@@ -38,11 +38,11 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 ### 9:00 - 12:00
 
-#### Branden Fitelson - What is a Replication?
+#### Branden Fitelson - How not to measure replication
 
 - Paper: @Fletcher2021-hv [[pdf]](papers/Fletcher 2021 - How (not) to measure replication.pdf)
 
-#### Giovanni Parmigiani - Probability of Replication
+#### Giovanni Parmigiani - How to measure replication
 
 - Paper: @Mathur2020-nw [[pdf]](papers/Mathur and VanderWeele 2020 - New statistical metrics for multisite replication projects.pdf)
 
