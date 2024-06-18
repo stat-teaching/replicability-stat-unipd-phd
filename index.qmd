@@ -1,0 +1,17 @@
+---
+title: "Replicability Crisis in Science?"
+---
+
+[**Replicability Crisis in Science?**](https://www.stat.unipd.it/sites/stat.unipd.it/files/Parmigiani-Fitelson-Gambarota%20July2024.pdf) is one of the [Specialist Courses](https://www.stat.unipd.it/ricerca/courses-202324-xxxix-cycle) organized from the [Department of Statistical Sciences](https://www.stat.unipd.it/en/) (University of Padova). The course has been proposed for the AY 2023/24 to the PhD students of the XXXIX cycle.
+
+# Overview
+
+When evaluating the reliability of scientific findings and predictions, a major concern is about their replicability, that is their consistency across different studies aimed at answering the same question. A "replicability crisis" has been claimed in the last decades, denouncing that a large part of published research findings, especially in applied sciences, such as psychology or medicine failed to be confirmed by subsequent studies. Difficulties in moving from empirical evidence and data analysis to a scientific result push towards the need to clarify various aspects, such as rigorous definitions, the possible tools for understanding and communicating the uncertainty inherent in most scientific conclusions, the definition of non-questionable research practices. The main objective of the course is to provide a broad and interdisciplinary view, as well as the tools that may enable individual participants to focus on specific aspects of replicability that are relevant to their own discipline of interest. The epistemological, philosophical and scientific/statistical bases of replicability and of its so-called crisis will be addressed in lectures by the teachers. Guided group activities will then be proposed to the students, to discuss basic questions and apply the ideas emerged during the course to some real data analysis.
+
+# Lecturers
+
+- Prof. [Giovanni Parmigiani](https://scholar.harvard.edu/parmigiani), Harvard University, USA
+- Prof. [Branden Fitelson](https://cssh.northeastern.edu/faculty/branden-fitelson/), Northeastern University, USA
+- Dr. [Filippo Gambarota](https://filippogambarota.xyz/), University of Padova, Italy
+
+# Schedule
