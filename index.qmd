@@ -24,12 +24,12 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 #### Branden Fitelson - What is a Replication?
 
-- Paper: @Machery2020-sv
+- Paper: @Machery2020-sv [[pdf]](papers/Machery 2020 - What is a replication.pdf)
 
 #### Giovanni Parmigiani - Probability of Replication
 
-- Paper: @Miller2009-hp
-
+- Paper: @Miller2009-hp [[pdf]](papers/Miller 2009 - What is the probability of replicating a statistically significant effect.pdf)
+ 
 ### 14:30 - 16:30
 
 #### Filippo Gambarota - Tools for Open Science
@@ -40,11 +40,11 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 #### Branden Fitelson - What is a Replication?
 
-- Paper: @Fletcher2021-hv
+- Paper: @Fletcher2021-hv [[pdf]](papers/Fletcher 2021 - How (not) to measure replication.pdf)
 
 #### Giovanni Parmigiani - Probability of Replication
 
-- Paper: @Mathur2020-nw
+- Paper: @Mathur2020-nw [[pdf]](papers/Mathur and VanderWeele 2020 - New statistical metrics for multisite replication projects.pdf)
 
 ### 14:30 - 16:30
 
@@ -56,11 +56,11 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 #### Branden Fitelson - Replicability in Psychology
 
-- Paper: @Nosek2022-ab
+- Paper: @Nosek2022-ab [[pdf]](papers/Nosek et al. 2022 - Replicability, robustness, and reproducibility in psychological science.pdf)
 
 #### Giovanni Parmigiani - Replicability in Cancer Science
 
-- Paper: @Errington2021-fb
+- Paper: @Errington2021-fb [[pdf]](papers/Errington et al. 2021 - Investigating the replicability of preclinical cancer biology.pdf)
 
 ### 14:30 - 16:30
 
