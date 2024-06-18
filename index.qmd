@@ -12,9 +12,9 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 # Lecturers
 
-- Prof. [Giovanni Parmigiani](https://scholar.harvard.edu/parmigiani), Harvard University, USA
 - Prof. [Branden Fitelson](https://cssh.northeastern.edu/faculty/branden-fitelson/), Northeastern University, USA
 - Dr. [Filippo Gambarota](https://filippogambarota.xyz/), University of Padova, Italy
+- Prof. [Giovanni Parmigiani](https://scholar.harvard.edu/parmigiani), Harvard University, USA
 
 # Schedule
 
