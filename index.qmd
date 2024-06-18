@@ -1,5 +1,7 @@
 ---
 title: "Replicability Crisis in Science?"
+bibliography: "https://raw.githubusercontent.com/filippogambarota/bib-database/main/references.bib"
+csl: "https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl"
 ---
 
 [**Replicability Crisis in Science?**](https://www.stat.unipd.it/sites/stat.unipd.it/files/Parmigiani-Fitelson-Gambarota%20July2024.pdf) is one of the [Specialist Courses](https://www.stat.unipd.it/ricerca/courses-202324-xxxix-cycle) organized from the [Department of Statistical Sciences](https://www.stat.unipd.it/en/) (University of Padova). The course has been proposed for the AY 2023/24 to the PhD students of the XXXIX cycle.
@@ -15,3 +17,54 @@ When evaluating the reliability of scientific findings and predictions, a major 
 - Dr. [Filippo Gambarota](https://filippogambarota.xyz/), University of Padova, Italy
 
 # Schedule
+
+## Monday 8<sup>th</sup> June 2024
+
+### 9:00 - 12:00
+
+#### Branden Fitelson - What is a Replication?
+
+- Paper: @Machery2020-sv
+
+#### Giovanni Parmigiani - Probability of Replication
+
+- Paper: @Miller2009-hp
+
+### 14:30 - 16:30
+
+#### Filippo Gambarota - Tools for Open Science
+
+## Tuesday 9<sup>th</sup> June 2024
+
+### 9:00 - 12:00
+
+#### Branden Fitelson - What is a Replication?
+
+- Paper: @Fletcher2021-hv
+
+#### Giovanni Parmigiani - Probability of Replication
+
+- Paper: @Mathur2020-nw
+
+### 14:30 - 16:30
+
+#### Filippo Gambarota - R tools and examples for Measures of Replication
+
+## Wednesday 10<sup>th</sup> June 2024
+
+### 9:00 - 12:00
+
+#### Branden Fitelson - Replicability in Psychology
+
+- Paper: @Nosek2022-ab
+
+#### Giovanni Parmigiani - Replicability in Cancer Science
+
+- Paper: @Errington2021-fb
+
+### 14:30 - 16:30
+
+#### Filippo Gambarota - Multiverse and meta-analysis
+
+:::{.refs}
+:::
