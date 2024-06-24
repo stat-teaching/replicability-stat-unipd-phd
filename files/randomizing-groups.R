@@ -68,7 +68,7 @@ students_shuffled <- split(students, students$phd_group) |>
 
 rownames(students_shuffled) <- NULL
 students_shuffled$group <- students$group
-table(students_shuffled$phd_group, students_shuffled$group)
 students_shuffled <- dplyr::arrange(students_shuffled, id)
+table(students_shuffled$phd_group, students_shuffled$group)
 
 writexl::write_xlsx(students_shuffled, path = "files/students.xlsx")
