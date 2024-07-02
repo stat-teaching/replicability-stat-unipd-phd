@@ -1,0 +1,86 @@
+---
+title: Introduction to the workshop
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# packages
+library(tidyverse)
+devtools::load_all()
+
+# ggplot theme
+theme_set(mtheme)
+
+# bibtex file
+filor::write_bib_rmd(input_bib = filor::fil()$bib, output_bib = "refs_to_download.bib")
+```
+
+```{r}
+#| label: functions
+#| include: false
+
+funs <- read_all_funs()
+```
+
+# About us {.section}
+
+##
+
+:::: {.columns}
+::: {.column width='40%'}
+
+#### Filippo Gambarota {.center}
+
+![](img/fg.jpg){width=200 fig-align="center"}
+
+- **Postdoctoral Researcher**: Department of Developmental and Social Psychology
+- **Research interests**: meta-analysis, data simulation, R programming, multiverse analysis
+
+:::
+::: {.column width='20%'}
+:::
+::: {.column width='40%'}
+
+#### Gianmarco Altoè
+
+![](img/ga.png){width=200 fig-align="center"}
+
+- **Associate Professor**: Department of Developmental and Social Psychology
+- **Research interests**: Power and design analysis, meta-research, multiverse analysis and psychological testing
+
+
+:::
+::::
+
+## About us {.about}
+
+We are part of the **Psicostat** research group. An interdisciplinary research group interested in Psychology and Statistics. `r icons::fontawesome("globe")` [psicostat.dpss.psy.unipd.it](https://psicostat.dpss.psy.unipd.it/)
+
+<center>
+<iframe src="https://psicostat.dpss.psy.unipd.it/" style="width:1000px; height:500px"></iframe>
+</center>
+
+## Contents
+
+- Introduction to Monte Carlo simulations
+- Introduction to Meta-analysis
+- Effect sizes
+- Equal and Random-effects model
+- Publication Bias
+- Power analysis for prospective and retrospective meta-analysis
+
+## Materials 📘
+
+- 🌐 All the **material** (code, slides, extra) are available **Github** [github.com/stat-teaching/csameta2024](https://github.com/stat-teaching/csameta2024) 
+- 📝 Slides are created with **Quarto**, you can use it as standard slides (in *html* format) and see the source code (`.qmd` file)
+- There will be references at the end of each slide deck. You will se a button where you can download the `.bib` file to import into your reference manager.
+
+## Disclaimer
+
+- We are using a lot of (R) code. When talking about code there is no a unique solution or method. My approach is not the best. If your code works, everything good :smile:
+- If we have time, we can discuss about best practice in writing code in terms of efficiency, organization and clarity :sunglasses:
+- Also for statistics related topics, there are often multiple options to solve a problem. If you know other alternatives beyond the proposed topics, we can discuss it :wink:
+
+# Let's start! {.section}

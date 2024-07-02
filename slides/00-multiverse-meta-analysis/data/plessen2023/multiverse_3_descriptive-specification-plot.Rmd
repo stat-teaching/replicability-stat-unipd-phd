@@ -1,0 +1,1295 @@
+---
+title: "Multiverse Meta-Analysis Exploring the Efficacy of Psychological Interventions for Depression"
+subtitle: "3. Descriptive Specification Plot"
+author: "Constantin Yves Plessen"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(metafor)
+library(plyr)
+library(ggpubr)
+library(grid)
+library(gridExtra)
+library(puniform)
+library(svMisc)
+library(cowplot) #Arrange Plots
+library(ggrepel) #geom_label_repel
+
+set.seed(1234)
+
+PET.PEESE <- function(data) {
+  mod <- list()
+  fit_PET <- lm(yi ~ sqrt(vi), 
+                weights = 1/vi, 
+                data = data)
+  
+  pet_p <- coef(summary(fit_PET))["(Intercept)", "Pr(>|t|)"] # pet p-value < .10 -> peese
+  
+  if(pet_p >= .1) {
+    mod$b <- coef(summary(fit_PET))["(Intercept)", "Estimate"] # pet estimate
+    mod$ci.lb <- confint(fit_PET)["(Intercept)", "2.5 %"] 
+    mod$ci.ub<- confint(fit_PET)["(Intercept)", "97.5 %"] 
+    mod$pval <- pet_p
+    mod$type <- "PET"
+    
+  }else{
+    
+    fit_PEESE <- lm(yi ~ vi, 
+                    weights = 1/vi, 
+                    data = data)
+    
+    mod$pval <- coef(summary(fit_PEESE))["(Intercept)", "Pr(>|t|)"] # pet p-value < .10 -> peese
+    mod$b  <- coef(summary(fit_PEESE))["(Intercept)", "Estimate"] # peese estimate
+    mod$ci.lb <- confint(fit_PEESE)["(Intercept)", "2.5 %"] 
+    mod$ci.ub <- confint(fit_PEESE)["(Intercept)", "97.5 %"] 
+    mod$type <- "PEESE"
+    
+  }
+  return(mod)
+}
+```
+
+# Setup
+
+## Load
+
+```{r}
+data <- read_csv("data/tidy/data_cleaned.csv")
+
+specifications_parallel <- read.csv2(file = "data/tidy/specifications_cleaned.csv")
+```
+
+<br>
+
+## Cleaning Specifications
+```{r}
+# Remove combinations in specs_male which did not occur
+specifications_full <- specifications_parallel[complete.cases(specifications_parallel), ]
+
+# Only keep unique sample subsets resulting from "Which" factor combinations.
+specifications_full <-
+  specifications_full[!duplicated(specifications_full[, c("mean", "set", "ma_method")]),]
+
+specifications_full <- specifications_full %>% filter(k >=10)
+
+write.csv2(file = "data/tidy/specifications_cleaned.csv", 
+           specifications_full)
+```
+
+
+```{r}
+specifications_full <- specifications_full %>% 
+  filter(dependency != "ignore") %>% 
+  mutate(mean_corrected = ifelse(mean < 0, 0, mean ))
+```
+
+# Validating parallelization
+
+Checking if mclapply produced the correct values. I check the smallest, largest, and 3 randomly drawn sets and recalculate the effect sizes manually.
+
+### Smallest ES
+```{r}
+min_ma <- specifications_full %>% 
+  filter(mean == min(mean))
+
+data_min_ma <- data %>% 
+  filter(row_number() %in% c(1,43,44,45,101,102,103,105,106,119,120,501,502,503,504,592,593,595,703,704,862,996))
+
+dat_min <- data_min_ma %>% 
+  escalc(yi=yi, vi=vi, data=.)
+
+dat_min <- as.data.frame(aggregate(dat_min, 
+                                   cluster = study,
+                                   struct="CS" , #compound symmetric structure as nested are not indpendent
+                                   rho = 0.5))
+min_ma
+PET.PEESE(dat_min)
+```
+
+### Largest ES
+```{r}
+max_ma <- specifications_full %>% filter(mean == max(mean))
+
+
+data_max_ma <- data %>% slice(126,531,532,533,534,706,707,911,912,913,1069,1070,1071,1072,1073,1074)
+
+mod_max <- rma.mv(data = data_max_ma, 
+                  yi = yi, 
+                  V = vi, 
+                  method = "REML", 
+                  control=list(optimizer="optim", optmethod="Nelder-Mead"),
+                  random = list(~1 | es_id,
+                                ~1 | study), 
+                  sparse=TRUE)
+
+max_ma
+mod_max
+```
+
+### 3 Randomly drawn universes
+
+```{r}
+set.seed(42) # the answer to the Ultimate Question of Life, the Universe and Everything
+specifications_sample <- specifications_full %>% sample_n(3) 
+```
+
+#### 1st sample
+```{r}
+specifications_sample[1,]
+vec_1 <- c(specifications_sample[1,]$set)
+vec_1 <- stringr::str_split(vec_1, pattern = ",")
+vec_1 <- unlist(vec_1)
+vec_1 <- as.numeric(vec_1)
+data_sample_1 <- data %>% 
+  filter(row_number() %in% c(vec_1))
+
+data_sample_1 <- data_sample_1 %>% 
+  escalc(yi=yi, vi=vi, data=.)
+
+data_sample_1 <- as.data.frame(aggregate(data_sample_1, 
+                                         cluster = study,
+                                         struct="CS" , #compound symmetric structure as nested are not indpendent
+                                         rho = 0.5))
+rma(yi = data_sample_1$yi, vi = data_sample_1$vi, method = "FE") 
+specifications_sample[1,]
+```
+
+#### 2nd sample
+```{r}
+specifications_sample[2,]
+vec_2 <- c(specifications_sample[2,]$set)
+vec_2 <- stringr::str_split(vec_2, pattern = ",")
+vec_2 <- unlist(vec_2)
+vec_2 <- as.numeric(vec_2)
+data_sample_2 <- data %>% 
+  filter(row_number() %in% c(vec_2))
+
+data_sample_2 <- data_sample_2 %>% 
+  escalc(yi=yi, vi=vi, data=.)
+
+data_sample_2 <- as.data.frame(aggregate(data_sample_2, 
+                                         cluster = study,
+                                         struct="CS" , #compound symmetric structure as nested are not indpendent
+                                         rho = 0.5))
+PET.PEESE(data_sample_2)
+specifications_sample[2,]
+```
+
+#### 3rd
+```{r}
+specifications_sample[3,]
+vec_3 <- c(specifications_sample[3,]$set)
+vec_3 <- stringr::str_split(vec_3, pattern = ",")
+vec_3 <- unlist(vec_3)
+vec_3 <- as.numeric(vec_3)
+data_sample_3 <- data %>% 
+  filter(row_number() %in% c(vec_3))
+
+data_sample_3 <- data_sample_3 %>% 
+  escalc(yi=yi, vi=vi, data=.)
+
+data_sample_3 <- as.data.frame(aggregate(data_sample_3, 
+                                         cluster = study,
+                                         struct="CS" , #compound symmetric structure as nested are not indpendent
+                                         rho = 0.5))
+rma.uni(yi = data_sample_3$yi, 
+        vi = data_sample_3$vi, method = "REML")
+specifications_sample[3,]
+```
+<br>
+
+
+# Inspecting Specifications
+
+```{r}
+specifications_full <- specifications_full %>% 
+  filter(lb < 0)
+specifications_full %>% glimpse()
+```
+
+## Overall
+
+```{r}
+specifications_full %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   min = min(mean),
+                   max = max(mean),
+                   mean_lb = mean(lb),
+                   mean_ub = mean(ub),
+                   n = n()) %>% 
+  mutate(set = "full")
+```
+
+<br>
+
+### type
+
+```{r}
+all_type_specs <- specifications_full %>% filter(type == "all types")
+
+for (i in 1:10) {
+  all_type_vec <- c(all_type_specs[i,]$set)
+  all_type_vec <- stringr::str_split(all_type_vec, pattern = ",")
+  all_type_vec <- unlist(all_type_vec)
+  all_type_vec <- as.numeric(all_type_vec)
+  result <- data %>% 
+    filter(row_number() %in% c(all_type_vec)) %>% pull(type) %>% table() 
+  print(result)
+}
+```
+
+
+```{r}
+specifications_full %>% 
+  group_by(type) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+<br>
+
+### control
+
+```{r}
+specifications_full %>% 
+  group_by(control) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+<br>
+
+### target_group
+
+```{r}
+specifications_full %>% 
+  group_by(target_group) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+### format
+```{r}
+specifications_full %>% 
+  group_by(format) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+### diag
+```{r}
+specifications_full %>% 
+  group_by(diagnosis) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+
+### rob
+```{r}
+specifications_full %>% 
+  group_by(rob) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+<br>
+
+### ma_method
+```{r}
+specifications_full %>% 
+  group_by(ma_method) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max_g = max(mean),
+                   min_g = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+<br>
+
+### k
+```{r}
+specifications_full %>% 
+  ggplot(aes(x = k)) + 
+  geom_histogram(bins = 100) 
+```
+
+<br>
+
+# Descriptive Specification Plot
+## Preparation
+
+<br>
+
+### Which factors
+
+```{r}
+target_group <- c(unique(data$target_group), "all groups")
+#region       <- str_to_lower(c(unique(data$region), "All Regions"))
+format       <- c(unique(data$format), "all formats")
+diagnosis    <- c(unique(data$diagnosis), "all diagnoses")
+type         <- c(unique(data$type), "all types")
+control      <- c(unique(data$control), "all control conditions")
+rob          <- c("exclude_worst", "include_best", "all rob")
+```
+
+
+### How Factors
+```{r}
+ma_method    <- c("3-level", "rve",   # modeled
+                  "reml", "fe", # aggregate | ignore
+                  "p-uniform", "pet-peese")        # aggregate only
+#dependency <- c("ignore", "aggregate", "modeled")
+
+number_which_how_factors <- 10
+```
+
+### Rank each summary effect size by magnitude
+
+```{r }
+x_rank <- rank(specifications_full$mean, 
+               ties.method = "random")
+```
+
+
+### Create all factors
+```{r }
+yvar <- rep(factor(rev(c(
+  type,
+  control,
+  target_group,
+  format,
+  diagnosis,
+  rob,
+ # dependency,
+  ma_method )), levels = rev(c(
+    type,
+    control,
+    target_group,
+    format,
+    diagnosis,
+    rob,
+ #   dependency,
+    ma_method ))), 
+  times = nrow(specifications_full))
+
+unique(yvar)
+```
+
+
+### Check lengths of yvar and specifications
+```{r }
+length(yvar)
+
+length(levels(yvar)) * nrow(specifications_full)
+```
+
+
+```{r }
+xvar <- rep(x_rank, 
+            each = length(levels(yvar)))
+spec <- NULL
+```
+
+<br>
+
+### Determine which specifications are observed and which are not
+
+```{r }
+for(i in 1:nrow(specifications_full)) {
+  id <- as.numeric(levels(yvar) %in% 
+                     as.character(unlist(
+                       specifications_full[i, 1:number_which_how_factors])))  
+  spec <- c(spec, id)
+}
+```
+
+## Universe specification panel
+```{r }
+plotdata <- data.frame(xvar, 
+                       yvar, 
+                       spec)
+
+head(plotdata)
+```
+
+<br>
+
+### Define y axis labels
+
+Need to be in order of:
+```{r}
+rev(unique(yvar))
+```
+
+### Create which and how factor description
+```{r }
+ylabels <- rev(c(
+  "Therapy: CBT-Based",  
+  "Therapy: Non-CBT-Based",  
+  "Therapy: All",  
+  
+  "Control: Usual Care",
+  "Control: Other",
+  "Control: Wait List", 
+  "Control: All", 
+  
+  "Group: Adults", 
+  "Group: General medical",
+  "Group: Perinatal D.", 
+  "Group: Older adults",
+  "Group: Other groups",
+  "Group: Student population",
+  "Group: All groups", 
+  
+  "Format: Group", 
+  "Format: Individual",
+  "Format: Guided self-help",
+  "Format: Other",
+  "Format: All",
+  
+  "Diagnoses: Clinician", 
+  "Diagnoses: Cut-off score",
+  "Diagnoses: Subclinical D.",
+  "Diagnoses: All diagnoses",
+  
+  #"Region: Europe", 
+  #"Region: Other",
+  #"Region: North America",
+  #"Region: East Asia",
+  #"Region: Australia",
+  #"Region: All",
+  
+  "ROB: Worst Excluded",  
+  "ROB: Only Best",
+  "ROB: All rob", 
+  
+ # "Dependency: Ignore", 
+ # "Dependency: Aggregate",
+ # "Dependency: Modeled",
+  
+  "Method: 3-Level",
+  "Method: RVE",
+  "Method: REML",
+  "Method: FE",
+  "Method: p-uniform",
+  "Method: PET-PEESE"
+))
+
+ylabels
+```
+
+<br>
+
+```{r }
+plotdata$k <- rep(specifications_full$k, 
+                  each = length(levels(yvar)))  
+
+plotdata$fill <- as.factor(plotdata$k * plotdata$spec)
+```
+
+```{r}
+write.csv(plotdata, "data/tidy/plotdata.csv")
+```
+
+<br>
+
+### Choose colors based on relative size (*k*)
+```{r}
+fill_quantiles <- quantile(plotdata$k, c(.10, .20, .30, .40, .50, .60, .70, .80, .90))
+```
+
+```{r}
+plotdata_rel <- plotdata %>% 
+  mutate(fill_manual = case_when(
+    spec == 0 ~ 0,           # white
+    k  != 0               & k <= fill_quantiles[1] ~ 1,     # light yellow
+    k > fill_quantiles[1] & k <= fill_quantiles[2] ~ 2,
+    k > fill_quantiles[2] & k <= fill_quantiles[3] ~ 3,
+    k > fill_quantiles[3] & k <= fill_quantiles[4] ~ 4,
+    k > fill_quantiles[4] & k <= fill_quantiles[5] ~ 5,
+    k > fill_quantiles[5] & k <= fill_quantiles[6] ~ 6,
+    k > fill_quantiles[6] & k <= fill_quantiles[7] ~ 7,
+    k > fill_quantiles[7] & k <= fill_quantiles[8] ~ 8,
+    k > fill_quantiles[8] & k <= fill_quantiles[9]  ~ 9,
+    k > fill_quantiles[9]  ~ 10),   # dark red
+    fill_manual = as.factor(fill_manual))
+```
+
+##### Choose colors
+
+```{r }
+cols <- RColorBrewer::brewer.pal(min(11, length(levels(plotdata_rel$fill_manual)) - 1), "Spectral")
+plot(NULL, xlim=c(0,length(cols)), ylim=c(0,1), 
+     xlab=cols, ylab="", xaxt="n", yaxt="n")
+rect(0:(length(cols)-1), 0, 1:length(cols), 1, col=cols)
+```
+
+Turn on either this chunk to get warm = much evidence
+```{r}
+cols <- cols[floor(seq(from = length(cols), to = 0, # change from to to reverse color coding!
+                       length.out = length(levels(plotdata_rel$fill_manual))))] # change - 1 for direction change
+plot(NULL, xlim=c(0,length(cols)), ylim=c(0,1), 
+     xlab="", ylab="", xaxt="n", yaxt="n")
+rect(0:(length(cols)-1), 0, 1:length(cols), 1, col=cols)
+```
+
+<br>
+
+We will need the length of each factor when we plot the spec curve:
+
+```{r}
+length_of_each_factor <- c(
+  length(ma_method),
+  length(rob) +  length(ma_method),
+  length(diagnosis) + length(rob) +  length(ma_method) ,
+  length(format) + length(diagnosis) + length(rob) +  length(ma_method) ,
+  length(target_group) +  length(format) + length(diagnosis) + length(rob) +  length(ma_method),
+  length(control) + length(target_group) +  length(format) + length(diagnosis) + length(rob) +  length(ma_method),
+  length(type) + length(control) + length(target_group) +  length(format) + length(diagnosis) + length(rob) +  length(ma_method))
+```
+
+### Create Plot
+```{r}
+tile_plot <- ggplot(data = plotdata_rel, 
+                    aes(x = xvar, 
+                        y = as.factor(yvar), 
+                        fill = fill_manual)) +
+  geom_raster() + 
+  geom_hline(yintercept = length_of_each_factor + 0.5) +  # Change lines here here
+  scale_x_continuous(position = "bottom") +
+  scale_y_discrete(labels = ylabels) +
+  scale_fill_manual(
+    values = c("white", cols)) +
+  labs(x = "Specification number", 
+       y = "Which/How factors") +
+  coord_cartesian(
+    expand = F, xlim = c(0.5, nrow(specifications_full) + 0.5)) +
+  theme_bw() + 
+  theme(legend.position = "none",
+        axis.text.y = element_text(colour = "black", size = 8),
+        axis.text.x = element_text(colour = "black"),
+        axis.ticks = element_line(colour = "black"),
+        plot.margin = margin(t = 5.5, 
+                             r = 5.5, 
+                             b = 5.5, 
+                             l = 5.5, 
+                             unit = "pt"))
+
+tile_plot
+```
+
+## Outcome curve plot
+```{r}
+fill_quantiles <- quantile(specifications_full$k, c(.10, .20, .30, .40, .50, .60, .70, .80, .90))
+
+specifications_full_rel <- specifications_full %>% 
+  mutate(fill_manual = case_when(
+    k  != 0               & k <= fill_quantiles[1] ~ 1,     # light yellow
+    k > fill_quantiles[1] & k <= fill_quantiles[2] ~ 2,
+    k > fill_quantiles[2] & k <= fill_quantiles[3] ~ 3,
+    k > fill_quantiles[3] & k <= fill_quantiles[4] ~ 4,
+    k > fill_quantiles[4] & k <= fill_quantiles[5] ~ 5,
+    k > fill_quantiles[5] & k <= fill_quantiles[6] ~ 6,
+    k > fill_quantiles[6] & k <= fill_quantiles[7] ~ 7,
+    k > fill_quantiles[7] & k <= fill_quantiles[8] ~ 8,
+    k > fill_quantiles[8] & k <= fill_quantiles[9]  ~ 9,
+    k > fill_quantiles[9]  ~ 10),   # dark red
+    fill_manual = as.factor(fill_manual))
+
+specifications_full_rel$xvar <- x_rank
+
+yrng <- range(c(0, specifications_full$lb, specifications_full$ub))
+
+#ylimit <- round(c(yrng[1] - diff(yrng)*0.1, yrng[2] + diff(yrng)*0.1), 1)
+ylimit <- c(-.5, 2)
+
+#y_breaks_forest <- round(seq(from = round(ylimit[1], 1), to = round(ylimit[2], 1), by = 0.5), 2)
+y_breaks_forest <- seq(-.25, 2, 0.25)
+
+y_labels_forest <- format(y_breaks_forest, nsmall = 2)
+y_breaks_forest <- c(ylimit[1], y_breaks_forest)
+y_labels_forest <- c(ylabels[which.max(nchar(ylabels))], y_labels_forest)
+```
+
+### Select specific meta-analyses to show in spec curve plot
+```{r}
+set.seed(42)
+ma_for_forest_1 <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "3-level") %>% mutate(label = "3-Level")
+
+ma_for_forest_2 <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "reml" & dependency == "aggregate") %>% mutate(label = "REML")
+
+ma_for_forest_3  <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "pet-peese") %>% mutate(label = "PET-PEESE ")
+
+
+ma_for_forest_4 <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "fe" & dependency == "aggregate") %>% mutate(label = "FEM")
+
+#ma_for_forest_4  <- specifications_full_rel %>% 
+#  filter(ma_method == "reml" & target_group == "adults" ) %>%
+#  arrange(desc(k)) %>% slice(1) %>% 
+#  mutate(label = "REML (Only Adults)")
+
+ma_for_forest_5  <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "p-uniform") %>% mutate(label = "p-uniform ")
+
+ma_for_forest <- bind_rows(ma_for_forest_1,
+                           ma_for_forest_2,
+                           ma_for_forest_3,
+                           ma_for_forest_4,
+                           ma_for_forest_5)
+```
+
+### Create Plot
+```{r}
+spec_curve_plot <- specifications_full_rel %>% 
+  # filter(!ma_method == "rve") %>% 
+  ggplot(aes(x = xvar, 
+             y = mean_corrected))+ 
+  geom_errorbar(aes(ymin = lb, 
+                    ymax = ub,
+                    col = as.factor(fill_manual)), 
+                size = .2,
+                alpha = .7) +
+  geom_line(col = "black", size = 0.25) +
+  geom_hline(yintercept = 0, linetype = "dashed", size = 0.7) +
+  geom_hline(yintercept = .24, linetype = "dotted", size = 0.7, color = "red") +
+  #geom_hline(yintercept = .24, linetype = "dotted", size = 0.7, color = "red") +
+  scale_x_continuous(name = "") +
+  scale_y_continuous(name = expression(paste("Summary effect (", italic("g"),")")),
+                     breaks = y_breaks_forest, labels = y_labels_forest) + 
+  scale_color_manual(values = cols) +
+  coord_cartesian(ylim = ylimit, xlim = c(0.5, nrow(specifications_full) + 0.5), expand = FALSE) +
+  # ggtitle("Multiverse of All Reasonable Meta-Analyses") +
+  theme_bw() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_text(colour = c("white", rep("black", times = length(y_labels_forest) - 1))),
+        axis.ticks.y = element_line(colour = c("white", rep("black", times = length(y_breaks_forest) - 1))),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(),
+        panel.grid.minor.y = element_blank(),
+        plot.margin = margin(t = 5.5, r = 5.5, b = -15, l = 5.5, unit = "pt")) +
+  geom_point(data = ma_for_forest,
+             color = "black") +
+  geom_label_repel(data = ma_for_forest, 
+                   aes(label = label),
+                   seed = 42,
+                   box.padding   = 0.35, 
+                   point.padding = 0.5,
+                   direction = "both",
+                   lineheight = 2,
+                   nudge_y = .5,
+                   segment.color = 'black',
+                   segment.angle = 90,
+                   segment.size = .5)
+
+spec_curve_plot
+```
+
+## Combine tile and specification curve plot
+```{r}
+descriptive_multiverse_plot <- plot_grid(spec_curve_plot,
+                                         tile_plot,
+                                         ncol = 1,
+                                         align = "v",
+                                         rel_heights = c(4,5))
+descriptive_multiverse_plot
+```
+
+<br>
+
+### Save Plot
+
+```{r }
+ggsave("figures/descriptive_specification.pdf", 
+       descriptive_multiverse_plot, 
+       width = 10, 
+       height = 7.5,
+       dpi = "retina"
+)
+
+ggsave("figures/descriptive_specification.png", 
+       descriptive_multiverse_plot, 
+       width = 10, 
+       height = 7.5,
+       dpi = "retina"
+)
+```
+
+# Descriptive Specification Plot (only not-effective studies)
+
+Here I produce a descriptive specification curve plot only for the meta-analyses suggesting that psychotherapy is not effective in treating depression (with the lower bound of the 95% CI being below zero)
+
+<br>
+## Preparation
+
+<br>
+
+### Which factors
+
+```{r}
+target_group <- c(unique(data$target_group), "all groups")
+#region       <- str_to_lower(c(unique(data$region), "All Regions"))
+format       <- c(unique(data$format), "all formats")
+diagnosis    <- c(unique(data$diagnosis), "all diagnoses")
+type         <- c(unique(data$type), "all types")
+control      <- c(unique(data$control), "all control conditions")
+rob          <- c("exclude_worst", "include_best", "all rob")
+```
+
+
+### How Factors
+```{r}
+ma_method    <- c("3-level", "rve",   # modeled
+                  "reml", "fe", # aggregate | ignore
+                  "p-uniform", "pet-peese")        # aggregate only
+#dependency <- c("ignore", "aggregate", "modeled")
+
+number_which_how_factors <- 10
+```
+
+### Rank each summary effect size by magnitude
+
+```{r }
+specifications_full <- specifications_full %>% 
+  filter(lb <= 0)
+```
+
+
+# Inspecting Specifications
+
+```{r}
+specifications_full <- specifications_full %>% 
+  filter(lb < 0)
+specifications_full %>% glimpse()
+```
+
+## Overall
+
+```{r}
+specifications_full %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   min = min(mean),
+                   max = max(mean),
+                   mean_lb = mean(lb),
+                   mean_ub = mean(ub),
+                   n = n()) %>% 
+  mutate(set = "full")
+```
+
+<br>
+
+### type
+
+```{r}
+all_type_specs <- specifications_full %>% filter(type == "all types")
+
+for (i in 1:10) {
+  all_type_vec <- c(all_type_specs[i,]$set)
+  all_type_vec <- stringr::str_split(all_type_vec, pattern = ",")
+  all_type_vec <- unlist(all_type_vec)
+  all_type_vec <- as.numeric(all_type_vec)
+  result <- data %>% 
+    filter(row_number() %in% c(all_type_vec)) %>% pull(type) %>% table() 
+  print(result)
+}
+```
+
+
+```{r}
+specifications_full %>% 
+  group_by(type) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+<br>
+
+### control
+
+```{r}
+specifications_full %>% 
+  group_by(control) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+<br>
+
+### target_group
+
+```{r}
+specifications_full %>% 
+  group_by(target_group) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+### format
+```{r}
+specifications_full %>% 
+  group_by(format) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+### diag
+```{r}
+specifications_full %>% 
+  group_by(diagnosis) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+
+### rob
+```{r}
+specifications_full %>% 
+  group_by(rob) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max = max(mean),
+                   min = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+<br>
+
+### ma_method
+```{r}
+specifications_full %>% 
+  group_by(ma_method) %>% 
+  dplyr::summarise(mean_g = mean(mean),
+                   max_g = max(mean),
+                   min_g = min(mean),
+                   lb = mean(lb),
+                   ub = mean(ub),
+                   n = n())
+```
+
+<br>
+
+### k
+```{r}
+specifications_full %>% 
+  ggplot(aes(x = k)) + 
+  geom_histogram(bins = 100) 
+```
+
+```{r }
+x_rank <- rank(specifications_full$mean, 
+               ties.method = "random")
+```
+
+
+### Create all factors
+```{r }
+yvar <- rep(factor(rev(c(
+  type,
+  control,
+  target_group,
+  format,
+  diagnosis,
+  rob,
+ # dependency,
+  ma_method )), levels = rev(c(
+    type,
+    control,
+    target_group,
+    format,
+    diagnosis,
+    rob,
+ #   dependency,
+    ma_method ))), 
+  times = nrow(specifications_full))
+
+unique(yvar)
+```
+
+
+### Check lengths of yvar and specifications
+```{r }
+length(yvar)
+
+length(levels(yvar)) * nrow(specifications_full)
+```
+
+
+```{r }
+xvar <- rep(x_rank, 
+            each = length(levels(yvar)))
+spec <- NULL
+```
+
+<br>
+
+### Determine which specifications are observed and which are not
+
+```{r }
+for(i in 1:nrow(specifications_full)) {
+  id <- as.numeric(levels(yvar) %in% 
+                     as.character(unlist(
+                       specifications_full[i, 1:number_which_how_factors])))  
+  spec <- c(spec, id)
+}
+```
+
+## Universe specification panel
+```{r }
+plotdata <- data.frame(xvar, 
+                       yvar, 
+                       spec)
+
+head(plotdata)
+```
+
+<br>
+
+### Define y axis labels
+
+Need to be in order of:
+```{r}
+rev(unique(yvar))
+```
+
+### Create which and how factor description
+```{r }
+ylabels <- rev(c(
+  "Therapy: CBT-Based",  
+  "Therapy: Non-CBT-Based",  
+  "Therapy: All",  
+  
+  "Control: Usual Care",
+  "Control: Other",
+  "Control: Wait List", 
+  "Control: All", 
+  
+  "Group: Adults", 
+  "Group: General medical",
+  "Group: Perinatal D.", 
+  "Group: Older adults",
+  "Group: Other groups",
+  "Group: Student population",
+  "Group: All groups", 
+  
+  "Format: Group", 
+  "Format: Individual",
+  "Format: Guided self-help",
+  "Format: Other",
+  "Format: All",
+  
+  "Diagnoses: Clinician", 
+  "Diagnoses: Cut-off score",
+  "Diagnoses: Subclinical D.",
+  "Diagnoses: All diagnoses",
+  
+  #"Region: Europe", 
+  #"Region: Other",
+  #"Region: North America",
+  #"Region: East Asia",
+  #"Region: Australia",
+  #"Region: All",
+  
+  "ROB: Worst Excluded",  
+  "ROB: Only Best",
+  "ROB: All rob", 
+  
+ # "Dependency: Ignore", 
+ # "Dependency: Aggregate",
+ # "Dependency: Modeled",
+  
+  "Method: 3-Level",
+  "Method: RVE",
+  "Method: REML",
+  "Method: FE",
+  "Method: p-uniform",
+  "Method: PET-PEESE"
+))
+
+ylabels
+```
+
+<br>
+
+```{r }
+plotdata$k <- rep(specifications_full$k, 
+                  each = length(levels(yvar)))  
+
+plotdata$fill <- as.factor(plotdata$k * plotdata$spec)
+```
+
+```{r}
+#write.csv(plotdata, "data/tidy/plotdata.csv")
+```
+
+<br>
+
+### Choose colors based on relative size (*k*)
+```{r}
+fill_quantiles <- quantile(plotdata$k, c(.10, .20, .30, .40, .50, .60, .70, .80, .90))
+```
+
+```{r}
+plotdata_rel <- plotdata %>% 
+  mutate(fill_manual = case_when(
+    spec == 0 ~ 0,           # white
+    k  != 0               & k <= fill_quantiles[1] ~ 1,     # light yellow
+    k > fill_quantiles[1] & k <= fill_quantiles[2] ~ 2,
+    k > fill_quantiles[2] & k <= fill_quantiles[3] ~ 3,
+    k > fill_quantiles[3] & k <= fill_quantiles[4] ~ 4,
+    k > fill_quantiles[4] & k <= fill_quantiles[5] ~ 5,
+    k > fill_quantiles[5] & k <= fill_quantiles[6] ~ 6,
+    k > fill_quantiles[6] & k <= fill_quantiles[7] ~ 7,
+    k > fill_quantiles[7] & k <= fill_quantiles[8] ~ 8,
+    k > fill_quantiles[8] & k <= fill_quantiles[9]  ~ 9,
+    k > fill_quantiles[9]  ~ 10),   # dark red
+    fill_manual = as.factor(fill_manual))
+```
+
+##### Choose colors
+
+```{r }
+cols <- RColorBrewer::brewer.pal(min(11, length(levels(plotdata_rel$fill_manual)) - 1), "Spectral")
+plot(NULL, xlim=c(0,length(cols)), ylim=c(0,1), 
+     xlab=cols, ylab="", xaxt="n", yaxt="n")
+rect(0:(length(cols)-1), 0, 1:length(cols), 1, col=cols)
+```
+
+Turn on either this chunk to get warm = much evidence
+```{r}
+cols <- cols[floor(seq(from = length(cols), to = 0, # change from to to reverse color coding!
+                       length.out = length(levels(plotdata_rel$fill_manual))))] # change - 1 for direction change
+plot(NULL, xlim=c(0,length(cols)), ylim=c(0,1), 
+     xlab="", ylab="", xaxt="n", yaxt="n")
+rect(0:(length(cols)-1), 0, 1:length(cols), 1, col=cols)
+```
+
+<br>
+
+We will need the length of each factor when we plot the spec curve:
+
+```{r}
+length_of_each_factor <- c(
+  length(ma_method),
+  length(rob) +  length(ma_method),
+  length(diagnosis) + length(rob) +  length(ma_method) ,
+  length(format) + length(diagnosis) + length(rob) +  length(ma_method) ,
+  length(target_group) +  length(format) + length(diagnosis) + length(rob) +  length(ma_method),
+  length(control) + length(target_group) +  length(format) + length(diagnosis) + length(rob) +  length(ma_method),
+  length(type) + length(control) + length(target_group) +  length(format) + length(diagnosis) + length(rob) +  length(ma_method))
+```
+
+### Create Plot
+```{r}
+tile_plot <- ggplot(data = plotdata_rel, 
+                    aes(x = xvar, 
+                        y = as.factor(yvar), 
+                        fill = fill_manual)) +
+  geom_raster() + 
+  geom_hline(yintercept = length_of_each_factor + 0.5) +  # Change lines here here
+  scale_x_continuous(position = "bottom") +
+  scale_y_discrete(labels = ylabels) +
+  scale_fill_manual(
+    values = c("white", cols)) +
+  labs(x = "Specification number", 
+       y = "Which/How factors") +
+  coord_cartesian(
+    expand = F, xlim = c(0.5, nrow(specifications_full) + 0.5)) +
+  theme_bw() + 
+  theme(legend.position = "none",
+        axis.text.y = element_text(colour = "black", size = 8),
+        axis.text.x = element_text(colour = "black"),
+        axis.ticks = element_line(colour = "black"),
+        plot.margin = margin(t = 5.5, 
+                             r = 5.5, 
+                             b = 5.5, 
+                             l = 5.5, 
+                             unit = "pt"))
+
+tile_plot
+```
+
+## Outcome curve plot
+```{r}
+fill_quantiles <- quantile(specifications_full$k, c(.10, .20, .30, .40, .50, .60, .70, .80, .90))
+
+specifications_full_rel <- specifications_full %>% 
+  mutate(fill_manual = case_when(
+    k  != 0               & k <= fill_quantiles[1] ~ 1,     # light yellow
+    k > fill_quantiles[1] & k <= fill_quantiles[2] ~ 2,
+    k > fill_quantiles[2] & k <= fill_quantiles[3] ~ 3,
+    k > fill_quantiles[3] & k <= fill_quantiles[4] ~ 4,
+    k > fill_quantiles[4] & k <= fill_quantiles[5] ~ 5,
+    k > fill_quantiles[5] & k <= fill_quantiles[6] ~ 6,
+    k > fill_quantiles[6] & k <= fill_quantiles[7] ~ 7,
+    k > fill_quantiles[7] & k <= fill_quantiles[8] ~ 8,
+    k > fill_quantiles[8] & k <= fill_quantiles[9]  ~ 9,
+    k > fill_quantiles[9]  ~ 10),   # dark red
+    fill_manual = as.factor(fill_manual))
+
+specifications_full_rel$xvar <- x_rank
+
+yrng <- range(c(0, specifications_full$lb, specifications_full$ub))
+
+#ylimit <- round(c(yrng[1] - diff(yrng)*0.1, yrng[2] + diff(yrng)*0.1), 1)
+ylimit <- c(-.5, 2)
+
+#y_breaks_forest <- round(seq(from = round(ylimit[1], 1), to = round(ylimit[2], 1), by = 0.5), 2)
+y_breaks_forest <- seq(-.25, 2, 0.25)
+
+y_labels_forest <- format(y_breaks_forest, nsmall = 2)
+y_breaks_forest <- c(ylimit[1], y_breaks_forest)
+y_labels_forest <- c(ylabels[which.max(nchar(ylabels))], y_labels_forest)
+```
+
+### Select specific meta-analyses to show in spec curve plot
+```{r}
+set.seed(42)
+ma_for_forest_1 <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "3-level") %>% mutate(label = "3-Level")
+
+ma_for_forest_2 <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "reml" & dependency == "aggregate") %>% mutate(label = "REML")
+
+ma_for_forest_3  <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "pet-peese") %>% mutate(label = "PET-PEESE ")
+
+
+ma_for_forest_4 <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "fe" & dependency == "aggregate") %>% mutate(label = "FEM")
+
+#ma_for_forest_4  <- specifications_full_rel %>% 
+#  filter(ma_method == "reml" & target_group == "adults" ) %>%
+#  arrange(desc(k)) %>% slice(1) %>% 
+#  mutate(label = "REML (Only Adults)")
+
+ma_for_forest_5  <- specifications_full_rel %>% 
+  filter(full_set == 1 & ma_method == "p-uniform") %>% mutate(label = "p-uniform ")
+
+ma_for_forest <- bind_rows(ma_for_forest_1,
+                           ma_for_forest_2,
+                           ma_for_forest_3,
+                           ma_for_forest_4,
+                           ma_for_forest_5)
+```
+
+### Create Plot
+```{r}
+spec_curve_plot <- specifications_full_rel %>% 
+  # filter(!ma_method == "rve") %>% 
+  ggplot(aes(x = xvar, 
+             y = mean))+ 
+  geom_errorbar(aes(ymin = lb, 
+                    ymax = ub,
+                    col = as.factor(fill_manual)), 
+                size = .2,
+                alpha = .7) +
+  geom_line(col = "black", size = 0.25) +
+  geom_hline(yintercept = 0, linetype = "dashed", size = 0.7) +
+  geom_hline(yintercept = .24, linetype = "dotted", size = 0.7, color = "red") +
+  #geom_hline(yintercept = .24, linetype = "dotted", size = 0.7, color = "red") +
+  scale_x_continuous(name = "") +
+  scale_y_continuous(name = expression(paste("Summary effect (", italic("g"),")")),
+                     breaks = y_breaks_forest, labels = y_labels_forest) + 
+  scale_color_manual(values = cols) +
+  coord_cartesian(ylim = ylimit, xlim = c(0.5, nrow(specifications_full) + 0.5), expand = FALSE) +
+  # ggtitle("Multiverse of All Reasonable Meta-Analyses") +
+  theme_bw() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_text(colour = c("white", rep("black", times = length(y_labels_forest) - 1))),
+        axis.ticks.y = element_line(colour = c("white", rep("black", times = length(y_breaks_forest) - 1))),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(),
+        panel.grid.minor.y = element_blank(),
+        plot.margin = margin(t = 5.5, r = 5.5, b = -15, l = 5.5, unit = "pt")) +
+  geom_point(data = ma_for_forest,
+             color = "black") +
+  geom_label_repel(data = ma_for_forest, 
+                   aes(label = label),
+                   seed = 42,
+                   box.padding   = 0.35, 
+                   point.padding = 0.5,
+                   direction = "both",
+                   lineheight = 2,
+                   nudge_y = .5,
+                   segment.color = 'black',
+                   segment.angle = 90,
+                   segment.size = .5)
+
+spec_curve_plot
+```
+
+## Combine tile and specification curve plot
+```{r}
+descriptive_multiverse_plot <- plot_grid(spec_curve_plot,
+                                         tile_plot,
+                                         ncol = 1,
+                                         align = "v",
+                                         rel_heights = c(4,5))
+descriptive_multiverse_plot
+```
+
+<br>

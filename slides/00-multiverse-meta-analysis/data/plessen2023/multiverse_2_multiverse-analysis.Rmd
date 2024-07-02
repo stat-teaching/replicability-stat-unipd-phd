@@ -1,0 +1,432 @@
+---
+title: "Exploring the Efficacy of Psychological Interventions for Depression"
+subtitle: "2. Specifications with 3 lvl model"
+author: "Constantin Yves Plessen"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    code_folding: show
+    highlight: pygment
+    keep_md: no
+    theme: lumen
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(metafor)
+library(plyr)
+library(ggpubr)
+library(grid)
+library(gridExtra)
+library(puniform)
+library(svMisc)
+library(clubSandwich)
+
+# parallelization
+library(doParallel)
+library(foreach)
+set.seed(1234)
+
+# helper function
+PET.PEESE <- function(data) {
+  mod <- list()
+  fit_PET <- lm(yi ~ sqrt(vi), 
+                weights = 1/vi, 
+                data = data)
+  
+  pet_p <- coef(summary(fit_PET))["(Intercept)", "Pr(>|t|)"] # pet p-value < .10 -> peese
+  
+  if(pet_p >= .1) {
+    mod$b <- coef(summary(fit_PET))["(Intercept)", "Estimate"] # pet estimate
+    mod$ci.lb <- confint(fit_PET)["(Intercept)", "2.5 %"] 
+    mod$ci.ub<- confint(fit_PET)["(Intercept)", "97.5 %"] 
+    mod$pval <- pet_p
+    mod$type <- "PET"
+    
+  }else{
+    
+    fit_PEESE <- lm(yi ~ vi, 
+                    weights = 1/vi, 
+                    data = data)
+    
+    mod$pval <- coef(summary(fit_PEESE))["(Intercept)", "Pr(>|t|)"] # pet p-value < .10 -> peese
+    mod$b  <- coef(summary(fit_PEESE))["(Intercept)", "Estimate"] # peese estimate
+    mod$ci.lb <- confint(fit_PEESE)["(Intercept)", "2.5 %"] 
+    mod$ci.ub <- confint(fit_PEESE)["(Intercept)", "97.5 %"] 
+    mod$type <- "PEESE"
+
+  }
+  return(mod)
+}
+```
+
+# Load data
+
+```{r}
+data_raw <- read_csv("data/tidy/data_cleaned.csv")
+```
+
+<br>
+
+# Descriptive Multiverse
+
+## Construct all possible combinations of which and how factors
+
+```{r}
+table(data$format)
+table(data$target_group)
+table(data$diagnosis)
+```
+
+```{r}
+target_group <- c(unique(data$target_group), "all groups")
+format       <- c(unique(data$format), "all formats")
+diagnosis    <- c(unique(data$diagnosis), "all diagnoses")
+type         <- c(unique(data$type), "all types")
+control      <- c(unique(data$control), "all control conditions")
+rob          <- c("exclude_worst", "include_best", "all rob")
+ma_method    <- c("3-level", "rve",   # modeled
+                       "reml", "fe", # aggregate | ignore
+                       "p-uniform", "pet-peese")        # aggregate only
+dependency <- c("ignore", "aggregate", "modeled")
+
+specifications_grid <- expand.grid(
+  #region = region,
+  target_group = target_group,
+  format = format,
+  diagnosis = diagnosis,
+  type = type,
+  control = control,
+  rob = rob,
+  ma_method = ma_method,
+  dependency = dependency)
+
+nrow(specifications_grid)
+```
+
+## Prune how factor paths that are impossible
+
+I.e. modeling 3-level structure with pet-peese
+```{r}
+specifications_grid <- specifications_grid %>% 
+  filter((dependency == "modeled" & # Only those modeled dependencies should be calculated
+            (ma_method == "3-level" | ma_method == "rve")) | 
+           
+           (dependency == "aggregate" & # Only those averaged dependencies should be calculated
+              (ma_method == "reml" | ma_method == "fe" | ma_method == "p-uniform"| ma_method == "pet-peese")) | 
+           
+           (dependency == "ignore" & # Only those ignored dependencies should be calculated
+              (ma_method == "reml" | ma_method == "fe"))) 
+
+nrow(specifications_grid)
+
+specifications <- data.frame(specifications_grid, 
+                             mean = rep(NA, nrow(specifications_grid)), 
+                             lb = rep(NA, nrow(specifications_grid)), 
+                             ub = rep(NA, nrow(specifications_grid)), 
+                             p = rep(NA, nrow(specifications_grid)), 
+                             k = rep(NA, nrow(specifications_grid)))
+```
+
+
+<br>
+
+# Parallel solution
+
+## Resetting specifications
+```{r}
+specifications <- data.frame(specifications_grid)
+                             #mean = rep(NA, nrow(specifications_grid)), 
+                             #lb = rep(NA, nrow(specifications_grid)), 
+                             #ub = rep(NA, nrow(specifications_grid)), 
+                             #p = rep(NA, nrow(specifications_grid)), 
+                             #k = rep(NA, nrow(specifications_grid)))
+```
+
+## `parallel_multiverse`
+```{r}
+parallel_multiverse <- function(i) {  
+  out <- list()
+  dat <- as.data.frame(data)
+  
+  # Determine specification subsets by using "Which" factors 
+  
+  # target group
+  if(specifications$target_group[i] == "adults") {
+    dat <- dat[dat$target_group == "adults", ] 
+  } else {
+    if(specifications$target_group[i] == "general medical") {
+      dat <- dat[dat$target_group == "general medical", ] 
+    } else {
+      if(specifications$target_group[i] == "perinatal depression") {
+        dat <- dat[dat$target_group == "perinatal depression", ] 
+      } else {
+        if(specifications$target_group[i] == "older adults") {
+          dat <- dat[dat$target_group == "older adults", ] 
+        } else {
+          if(specifications$target_group[i] == "other target groups") {
+            dat <- dat[dat$target_group == "other target groups", ]   
+          } else {
+            if(specifications$target_group[i] == "student population") {
+              dat <- dat[dat$target_group == "student population", ] 
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  # format
+  if(specifications$format[i] == "group") {
+    dat <- dat[dat$format == "group", ] 
+  } else {
+    if(specifications$format[i] == "individual") {
+      dat <- dat[dat$format == "individual", ] 
+    } else {
+      if(specifications$format[i] == "guided self-help") {
+        dat <- dat[dat$format == "guided self-help", ] 
+      } else {
+        if(specifications$format[i] == "other formats") {
+          dat <- dat[dat$format == "other formats", ] 
+        }
+      }
+    }
+  }
+  
+  #diagnosis
+  if(specifications$diagnosis[i] == "diagnosis") {
+    dat <- dat[dat$diagnosis== "diagnosis", ] 
+  } else {
+    if(specifications$diagnosis[i] == "cut-off score") {
+      dat <- dat[dat$diagnosis== "cut-off score", ] 
+    } else {
+      if(specifications$diagnosis[i] == "subclinical depression") {
+        dat <- dat[dat$diagnosis== "subclinical depression", ] 
+      }
+    }
+  }
+
+  # type
+  if(specifications$type[i] == "cbt-based") {
+    dat <- dat[dat$type == "cbt-based", ] 
+  } else {
+    if(specifications$type[i] == "not-cbt-based") {
+      dat <- dat[dat$type == "not-cbt-based", ] 
+    }
+  }
+  
+  # control
+  if(specifications$control[i] == "wl") {
+    dat <- dat[dat$control == "wl", ] 
+  } else {
+    if(specifications$control[i] == "cau") {
+      dat <- dat[dat$control == "cau", ] 
+    } else {
+      if(specifications$control[i] == "other ctr") {
+        dat <- dat[dat$control == "other ctr", ] 
+      }
+    }
+  }
+  
+  # rob
+  if(specifications$rob[i] == "exclude_worst") {
+    dat <- dat[dat$rob_exclude_worst == 1, ] 
+  } else {
+    if(specifications$rob[i] == "include_best") {
+      dat <- dat[dat$rob_include_best == 1, ] 
+    }
+  }
+  
+  # Save which study/sample IDs were selected by the "Which" factors for a given specification.
+  dat <- drop_na(dat, yi, vi)
+  set <- paste(dat$es_id, collapse = ",")
+  
+  # only compute meta-analytic summary effects for specification subsets with at least 2 studies/samples.
+  if(nrow(dat) < 10) {
+    out <- NULL
+    
+    #######################################################################
+    ######################## HOW FACTORS ##################################
+    ####################################################################### 
+    
+    
+    ######################## AGGREGATE DEPENDENCY ################################
+  } else {
+    if(specifications$dependency[i] == "aggregate") {
+      
+      # Aggregate data
+      dat <- dat %>% 
+        escalc(yi=yi, vi=vi, data=.)
+      
+      dat <- as.data.frame(aggregate(dat, 
+                                     cluster = study,
+                                     struct="CS" , #compound symmetric structure as nested are not indpendent
+                                     rho = 0.5))
+      
+      
+      if(specifications$ma_method[i] == "fe") {
+        mod <- rma(yi = dat$yi, vi = dat$vi, method = "FE") 
+      } else {
+        if(specifications$ma_method[i] == "reml") {
+          mod <- rma(yi = dat$yi, vi = dat$vi, method = "REML", 
+                     control = list(stepadj=0.5, maxiter = 2000))  
+        } else {
+          if(specifications$ma_method[i] == "pet-peese" & length(unique(dat$study)) >= 10) { # needs more than 10 unique studies
+            mod <- PET.PEESE(dat)
+          } else {
+            if(specifications$ma_method[i] == "pet-peese" & length(unique(dat$study)) < 10) { 
+              mod <- list() 
+              mod$b[[1]]     <- NA
+              mod$ci.lb[[1]] <- NA
+              mod$ci.ub[[1]] <- NA
+              mod$pval[[1]]  <- NA
+            } else {
+              if(specifications$ma_method[i] == "p-uniform") {
+                mod <- puni_star(yi = dat$yi, 
+                                 vi = dat$vi, 
+                                 side = "right")
+                mod$b <- mod$est
+                mod$pval <- mod$pval.0 
+              }
+            }
+          }
+        }
+      }
+      out <-  data.frame(specifications[i, ], 
+                         mod$b[[1]],
+                         mod$ci.lb[[1]],
+                         mod$ci.ub[[1]],
+                         mod$pval[[1]],
+                         nrow(dat),
+                         set)
+      
+    } else {
+      
+      ######################## IGNORING DEPENDENCY ##############################
+      if(specifications$dependency[i] == "ignore") {
+        
+        if(specifications$ma_method[i] == "fe") {
+          mod <- rma(yi = dat$yi, vi = dat$vi, method = "FE") 
+        } else {
+          if(specifications$ma_method[i] == "reml") {
+            mod <- rma(yi = dat$yi, vi = dat$vi, method = "REML", control = list(stepadj=0.5, maxiter = 2000))  
+          }
+        }
+        out <-  data.frame(specifications[i, ], 
+                           mod$b[[1]],
+                           mod$ci.lb[[1]],
+                           mod$ci.ub[[1]],
+                           mod$pval[[1]],
+                           nrow(dat),
+                           set)
+        
+      }  else {
+        
+        #################### MODELING DEPENDENCY #################################  
+        if(specifications$dependency[i] == "modeled" & sum(duplicated(dat$study)) > 1 & length(unique(dat$study)) > 1) { 
+          # only if number of clusters is smaller than number of data points
+          
+          mod_modeled <- rma.mv(data = dat, 
+                                yi = yi, 
+                                V = vi, 
+                                method = "REML", 
+                                control=list(optimizer="optim", optmethod="Nelder-Mead"),
+                                random = list(~1 | es_id,
+                                              ~1 | study), 
+                                sparse=TRUE)
+          
+          if(specifications$ma_method[i] == "3-level") {
+            mod <- mod_modeled
+          } else {
+            if(specifications$ma_method[i] == "rve") {
+              mod <- robust(mod_modeled, 
+                            cluster=dat$study, 
+                            clubSandwich=TRUE)
+            }
+          }
+        } else {
+          if(specifications$dependency[i] == "modeled" & (sum(duplicated(dat$study)) <= 1 | length(unique(dat$study) == 1))) { 
+            
+            # IF number of clusters is smaller than number of data points, write NA
+            mod <- list() 
+            
+            if(specifications$ma_method[i] == "3-level") {
+              mod$b[[1]]     <- NA
+              mod$ci.lb[[1]] <- NA
+              mod$ci.ub[[1]] <- NA
+              mod$pval[[1]]  <- NA
+            } else {
+              if(specifications$ma_method[i] == "rve") {
+                mod$b[[1]]      <- NA
+                mod$ci.lb[[1]]  <- NA
+                mod$ci.ub[[1]]  <- NA
+                mod$pval[[1]]   <- NA
+              }
+            }
+          }
+        }
+        out <-  data.frame(specifications[i, ], 
+                           mod$b[[1]],
+                           mod$ci.lb[[1]],
+                           mod$ci.ub[[1]],
+                           mod$pval[[1]],
+                           nrow(dat),
+                           set)
+        ################################################     
+      }
+    }
+  }
+}
+```
+
+## Initiate parallel computations
+
+### PSOCK
+```{r}
+n.cores <- parallel::detectCores() -1
+my.cluster <- parallel::makeCluster(
+  n.cores,
+  type = "PSOCK"
+)
+print(my.cluster)
+
+registerDoParallel(cl = my.cluster)
+getDoParRegistered()
+getDoParWorkers()
+
+## Assign empty list for storing results
+res_spec_curve <- list()
+
+## Iterate
+tictoc::tic()
+res_spec_curve <- foreach(i=1:nrow(specifications), 
+                          .packages = c("tidyverse", "metafor", "puniform")) %dopar% {
+                            parallel_multiverse(i)
+                          }
+stopCluster(my.cluster)
+
+## Bind results 
+specifications_parallel <- do.call(rbind, res_spec_curve)
+tictoc::toc()
+```
+
+# Cleaning specifications
+
+```{r}
+colnames(specifications_parallel) <-
+  c(colnames(specifications),"mean","lb" ,"ub","p" ,"k", "set")
+
+
+#Indicator if all studies are included in the set
+specifications_parallel$full_set <- as.numeric(specifications_parallel$set == paste(1:nrow(data), collapse =",", sep = ""))
+
+write.csv2(file = "data/tidy/specifications_parallel.csv", 
+           specifications_parallel)
+```

@@ -1,19 +1,38 @@
 project:
   type: website
   output-dir: docs
+  render:
+    - "*.qmd"
+    - "!local/"
+    - "!metasimulation/"
+execute:
+  freeze: auto  # re-render only when source changes
 
 website:
-  title: "Replicability Crisis in Science?"
+  title: "Replicability crisis in science?"
   navbar:
+    background: primary
+    search: true
     left:
       - href: index.qmd
         text: Home
+      - href: materials.qmd
+        text: Materials
+    right:
+      - icon: github
+        href: https://github.com/stat-teaching/replicability-stat-unipd-phd
+        aria-label: GitHub
+        
+author: 
+  - name: "Filippo Gambarota"
+    email: filippo.gambarota@unipd.it
+    twitter: fgambarota
+    github: filippogambarota
+    orcid: "0000-0002-6666-1747"
+institute: "University of Padova"
 
 format:
   html:
     theme: cosmo
     css: styles.css
     toc: true
-
-
-

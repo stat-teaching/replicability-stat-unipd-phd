@@ -1,0 +1,185 @@
+---
+title: Monte Carlo Simulations
+knitr:
+  opts_chunk: 
+    echo: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# packages
+library(tidyverse)
+library(patchwork)
+devtools::load_all()
+
+# ggplot theme
+theme_set(mtheme())
+
+# bibtex file
+filor::write_bib_rmd(input_bib = filor::fil()$bib, output_bib = "refs_to_download.bib")
+```
+
+```{r}
+#| label: functions
+#| include: false
+
+funs <- read_all_funs()
+```
+
+# Monte Carlo Simulations (MCS) {.section}
+
+## Monte Carlo Simulations (MCS)
+
+- MCS are controlled experiments where assuming the data generation process, realistic data can be generated
+- MCS (usually) requires parametric assumptions (e.g., data are generated from a normal distribution). To note that the same parametric assumptions are made by the statistical models
+- MCS allow to estimate the statistical power, evaluate a new statistical methods, understand how a specific model works on some conditions, etc.
+
+# Why MCS are useful? {.section}
+
+## Why MCS are useful?
+
+**while(TRUE){**
+
+![](img/learningbysim.svg)
+
+**}**
+
+## A quick example, Welch t-test^[http://daniellakens.blogspot.com/2015/01/always-use-welchs-t-test-instead-of.html]
+
+We are learning the t-test, and we read that if the two sample comes from populations with the same variance, we can use the regular t-test otherwise we should use the so-called Welch t-test.
+
+```{r}
+#| echo: false
+#| out-width: 70%
+equal <- ggplot() +
+    xlim(c(-5, 6)) +
+    stat_function(geom = "area", fun = dnorm, args = list(mean = 0, sd = 1),
+                  aes(fill = "Treated"),
+                  alpha = 0.5) +
+    stat_function(geom = "area", fun = dnorm, args = list(mean = 1, sd = 1),
+                  aes(fill = "Control"),
+                  alpha = 0.5) +
+    theme_minimal(base_size = 15) +
+    theme(legend.title = element_blank(),
+          legend.position = "none")
+
+
+unequal <- ggplot() +
+    xlim(c(-6, 8)) +
+    stat_function(geom = "area", fun = dnorm, args = list(mean = 0, sd = 1),
+                  aes(fill = "Treated"),
+                  alpha = 0.5) +
+    stat_function(geom = "area", fun = dnorm, args = list(mean = 1, sd = 2),
+                  aes(fill = "Control"),
+                  alpha = 0.5) +
+    theme_minimal(base_size = 15) +
+    theme(legend.title = element_blank(),
+          legend.position = "none")
+
+(equal | unequal)
+```
+
+## Cool! but why?
+
+Without looking at the formula, let's simply try to simulate a t-test where we know the two populations have different variance and also simulate different sample size between the two groups:
+
+```{r}
+nsim <- 1e4
+
+n0 <- 30
+n1 <- 20
+m0 <- 0
+m1 <- 0
+sratio <- 3
+
+equal_t <- vector(mode = "list", length = nsim)
+unequal_t <- vector(mode = "list", length = nsim)
+
+for(i in 1:nsim){
+  g0 <- rnorm(n0, m0, 1)  
+  g1 <- rnorm(n1, m0, sratio)
+  equal_t[[i]] <- t.test(g0, g1, var.equal = TRUE)
+  unequal_t[[i]] <- t.test(g0, g1, var.equal = FALSE)
+}
+```
+
+## Cool! but why?
+
+```{r, eval = FALSE}
+p_equal <- sapply(equal_t, function(x) x$p.value)
+p_unequal <- sapply(unequal_t, function(x) x$p.value)
+
+mean(p_equal <= 0.05)
+mean(p_unequal <= 0.05)
+```
+
+```{r, echo = FALSE}
+sim <- readRDS("objects/sim-welch.rds")
+sim <- unnest(sim, tidy)
+mean(sim$p[sim$type == "standard"] <= 0.05)
+mean(sim$p[sim$type == "welch"] <= 0.05)
+```
+
+The probability of making type-1 error is almost two times higher when using the standard t test
+
+## Cool! but why?
+
+Let's have a better look at the simulation results. We find the answer! The standard error is systematically lower using the standard t-test thus increasing the t value and the number of low p-values inflating the type-1 error rate.
+
+```{r, echo = FALSE, fig.width=13, fig.height=5}
+se_plot <- sim |> 
+    ggplot(aes(x = se, fill = type)) +
+    geom_density(color = "black",
+                 alpha = 0.5) +
+    ggthemes::theme_par(base_size = 15) +
+    theme(legend.position = c(0.8,0.8),
+          legend.title = element_blank()) +
+    xlab("Standard Error")
+
+pvalue_plot <- sim |> 
+    ggplot(aes(x = p, fill = type)) +
+    geom_density(color = "black",
+                 alpha = 0.5) +
+    ylim(c(0, 2.5)) +
+    ggthemes::theme_par(base_size = 15) +
+    theme(legend.position = c(0.8,0.8),
+          legend.title = element_blank()) +
+    xlab("P-value")
+
+pvalue_plot | se_plot
+```
+
+## Cool! but why?^[Also the degrees of freedom calculation is different between the two approaches]
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**Standard t-test**
+
+$$t = \frac{\bar{X_1} - \bar{X_2}}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
+$$s_p = \sqrt{\frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{n_1 + n_2 - 2}}$$
+:::
+
+::: {.column width="50%"}
+**Welch's t-test**
+
+$$t = \frac{\bar{X_1} - \bar{X_2}}{\sqrt{SE^2_{\bar X_1} + SE^2_{\bar X_2}}}$$
+$$SE_{X_i} = \frac{s_i}{\sqrt{n_i}}$$
+:::
+
+::::
+
+# General MCS strategy {.section}
+
+## General MCS strategy
+
+In general, the following workflow can be useful when preparing a simulation:
+
+1. Define the data-generation process usually starting from the model equation
+2. Find the fixed parameters e.g., mean of group 1, etc.
+3. Find the R functions to generate data given 1 and 2
+4. Repeat the simulation several times
+5. Check the recovery of simulated parameters
+6. Compute the metrics that are useful for the simulation e.g., power, type1 error, etc.
