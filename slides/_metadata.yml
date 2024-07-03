@@ -15,7 +15,7 @@ format:
     self-contained-math: true
 from: markdown+emoji
 date: last-modified
-date-format: "[08 February] YYYY"
+date-format: "[8-10 July] YYYY"
 crossref:
   sec-prefix: "Slide"
 bibliography: "https://raw.githubusercontent.com/filippogambarota/bib-database/main/references.bib"

@@ -4,7 +4,7 @@
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html",
     "title": "Multiverse",
     "section": "",
-    "text": "knitr::opts_chunk$set(echo = TRUE,\n                      dev = \"svg\",\n                      fig.align = \"center\")\n\nlibrary(kableExtra)\nlibrary(tidyverse)\nlibrary(cowplot)\n\nspecif &lt;- readRDS(\"objects/plessen2023-specification-data.rds\")\nspecif_res &lt;- specif$specif |&gt; \n  mutate(res = map(fit, filor::summary_rma)) |&gt; \n  unnest(res)\n\nmtheme &lt;- function(){\n  theme_minimal(15)\n}\n\ntheme_set(mtheme())"
+    "text": "knitr::opts_chunk$set(echo = TRUE,\n                      dev = \"svg\",\n                      fig.align = \"center\")\n\nlibrary(kableExtra)\nlibrary(tidyverse)\nlibrary(cowplot)\nlibrary(latex2exp)\n\nspecif &lt;- readRDS(\"objects/plessen2023-specification-data.rds\")\npimaex &lt;- readRDS(\"objects/pima-example.rds\")\nspecif_res &lt;- specif$specif |&gt; \n  mutate(res = map(fit, filor::summary_rma)) |&gt; \n  unnest(res)\n\nmtheme &lt;- function(){\n  theme_minimal(15)\n}\n\ntheme_set(mtheme())"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#multiverse-analysis-1",
@@ -39,63 +39,63 @@
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#meta-analysis-many-choices",
     "title": "Multiverse",
     "section": "Meta-analysis many choices",
-    "text": "Meta-analysis many choices\nIn meta-analysis there are a lot of arbitrary choices."
+    "text": "Meta-analysis many choices\nDespite useful and very powerful, meta-analysis is characterized by several (arbitrary) choices. For example:\n\nShould the study \\(x\\) be excluded for theoretical or statistical (e.g., outliers) reasons?\nShould we use an equal or random-effects model?\nWhich value should take the pre-post missing correlation?\n…"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#an-example-from-plessen2023-ex",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#an-example-from-plessen2023-ex",
     "title": "Multiverse",
-    "section": "An example from Plessen et al. (2023)",
+    "section": "An example from Plessen et al. (2023)\n",
     "text": "An example from Plessen et al. (2023)"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#an-example-from-plessen2023-ex-1",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#an-example-from-plessen2023-ex-1",
     "title": "Multiverse",
-    "section": "An example from Plessen et al. (2023)",
-    "text": "An example from Plessen et al. (2023)\n\nOver the last four decades, more than 80 meta-analyses have examined the efficacy of psychotherapies for depression\nMore than 700 randomised controlled trials (RCTs)\nNot all these studies goes in the same direction"
+    "section": "An example from Plessen et al. (2023)\n",
+    "text": "An example from Plessen et al. (2023)\n\n\nOver the last four decades, more than 80 meta-analyses have examined the efficacy of psychotherapies for depression\nMore than 700 randomised controlled trials (RCTs)\nNot all these studies goes in the same direction"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#an-example-from-plessen2023-ex-2",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#an-example-from-plessen2023-ex-2",
     "title": "Multiverse",
-    "section": "An example from Plessen et al. (2023)",
-    "text": "An example from Plessen et al. (2023)\nDiscrepancies in results could be due to:\n\nWhich factors (which data to meta-analyze)\n\ninclusion/esclusion of a subset of studies (e.g., low quality studies)\ntype of control group or control therapy\n…\n\n\n\nHow factors (how to meta-analyze)\n\ntype of model (e.g., equal vs random)\nmodel complexity (two-level, three level, robust, etc.)\ncorrecting for publication bias"
+    "section": "An example from Plessen et al. (2023)\n",
+    "text": "An example from Plessen et al. (2023)\n\nDiscrepancies in results could be due to:\nWhich factors (which data to meta-analyze)\n\ninclusion/esclusion of a subset of studies (e.g., low quality studies)\ntype of control group or control therapy\n…\n\nHow factors (how to meta-analyze)\n\ntype of model (e.g., equal vs random)\nmodel complexity (two-level, three level, robust, etc.)\ncorrecting for publication bias"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#estimated-effect-of-interest",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#estimated-effect-of-interest",
     "title": "Multiverse",
     "section": "Estimated effect of interest",
-    "text": "Estimated effect of interest\n\nspecif_res |&gt; \n  ggplot(aes(x = b)) +\n  geom_histogram(bins = 50,\n                 fill = \"dodgerblue\",\n                 col = \"black\") +\n  ylab(\"Frequency\") +\n  xlab(\"Estimated Effect\") +\n  geom_vline(xintercept = 0, col = \"red\") +\n  geom_vline(xintercept = 0.25, col = \"green\")"
+    "text": "Estimated effect of interest\n\nCodespecif_res |&gt; \n  ggplot(aes(x = b)) +\n  geom_histogram(bins = 50,\n                 fill = \"dodgerblue\",\n                 col = \"black\") +\n  ylab(\"Frequency\") +\n  xlab(\"Estimated Effect\") +\n  geom_vline(xintercept = 0, col = \"red\") +\n  geom_vline(xintercept = 0.25, col = \"green\")"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#estimated-effect-as-a-function-of-scenarios",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#estimated-effect-as-a-function-of-scenarios",
     "title": "Multiverse",
     "section": "Estimated effect as a function of scenarios",
-    "text": "Estimated effect as a function of scenarios\n\nabove &lt;- specif_res |&gt; \n  arrange(b) |&gt; \n  mutate(id = 1:n()) |&gt; \n  ggplot(aes(x = id, y = b)) +\n  geom_segment(aes(xend = id, y = ci.lb, yend = ci.ub)) +\n  geom_hline(yintercept = 0, col = \"red\") +\n  geom_hline(yintercept = 0.25, col = \"green\") +\n  theme(axis.title.y = element_blank(),\n        axis.text.x = element_blank(),\n        axis.title.x = element_blank())\n  \nbelow &lt;- specif_res |&gt; \n  arrange(b) |&gt; \n  mutate(id = 1:n()) |&gt; \n  pivot_longer(c(\n    target_group,\n    format,\n    diagnosis,\n    risk_of_bias,\n    type,\n    method\n  )) |&gt; \n  ggplot(aes(x = id, y = value)) +\n  geom_raster() +\n  theme(axis.title.y = element_blank(),\n        axis.text.x = element_blank()) +\n  xlab(\"Specification\")\n\nplot_grid(above, below, nrow = 2, align = \"hv\")"
+    "text": "Estimated effect as a function of scenarios\n\nCodeabove &lt;- specif_res |&gt; \n  arrange(b) |&gt; \n  mutate(id = 1:n()) |&gt; \n  ggplot(aes(x = id, y = b)) +\n  geom_segment(aes(xend = id, y = ci.lb, yend = ci.ub)) +\n  geom_hline(yintercept = 0, col = \"red\") +\n  geom_hline(yintercept = 0.25, col = \"green\") +\n  theme(axis.title.y = element_blank(),\n        axis.text.x = element_blank(),\n        axis.title.x = element_blank())\n  \nbelow &lt;- specif_res |&gt; \n  arrange(b) |&gt; \n  mutate(id = 1:n()) |&gt; \n  pivot_longer(c(\n    target_group,\n    format,\n    diagnosis,\n    risk_of_bias,\n    type,\n    method\n  )) |&gt; \n  ggplot(aes(x = id, y = value)) +\n  geom_raster() +\n  theme(axis.title.y = element_blank(),\n        axis.text.x = element_blank()) +\n  xlab(\"Specification\")\n\nplot_grid(above, below, nrow = 2, align = \"hv\")"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#fixing-a-specific-parameter",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#fixing-a-specific-parameter",
     "title": "Multiverse",
     "section": "Fixing a specific parameter",
-    "text": "Fixing a specific parameter\n\nspecif_res |&gt; \n  arrange(b) |&gt; \n  mutate(id = 1:n()) |&gt; \n  ggplot(aes(x = b, fill = diagnosis)) +\n  geom_density()"
+    "text": "Fixing a specific parameter\nWe can the effect of a set of scenarios having a certain parameter:\n\nCodespecif_res |&gt; \n  arrange(b) |&gt; \n  mutate(id = 1:n()) |&gt; \n  ggplot(aes(x = b, fill = diagnosis)) +\n  geom_density(alpha = 0.5)"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-simonsohn2020-sr",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-simonsohn2020-sr",
     "title": "Multiverse",
-    "section": "Specification Curve Simonsohn, Simmons, and Nelson (2020)",
-    "text": "Specification Curve Simonsohn, Simmons, and Nelson (2020)\nThe idea of the specification curve is both descriptive (see previous plots) and inferential.\nInferentially, the approach requires to generate a new dataset under the null hypothesis and compare with the observed value."
+    "section": "Specification Curve Simonsohn, Simmons, and Nelson (2020)\n",
+    "text": "Specification Curve Simonsohn, Simmons, and Nelson (2020)\n\nThe idea of the specification curve is both descriptive (see previous plots) and inferential.\nInferentially, the approach requires to generate a new dataset under the null hypothesis and compare with the observed value."
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex",
     "title": "Multiverse",
-    "section": "Specification Curve in meta-analysis Plessen et al. (2023)",
-    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\nPlessen et al. (2023) describe how to implement the method for meta-analysis.\n\nFor each dataset/model generate \\(k_s\\) data (where \\(k\\) is the number of effect in the specification \\(s\\)) sampling from \\(\\mathcal{N}(0,\\sigma^2_{\\epsilon_i} + \\tau^2)\\).\nFit the model (FE or RE)\nGet the specification curve\nRepeat 1-3 for a large number of times (e.g., 1000)\nCompute the 2.5% and 95.75% quantiles\nCheck if the observed specification is outside the 95% CI"
+    "section": "Specification Curve in meta-analysis Plessen et al. (2023)\n",
+    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\n\nPlessen et al. (2023) describe how to implement the method for meta-analysis.\n\nFor each dataset/model generate \\(k_s\\) data (where \\(k\\) is the number of effect in the specification \\(s\\)) sampling from \\(\\mathcal{N}(0,\\sigma^2_{\\epsilon_i} + \\tau^2)\\).\nFit the model (FE or RE)\nGet the specification curve\nRepeat 1-3 for a large number of times (e.g., 1000)\nCompute the 2.5% and 95.75% quantiles\nCheck if the observed specification is outside the 95% CI"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#pima",
@@ -109,21 +109,21 @@
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#references",
     "title": "Multiverse",
     "section": "References",
-    "text": "References\n\nSteegen et al. (2016)\nHall et al. (2022) for data visualization\nLiu et al. (2021) for data visualization"
+    "text": "References\n\n\n\n\n\n\n\n\nDafflon, Jessica, Pedro F Da Costa, František Váša, Ricardo Pio Monti, Danilo Bzdok, Peter J Hellyer, Federico Turkheimer, Jonathan Smallwood, Emily Jones, and Robert Leech. 2022. “A Guided Multiverse Study of Neuroimaging Analyses.” Nature Communications 13 (June): 3758. https://doi.org/10.1038/s41467-022-31347-8.\n\n\nGirardi, Paolo, Anna Vesely, Daniël Lakens, Gianmarco Altoè, Massimiliano Pastore, Antonio Calcagnì, and Livio Finos. 2024. “Post-Selection Inference in Multiverse Analysis (PIMA): An Inferential Framework Based on the Sign Flipping Score Test.” Psychometrika, April. https://doi.org/10.1007/s11336-024-09973-6.\n\n\nHall, B D, Y Liu, Y Jansen, P Dragicevic, F Chevalier, and M Kay. 2022. “A Survey of Tasks and Visualizations in Multiverse Analysis Reports.” Computer Graphics Forum: Journal of the European Association for Computer Graphics 41: 402–26. https://doi.org/10.1111/cgf.14443.\n\n\nHoogeveen, Suzanne, Sophie W Berkhout, Quentin F Gronau, Eric-Jan Wagenmakers, and Julia M Haaf. 2023. “Improving Statistical Analysis in Team Science: The Case of a Bayesian Multiverse of Many Labs 4.” Advances in Methods and Practices in Psychological Science 6 (July): 25152459231182318. https://doi.org/10.1177/25152459231182318.\n\n\nLiu, Yang, Alex Kale, Tim Althoff, and Jeffrey Heer. 2021. “Boba: Authoring and Visualizing Multiverse Analyses.” IEEE Transactions on Visualization and Computer Graphics 27 (February): 1753–63. https://doi.org/10.1109/TVCG.2020.3028985.\n\n\nOlsson-Collentine, Anton, Robbie C M van Aert, Marjan Bakker, and Jelte Wicherts. 2023. “Meta-Analyzing the Multiverse: A Peek Under the Hood of Selective Reporting.” Psychological Methods, May. https://doi.org/10.1037/met0000559.\n\n\nPlessen, Constantin Yves, Eirini Karyotaki, Clara Miguel, Marketa Ciharova, and Pim Cuijpers. 2023. “Exploring the Efficacy of Psychotherapies for Depression: A Multiverse Meta-Analysis.” BMJ Mental Health 26 (February). https://doi.org/10.1136/bmjment-2022-300626.\n\n\nSimonsohn, Uri, Joseph P Simmons, and Leif D Nelson. 2020. “Specification Curve Analysis.” Nature Human Behaviour 4 (November): 1208–14. https://doi.org/10.1038/s41562-020-0912-z.\n\n\nSteegen, Sara, Francis Tuerlinckx, Andrew Gelman, and Wolf Vanpaemel. 2016. “Increasing Transparency Through a Multiverse Analysis.” Perspectives on Psychological Science: A Journal of the Association for Psychological Science 11 (September): 702–12. https://doi.org/10.1177/1745691616658637."
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex-1",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex-1",
     "title": "Multiverse",
-    "section": "Specification Curve in meta-analysis Plessen et al. (2023)",
-    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\n\n\nCode\nspecif$SD |&gt; \n  filter(spec %in% sample(1:1000, 1)) |&gt; \n  ggplot(aes(x = id, y = b)) +\n  geom_line(aes(group = spec))"
+    "section": "Specification Curve in meta-analysis Plessen et al. (2023)\n",
+    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\n\n\nCodespecif$SD |&gt; \n  filter(spec %in% sample(1:1000, 1)) |&gt; \n  ggplot(aes(x = id, y = b)) +\n  geom_line(aes(group = spec))"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#important-aspects-of-multiverse-analysis-1",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#important-aspects-of-multiverse-analysis-1",
     "title": "Multiverse",
     "section": "Important aspects of multiverse analysis",
-    "text": "Important aspects of multiverse analysis\n\nInclude only plausible scenarios. Regardless the aim (description or inference)"
+    "text": "Important aspects of multiverse analysis\n\nInclude only plausible scenarios. Regardless the aim (description or inference) of the multiverse, the results are meaningful if and only if scenarios are plausible.\nScenarios are assumed to be equally plausible but we could imagine a plausibility weight (future direction)\nMultiverse analysis is also useful to estimate the degree of variability according to plausible choices"
   },
   {
     "objectID": "slides/02-meta-analysis/02-meta-analysis.html",
@@ -1823,21 +1823,1204 @@
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex-2",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex-2",
     "title": "Multiverse",
-    "section": "Specification Curve in meta-analysis Plessen et al. (2023)",
-    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\n\n\nCode\nspecif$SD |&gt; \n  filter(spec %in% sample(1:1000, 1)) |&gt; \n  ggplot(aes(x = id, y = b)) +\n  geom_line(aes(group = spec))"
+    "section": "Specification Curve in meta-analysis Plessen et al. (2023)\n",
+    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\n\n\nCodespecif$SD |&gt; \n  filter(spec %in% sample(1:1000, 1)) |&gt; \n  ggplot(aes(x = id, y = b)) +\n  geom_line(aes(group = spec))"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex-3",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex-3",
     "title": "Multiverse",
-    "section": "Specification Curve in meta-analysis Plessen et al. (2023)",
-    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\n\n\nCode\nspecif$SD |&gt; \n  filter(spec %in% sample(1:1000, 1)) |&gt; \n  ggplot(aes(x = id, y = b)) +\n  geom_line(aes(group = spec))"
+    "section": "Specification Curve in meta-analysis Plessen et al. (2023)\n",
+    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\n\n\nCodespecif$SD |&gt; \n  filter(spec %in% sample(1:1000, 1)) |&gt; \n  ggplot(aes(x = id, y = b)) +\n  geom_line(aes(group = spec))"
   },
   {
     "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex-4",
     "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#specification-curve-in-meta-analysis-plessen2023-ex-4",
     "title": "Multiverse",
-    "section": "Specification Curve in meta-analysis Plessen et al. (2023)",
-    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\n\n\nCode\nspecif_res &lt;- specif_res |&gt; \n  arrange(b) |&gt; \n  mutate(id = 1:n())\n\nggplot(data = specif$SD,\n       aes(x = id, y = b)) +\n  geom_line(aes(group = spec)) +\n  geom_line(data = specif_res,\n            aes(x = id, y = b),\n            col = \"firebrick\",\n            lwd = 2)"
+    "section": "Specification Curve in meta-analysis Plessen et al. (2023)\n",
+    "text": "Specification Curve in meta-analysis Plessen et al. (2023)\n\n\nCodespecif_res &lt;- specif_res |&gt; \n  arrange(b) |&gt; \n  mutate(id = 1:n())\n\nggplot(data = specif$SD,\n       aes(x = id, y = b)) +\n  geom_line(aes(group = spec)) +\n  geom_line(data = specif_res,\n            aes(x = id, y = b),\n            col = \"firebrick\",\n            lwd = 2)"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#pima-1",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#pima-1",
+    "title": "Multiverse",
+    "section": "PIMA",
+    "text": "PIMA\nexample here"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#pima-on-meta-analysis",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#pima-on-meta-analysis",
+    "title": "Multiverse",
+    "section": "PIMA on meta-analysis",
+    "text": "PIMA on meta-analysis\nWe implemented PIMA also on meta-analysis but (for the moment) limited to two-level models without moderators."
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#the-main-advantage-of-pima",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#the-main-advantage-of-pima",
+    "title": "Multiverse",
+    "section": "The main advantage of PIMA",
+    "text": "The main advantage of PIMA\n\nCodetp &lt;- function(p){\n    -log10(p)\n}\n\nlbl &lt;- c(\"Never $p \\\\leq 0.05$\", \n         \"Before correction $p \\\\leq 0.05$\", \n         \"After correction $p \\\\leq 0.05$\")\n\n\npimaex$sign &lt;- factor(pimaex$sign, \n                     labels = latex2exp::TeX(lbl))\n\nggplot(pimaex, aes(x = tp(p.value), tp(adjust.maxt), color = sign)) +\n    geom_hline(yintercept = tp(0.05), alpha = 0.4) +\n    geom_vline(xintercept = tp(0.05), alpha = 0.4) +\n    geom_abline(linetype = \"dashed\", lwd = 0.5) +\n    geom_point(size = 5,\n               position = position_jitter(width = 0.1),\n               alpha = 0.5) +\n    xlim(c(0, 3)) +\n    ylim(c(0, 3)) +\n    xlab(TeX(\"Raw p value ($-log_{10}$)\")) +\n    ylab(TeX(\"Corrected p value\")) +\n    theme_minimal(base_size = 20) +\n    theme(legend.title = element_blank(),\n          legend.position = \"bottom\") +\n    scale_color_manual(labels = scales::parse_format(), values = c(\"#F8766D\", \"#7CAE00\", \"#00BFC4\"))"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#multiverse-analysis-steegen2016-lz",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#multiverse-analysis-steegen2016-lz",
+    "title": "Multiverse",
+    "section": "Multiverse analysis Steegen et al. (2016)\n",
+    "text": "Multiverse analysis Steegen et al. (2016)\n\n\nEven a simple data analysis is characterized by several (often arbitrary) choices\nThe impact of these choices is not always clear, known or easy to predict\nResearchers (with or without awareness) usually report a single set of choices"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#some-examples",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#some-examples",
+    "title": "Multiverse",
+    "section": "Some examples",
+    "text": "Some examples\n\nusing a predictor as continous or choosing some thresholds and transforming to categorical\nincluding or excluding an observation (e.g., outlier)\nincluding or excluding a covariate (e.g., controlling for age or not)\nusing a linear model or an ordinal regression for discrete ordered data\n…"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#the-garden-of-forking-paths",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#the-garden-of-forking-paths",
+    "title": "Multiverse",
+    "section": "The garden of forking paths",
+    "text": "The garden of forking paths\nA tree of possibilities…"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#the-garden-of-forking-paths-1",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#the-garden-of-forking-paths-1",
+    "title": "Multiverse",
+    "section": "The garden of forking paths",
+    "text": "The garden of forking paths\n… Where only some of them produce a certain result."
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#an-example-pre-post-cohens-d",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#an-example-pre-post-cohens-d",
+    "title": "Multiverse",
+    "section": "An example: Pre-post Cohen’s \\(d\\)\n",
+    "text": "An example: Pre-post Cohen’s \\(d\\)\n\nWith a pre-post Cohen’s \\(d\\) we need the pre-post correlation \\(\\rho\\) to calculate the sampling variance:\n\\[\n\\sigma^2_{\\epsilon_{pp}} = \\frac{2(1 - \\rho)}{n} + \\frac{d^2}{2n}\n\\]\n\\(\\rho\\) is usually non reported and need to be chosen from previous literature or a plausible guess."
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#pre-post-cohens-d",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#pre-post-cohens-d",
+    "title": "Multiverse",
+    "section": "Pre-post Cohen’s \\(d\\)\n",
+    "text": "Pre-post Cohen’s \\(d\\)\n\n\nCodev_dm &lt;- function(r, d, n){\n    2*(1-r)/n + d^2/(2*n)\n}\n\nvdd &lt;- data.frame(x = seq(-1, 1, 0.001))\nvdd$y &lt;- v_dm(vdd$x, 0, 40)\n\nggplot(vdd, aes(x = x, y = y)) +\n    geom_line() +\n    xlab(expression(rho)) +\n    ylab(expression(sigma^2)) +\n    theme_minimal(25)"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#a-simulated-example",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#a-simulated-example",
+    "title": "Multiverse",
+    "section": "A simulated example",
+    "text": "A simulated example\n\nCodep_beta &lt;- ggplot(pimaex, aes(y = b)) +\n    xlim(c(-0.5,0.5)) +\n    geom_boxplot(width = 0.5,\n                 fill = \"dodgerblue\",\n                 alpha = 0.6) + \n    ylab(latex2exp::TeX(\"$\\\\mu_{\\\\,\\\\, \\\\theta}$\")) +\n    theme_minimal(30) +\n    theme(axis.text.x = element_blank())\n\np_pval &lt;- ggplot(pimaex, aes(y = -log10(p.value))) +\n    xlim(c(-0.5,0.5)) +\n    geom_hline(yintercept = -log10(0.05)) +\n    geom_boxplot(width = 0.5,\n                 fill = \"dodgerblue\",\n                 alpha = 0.6) + \n    ylab(latex2exp::TeX(\"Raw $-log_{10}(p)$\")) +\n    theme_minimal(30) +\n    theme(axis.text.x = element_blank())\n\ncowplot::plot_grid(p_beta, p_pval, nrow = 1)"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#pima-girardi2024-ip",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#pima-girardi2024-ip",
+    "title": "Multiverse",
+    "section": "PIMA (Girardi et al. 2024)\n",
+    "text": "PIMA (Girardi et al. 2024)"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#describing-the-multiverse",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#describing-the-multiverse",
+    "title": "Multiverse",
+    "section": "Describing the multiverse",
+    "text": "Describing the multiverse\nHall et al. (2022) and Liu et al. (2021) proposed several tools to describe the results of a multiverse analysis.\nThe increase in complexity NEED to be managed using appropriate tools to summarise and visualize the results."
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#r-packages",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#r-packages",
+    "title": "Multiverse",
+    "section": "R Packages",
+    "text": "R Packages\n\nhttps://mucollective.github.io/multiverse/\nhttps://mverseanalysis.github.io/mverse/\nhttps://github.com/uwdata/boba"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#multiverse-projects",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#multiverse-projects",
+    "title": "Multiverse",
+    "section": "Multiverse projects",
+    "text": "Multiverse projects\n\n\nDafflon et al. (2022) implemented a multiverse analysis for neuroimaging data\n\nHoogeveen et al. (2023) implemented a Bayesian multiverse analysis within the Many Labs 4 project (a large scale replication project in Psychology)\n\nOlsson-Collentine et al. (2023) re-analyzed some replication projects using a multiverse approach"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#multiverse-is-catchy",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#multiverse-is-catchy",
+    "title": "Multiverse",
+    "section": "Multiverse is catchy!",
+    "text": "Multiverse is catchy!\n\nCodemulti_cit &lt;- data.frame(\n        year = c(2024L,2023L,2022L,2021L,2020L,2019L,\n                 2018L,2017L,2016L,2015L,2014L,2013L),\n      papers = c(30L, 46L, 33L, 19L, 10L, 11L, 4L, 2L, 3L, 0L, 1L, 1L),\n       total = c(652674L,1295092L,1317981L,1299609L,\n                 1161910L,1044346L,955091L,907118L,874112L,840256L,804004L,\n                 777242L)\n)\n\nmulti_cit |&gt; \n    mutate(year = as.integer(year)) |&gt; \n    ggplot(aes(x = year, y = papers/total)) +\n    geom_line() +\n    geom_label(aes(label = papers)) +\n    scale_x_continuous(breaks = seq(2012, 2024, 1)) +\n    theme(axis.title.x = element_blank(),\n          axis.text.y = element_blank(),\n          axis.ticks.y = element_blank()) +\n    ylab(\"# papers on Multiverse\")"
+  },
+  {
+    "objectID": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#only-plausible-vs-all-scenarios",
+    "href": "slides/00-multiverse-meta-analysis/00-multiverse-meta-analysis.html#only-plausible-vs-all-scenarios",
+    "title": "Multiverse",
+    "section": "Only plausible vs all scenarios",
+    "text": "Only plausible vs all scenarios\nNot all scenarios are equally plausible or reasonable. Thus the multiverse is not the entire set but a non-random sample of plausibile choices.\n\nCodex &lt;- seq(0, 1, 0.0001)\ny &lt;- dexp(x, 2)\ny &lt;- (y-min(y))/(max(y)-min(y))\n\nplot(x*100, y, type = \"l\",\n     xlab = \"All possible scenarios\",\n     ylab = \"Plausibility\",\n     lwd = 2)"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Replicability Crisis in Science?",
+    "section": "",
+    "text": "Replicability Crisis in Science? is one of the Specialist Courses organized from the Department of Statistical Sciences (University of Padova). The course has been proposed for the AY 2023/24 to the PhD students of the XXXIX cycle."
+  },
+  {
+    "objectID": "index.html#monday-8th-june-2024",
+    "href": "index.html#monday-8th-june-2024",
+    "title": "Replicability Crisis in Science?",
+    "section": "Monday 8th June 2024",
+    "text": "Monday 8th June 2024\n\n9:00 - 12:00\n\nBranden Fitelson - What is a Replication?\n\nPaper: Machery (2020) [pdf]\n\n\n\nGiovanni Parmigiani - Probability of Replication\n\nPaper: Miller (2009) [pdf]\n\n\n\n\n14:30 - 16:30\n\nFilippo Gambarota - Tools for Open Science"
+  },
+  {
+    "objectID": "index.html#tuesday-9th-june-2024",
+    "href": "index.html#tuesday-9th-june-2024",
+    "title": "Replicability Crisis in Science?",
+    "section": "Tuesday 9th June 2024",
+    "text": "Tuesday 9th June 2024\n\n9:00 - 12:00\n\nBranden Fitelson - How not to measure replication\n\nPaper: Fletcher (2021) [pdf]\n\n\n\nGiovanni Parmigiani - How to measure replication\n\nPaper: Mathur & VanderWeele (2020) [pdf]\n\n\n\n\n14:30 - 16:30\n\nFilippo Gambarota - R tools and examples for Measures of Replication"
+  },
+  {
+    "objectID": "index.html#wednesday-10th-june-2024",
+    "href": "index.html#wednesday-10th-june-2024",
+    "title": "Replicability Crisis in Science?",
+    "section": "Wednesday 10th June 2024",
+    "text": "Wednesday 10th June 2024\n\n9:00 - 12:00\n\nBranden Fitelson - Replicability in Psychology\n\nPaper: Nosek et al. (2022) [pdf]\n\n\n\nGiovanni Parmigiani - Replicability in Cancer Science\n\nPaper: Errington et al. (2021) [pdf]\n\n\n\n\n14:30 - 16:30\n\nFilippo Gambarota - Meta-analysis and multiverse analysis"
+  },
+  {
+    "objectID": "materials.html",
+    "href": "materials.html",
+    "title": "Replicability Crisis in Science?",
+    "section": "",
+    "text": "Introduction to the workshop\nReplication starter pack\nIntroduction to meta-analysis\nStatistical methods for replication assessment"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#some-random-concepts-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#some-random-concepts-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Some (random) concepts",
+    "text": "Some (random) concepts\n\nCredibility of scientific claims is established with evidence for their replicability using new data (Nosek and Errington 2020)\n\n\nReplication is repeating a study’s procedure and observing whether the prior finding recurs (Jeffreys 1973)\n\n\nReplication is a study for which any outcome would be considered diagnostic evidence about a claim from prior research (Nosek and Errington 2020)."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#difficulty-in-drawing-conclusions-from-replications",
+    "href": "slides/02-replication-methods/02-replication-methods.html#difficulty-in-drawing-conclusions-from-replications",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Difficulty in drawing conclusions from replications",
+    "text": "Difficulty in drawing conclusions from replications\nReplication is often intended as conditioned to the original result. The original result could be a false positive or a biased result. Also the replication attempt could be a false positive or a false negative (Nosek and Errington 2020).\n\n\nTo be a replication, two things must be true. Outcomes consistent with a prior claim would increase confidence in the claim, and outcomes inconsistent with a prior claim would decrease confidence in the claim (Nosek and Errington 2020).\n\n\n\nThis is somehow similar with a Bayesian reasoning where evidence about a phenomenon is updated after collecting more data."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#exact-and-conceptual-replications",
+    "href": "slides/02-replication-methods/02-replication-methods.html#exact-and-conceptual-replications",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Exact and Conceptual replications",
+    "text": "Exact and Conceptual replications\nExact replications are commonly considered as the gold-standard but in practice (especially in Social Sciences, Psychology, etc.) are rare.\nLet’s imagine, an original study \\(y_{or}\\) finding a result.\n\nReplication \\(y_{rep}\\) with the exact same method find the same result. Replication or not?\n\nReplication \\(y_{rep}\\) with a similar method find the same result. Replication or not?\n\nReplication \\(y_{rep}\\) with similar method did not find the same result. Replication or not?"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#direct-and-conceptual-replications-schmidt2009-mq",
+    "href": "slides/02-replication-methods/02-replication-methods.html#direct-and-conceptual-replications-schmidt2009-mq",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Direct and Conceptual replications (S. Schmidt 2009)\n",
+    "text": "Direct and Conceptual replications (S. Schmidt 2009)\n\nA direct replication is defined as the repetition of an experimental procedure.\nA conceptual replication is defined as testing the same hypothesis with different methods."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#exact-replications-are-often-impossible-schmidt2009-mq",
+    "href": "slides/02-replication-methods/02-replication-methods.html#exact-replications-are-often-impossible-schmidt2009-mq",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Exact replications are (often) impossible (S. Schmidt 2009)\n",
+    "text": "Exact replications are (often) impossible (S. Schmidt 2009)\n\nLet’s imagine an extreme example: testing the physiological reaction to arousing situation:\n\nThe original study: Experiment with prehistoric reacting to an arousing stimulus\nThe actual replication: It is possible to create the exact situation? Some phenomenon changes overtime, especially people-related phenomenon\n\nExact replication is often not feasible. Even using the same experimental setup (direct replication) does not assure that we are studying the same phenomenon."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#as-exact-as-possible",
+    "href": "slides/02-replication-methods/02-replication-methods.html#as-exact-as-possible",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "As Exact as possible…",
+    "text": "As Exact as possible…\nEven when an experiment use almost the same setup of the original study there is a source of unknown uncertainty. Which is the impact of a slightly change in the experimental setup on the actual result?\n\nA study on the human visual system: presenting stimuli on different monitors –&gt; small change with a huge impact\nA study on consumer behavior: participant answering question using a smartphone or a computer –&gt; small but (maybe) irrelevant change\n\nHow to evaluate the actual impact?"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#what-we-are-not-going-to-do",
+    "href": "slides/02-replication-methods/02-replication-methods.html#what-we-are-not-going-to-do",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "What we are (not) going to do?",
+    "text": "What we are (not) going to do?\n\n\nI will not present a strictly theoretical and philosophical approach to replication (what is a replication?, what is the most appropriate definition?, etc.). But we can discuss it together 😄!\n\n\n\n\nAccording to the replication definitions and problems, we will explore some statistical methods to evaluate a replication success"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Overall model and notation",
+    "text": "Overall model and notation\nFor the purpose of notation and simplicity we can define a meta-analytical-based replication model (Hedges and Schauer 2019b; J. M. Schauer and Hedges 2021; Jacob M. Schauer 2022)\n\\[\ny_i = \\mu_{\\theta} + \\delta_i + \\epsilon_i\n\\]\n\\[\n\\delta_i \\sim \\mathcal{N}(0, \\tau^2)\n\\]\n\\[\n\\epsilon_i \\sim \\mathcal{N}(0, \\sigma^2_i)\n\\]"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-2",
+    "href": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-2",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Overall model and notation",
+    "text": "Overall model and notation\n\nThus each study \\(i\\) out of the number of studies \\(k\\).\n\n\\(\\mu_{\\theta}\\) is the real average effect and \\(\\theta = \\mu_{\\theta} + \\delta_i\\) is the real effect of each study\n\n\\(\\tau^2\\) is the real variance among different studies. When \\(\\tau^2 = 0\\) there is no variability among studies\n\n\\(\\epsilon_i\\) are the sampling errors that depends on \\(\\sigma^2_i\\), the sampling variability of each study\nWe define \\(\\theta_{orig}\\) (or \\(\\theta_1\\)) as the original study and \\(\\theta_{rep_i}\\) (with \\(i\\) from 2 to \\(k\\)) as the replication studies"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-3",
+    "href": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-3",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Overall model and notation",
+    "text": "Overall model and notation\nFor the examples we are going to simulate (unstandardized) effect sizes (see Slide “Extra - Simulating Meta-Analysis” of the meta-analysis workshop). Basically:\n\\[\n\\Delta = \\overline{X_1} - \\overline{X_2}\n\\]\n\\[\nSE_{\\Delta} = \\sqrt{\\frac{s^2_1}{n_1} + \\frac{s^2_2}{n_2}}\n\\]\nWith \\(X_{1_j} \\sim \\mathcal{N}(0, 1)\\) and \\(X_{2_j} \\sim \\mathcal{N}(\\Delta, 1)\\)\ncontinue…"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-4",
+    "href": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-4",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Overall model and notation",
+    "text": "Overall model and notation\nThus our observed effect sizes \\(y_i\\) is sampled from: \\[\ny_i \\sim \\mathcal{N}(\\mu_\\theta, \\tau^2 + \\frac{1}{n_1} + \\frac{1}{n_2})\n\\]\nWhere \\(\\frac{1}{n_1} + \\frac{1}{n_2}\\) is the sampling variability (\\(\\sigma^2_i\\)).\nThe sampling variances are sampled from:\n\\[\n\\sigma_i^2 \\sim \\frac{\\chi^2_{n_1 + n_2 - 2}}{n_1 + n_2 - 2} (\\frac{1}{n_1} + \\frac{1}{n_2})\n\\]"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-5",
+    "href": "slides/02-replication-methods/02-replication-methods.html#overall-model-and-notation-5",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Overall model and notation",
+    "text": "Overall model and notation\nEverything is implemented into the sim_studies() function:\n\nsim_studies &lt;- function(k, theta, tau2, n0, n1, summary = FALSE){\n  yi &lt;- rnorm(k, theta, sqrt(tau2 + 1/n0 + 1/n1))\n  vi &lt;- (rchisq(k, n0 + n1 - 2) / (n0 + n1 - 2)) * (1/n0 + 1/n1)\n  out &lt;- data.frame(yi, vi, sei = sqrt(vi))\n  if(summary){\n    out &lt;- summary_es(out)\n  }\n  return(out)\n}\n\n\nCodesim_studies(k = 10, theta = 0.5, tau2 = 0.1, n0 = 30, n1 = 30)\n#&gt;           yi         vi       sei\n#&gt; 1  0.1129426 0.05414956 0.2327006\n#&gt; 2  1.6015911 0.06985315 0.2642975\n#&gt; 3  0.6289465 0.07542551 0.2746371\n#&gt; 4  0.7075030 0.07156926 0.2675243\n#&gt; 5  0.4399177 0.04511086 0.2123932\n#&gt; 6  0.5237410 0.05822274 0.2412939\n#&gt; 7  0.4149414 0.05525063 0.2350545\n#&gt; 8  1.2030798 0.07248980 0.2692393\n#&gt; 9  0.5873390 0.09722328 0.3118065\n#&gt; 10 0.8418949 0.07881274 0.2807361"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#exact-vs-approximate-replication",
+    "href": "slides/02-replication-methods/02-replication-methods.html#exact-vs-approximate-replication",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Exact vs Approximate replication",
+    "text": "Exact vs Approximate replication\nThis distinction (see Brandt et al. 2014 for a different terminology) refers to parameters \\(\\theta_i\\). With exact are considering a case where:\n\\[\n\\theta_1 = \\theta_2 = \\theta_3, \\dots, \\theta_k\n\\]\nThus the true parameters of \\(k\\) replication studies are the same. Thus the variability among true effects \\(\\tau^2 = 0\\).\nSimilarly, due to (often not controllable) differences among experiments (i.e., lab, location, sample, etc.) we could expect a certain degree of variability \\(\\tau^2\\). In other terms \\(\\tau^2 &lt; \\tau^2_0\\) where \\(\\tau^2_0\\) is the maximum variability (that need to be defined). In this way studies are replicating:\n\\[\n\\theta_i \\sim \\mathcal{N}(\\mu_\\theta, \\tau^2_0)\n\\]"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#types-of-agreement",
+    "href": "slides/02-replication-methods/02-replication-methods.html#types-of-agreement",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Types of agreement",
+    "text": "Types of agreement\nCoarsely, we can define a replication success when two or more studies obtain the “same” result. The definion of sameness it is crucial:\n\nsame sign or direction: two studies (original and replication) evaluating the efficacy of a treatment have a positive effect \\(sign(\\theta_1) = sign(\\theta_2)\\) where \\(sign\\) is the sign function.\nsame magnitude: two studies (original and replication) evaluating the efficacy of a treatment have the same effect in terms \\(|\\theta_1 - \\theta_2| = 0\\) or similar up to a tolerance factor \\(|\\theta_1 - \\theta_2| &lt; \\gamma\\) where \\(\\gamma\\) is the maximum difference considered as null.\n\nThe different methods that we are going to see are focused on a specific type of aggreement. For example, we could consider \\(\\theta_1 = 3x\\) and \\(\\theta_2 = x\\) to have the same sign but the replication study is on a completely different scale. Is this considered a successful replication?"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#falsification-vs-consistency",
+    "href": "slides/02-replication-methods/02-replication-methods.html#falsification-vs-consistency",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Falsification vs Consistency",
+    "text": "Falsification vs Consistency\n\nThis refers to how the replication setup is formulated. With \\(k = 2\\) studies where \\(k_1\\) is the original study and \\(k_2\\) is the replication we have a one-to-one setup. In this setup we compare the replication with the original and according to the chosen method and expectation we conclude if \\(k_1\\) has been replicated or not.\n\n\nWhen \\(k &gt; 2\\) we could collapse the replication studies into a single value (e.g., using a meta-analysis method) and compare the results using a one-to-one or we can use a method for one-to-many designs.\n\n\nRegardless the method, falsification approaches compared the original with the replicate(s) obtaining a yes-no answer or a continuous result. On the other side consistency methods are focused on evaluating the degree of similarity (i.e., consistency) among all studies."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#the-big-picture",
+    "href": "slides/02-replication-methods/02-replication-methods.html#the-big-picture",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "The big picture",
+    "text": "The big picture\n\nStatistical MethodsSign/DirectionVote CountingConfidence/Prediction IntervalCI/PI original/replicationSmall TelescopeMeta-analysisEqual and Random-effectsQ StatisticsBayesian MethodsReplication Bayes Factor"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#statistical-methods-disclaimer-schauer2021-ja",
+    "href": "slides/02-replication-methods/02-replication-methods.html#statistical-methods-disclaimer-schauer2021-ja",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Statistical Methods, disclaimer (J. M. Schauer and Hedges 2021)\n",
+    "text": "Statistical Methods, disclaimer (J. M. Schauer and Hedges 2021)\n\n\nThere are no unique methods to assess replication from a statistical point of view\nFor available statistical methods, statistical properties (e.g., type-1 error rate, power, bias, etc.) are not always known or extensively examined\nDifferent methods answers to the same question or to different replication definitions"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#vote-counting-based-on-significance-or-direction",
+    "href": "slides/02-replication-methods/02-replication-methods.html#vote-counting-based-on-significance-or-direction",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Vote Counting based on significance or direction",
+    "text": "Vote Counting based on significance or direction\nThe simplest method is called vote counting (Valentine et al. 2011; Hedges and Olkin 1980). A replication attempt \\(\\theta_{rep}\\) is considered successful if the result has the same direction of the original study \\(\\theta_{orig}\\) and it is statistically significant i.e., \\(p_{\\theta_{rep}} \\leq \\alpha\\). Similarly we can count the number of replication with the same sign as the original study.\n\n\nEasy to understand, communicate and compute\n\n\n\n\nDid not consider the size of the effect\nDepends on the power of \\(\\theta_{rep}\\)"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-with-simulated-data",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-with-simulated-data",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example with simulated data",
+    "text": "Example with simulated data\nLet’s simulate an exact replication:\n\nCode## original study\nn_orig &lt;- 30\ntheta_orig &lt;- theta_from_z(2, n_orig)\n\norig &lt;- data.frame(\n  yi = theta_orig,\n  vi = 4/(n_orig*2)\n)\n\norig$sei &lt;- sqrt(orig$vi)\norig &lt;- summary_es(orig)\n\norig\n#&gt;          yi         vi       sei zi       pval      ci.lb    ci.ub\n#&gt; 1 0.5163978 0.06666667 0.2581989  2 0.04550026 0.01033725 1.022458\n\nCode\n## replications\n\nk &lt;- 10\nreps &lt;- sim_studies(k = k, theta = theta_orig, tau2 = 0, n_orig, n_orig, summary = TRUE)\n\nhead(reps)\n#&gt;           yi         vi       sei        zi       pval       ci.lb     ci.ub\n#&gt; 1 0.46165621 0.05938011 0.2436803 1.8945156 0.05815660 -0.01594848 0.9392609\n#&gt; 2 0.37963305 0.05999521 0.2449392 1.5499073 0.12116376 -0.10043895 0.8597051\n#&gt; 3 0.06799016 0.05401238 0.2324056 0.2925495 0.76986652 -0.38751654 0.5234968\n#&gt; 4 0.41023375 0.08690541 0.2947972 1.3915794 0.16404980 -0.16755820 0.9880257\n#&gt; 5 0.63271153 0.06785148 0.2604832 2.4289920 0.01514087  0.12217390 1.1432492\n#&gt; 6 0.42819221 0.05691677 0.2385724 1.7948106 0.07268388 -0.03940103 0.8957854"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-with-simulated-data-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-with-simulated-data-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example with simulated data",
+    "text": "Example with simulated data\nLet’s compute the proportions of replication studies are statistically significant:\n\nCodemean(reps$pval &lt;= 0.05)\n#&gt; [1] 0.3\n\n\nLet’s compute the proportions of replication studies with the same sign as the original:\n\nCodemean(sign(orig$yi) == sign(reps$yi))\n#&gt; [1] 1\n\n\nWe could also perform some statistical tests. See Bushman and Wang (2009) and Hedges and Olkin (1980) for vote-counting methods in meta-analysis."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#vote-counting-extreme-example",
+    "href": "slides/02-replication-methods/02-replication-methods.html#vote-counting-extreme-example",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Vote Counting, extreme example",
+    "text": "Vote Counting, extreme example\nLet’s imagine an original experiment with \\(n_{orig} = 30\\) and \\(\\hat \\theta_{orig} = 0.5\\) that is statistically significant \\(p \\approx 0.045\\). Now a direct replication (thus assuming \\(\\tau^2 = 0\\)) study with \\(n_{rep} = 350\\) found \\(\\hat \\theta_{rep_1} = 0.15\\), that is statistically significant \\(p\\approx 0.047\\)."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#confidence-interval-replication-within-original",
+    "href": "slides/02-replication-methods/02-replication-methods.html#confidence-interval-replication-within-original",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Confidence Interval, replication within original",
+    "text": "Confidence Interval, replication within original\n\n\nTheory\nR Code\n\n\n\nAnother approach check if the replication attempt \\(\\theta_{rep}\\) is contained in the % confidence interval of the original study \\(\\theta_{orig}\\). Formally:\n\\[\n\\theta_{orig} - \\Phi(\\alpha/2) \\sqrt{\\sigma^2_{orig}} &lt; \\theta_{rep} &lt; \\theta_{orig} + \\Phi(\\alpha/2) \\sqrt{\\sigma^2_{orig}}\n\\]\nWhere \\(\\Phi\\) is the cumulative standard normal distribution, \\(\\alpha\\) is the type-1 error rate.\n\n\nTake into account the size of the effect and the precision of \\(\\theta_{orig}\\)\n\n\n\n\n\nThe original study is assumed to be a reliable estimation\nNo extension for many-to-one designs\nLow precise original studies lead to higher success rate"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#confidence-interval-replication-within-original-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#confidence-interval-replication-within-original-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Confidence Interval, replication within original",
+    "text": "Confidence Interval, replication within original\nOne potential problem of this method regards that low precise original studies are “easier” to replicate due to larger confidence intervals."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#confidence-interval-original-within-replication",
+    "href": "slides/02-replication-methods/02-replication-methods.html#confidence-interval-original-within-replication",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Confidence Interval, original within replication",
+    "text": "Confidence Interval, original within replication\n\n\nTheory\nPlot\n\n\n\nThe same approach can be applied checking if the original effect size is contained within the replication confidence interval. Clearly these methods depends on the precision of studies. Formally:\n\\[\n\\theta_{rep} - \\Phi(\\alpha/2) \\sqrt{\\sigma_{rep}^2} &lt; \\theta_{orig} &lt; \\theta_{rep} + \\Phi(\\alpha/2) \\sqrt{\\sigma_{rep}^2}\n\\]\nThe method has the same pros and cons of the previous approach. One advantage is that usually replication studies are more precise (higher sample size) thus the parameter and the % CI is more reliable."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#prediction-interval-pi-what-to-expect-from-a-replication",
+    "href": "slides/02-replication-methods/02-replication-methods.html#prediction-interval-pi-what-to-expect-from-a-replication",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Prediction interval (PI), what to expect from a replication",
+    "text": "Prediction interval (PI), what to expect from a replication\nOne problem of the previous approaches is taking into account only the uncertainty of the original or the replication study. Patil, Peng, and Leek (2016) and Spence and Stanley (2016) proposed a method to take into account both sources of uncertainty.\nIf the original and replication studies comes from the same population, the sampling distribution of the difference is centered on 0 with a certain standard error \\(\\theta_{orig} - \\theta_{rep_0} \\sim \\mathcal{N}\\left( 0, \\sqrt{\\sigma^2_{\\hat \\theta_{orig} - \\hat \\theta_{rep}}} \\right)\\) (subscript \\(0\\) to indicate that is expected to be sampled from the same population as \\(\\theta_{orig}\\))\n\\[\n\\hat \\theta_{orig} \\pm z_{95\\%} \\sqrt{\\sigma^2_{\\theta_{orig} - \\theta_{rep}}}\n\\]\nIf factors other than standard error influence the replication result, \\(\\theta_{rep_0}\\) is not expected to be contained within the 95% prediction interval."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#prediction-interval-pi-what-to-expect-from-a-replication-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#prediction-interval-pi-what-to-expect-from-a-replication-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Prediction interval (PI), what to expect from a replication",
+    "text": "Prediction interval (PI), what to expect from a replication\nIn the case of a (un)standardized mean difference we can compute the prediction interval as:\n\\[\n\\sqrt{\\sigma^2_{\\epsilon_{\\hat \\theta_{orig} - \\hat \\theta_{rep_0}}}} = \\sqrt{\\left( \\frac{\\hat \\sigma^2_{o1}}{n_{o1}} +\\frac{\\hat \\sigma^2_{o2}}{n_{o2}}\\right) + \\left(\\frac{\\hat \\sigma^2_{o1}}{n_{r1}} + \\frac{\\hat\\sigma^2_{o2}}{n_{r2}}\\right)}\n\\]\nThe first term is just the standard error of the difference between the two groups in the original study and the second term is the standard error of the hypothetical replication study assuming the same standard deviation of the original but a different \\(n\\).\nIn this way we estimate an interval where, combining sampling variance from both studies and assuming that they comes from the same population, the replication should fall."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#prediction-interval-pi-what-to-expect-from-a-replication-2",
+    "href": "slides/02-replication-methods/02-replication-methods.html#prediction-interval-pi-what-to-expect-from-a-replication-2",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Prediction interval (PI), what to expect from a replication",
+    "text": "Prediction interval (PI), what to expect from a replication\n\n\nR Code\nPlot\nPros/Cons\n\n\n\n\nCodeset.seed(2025)\n\no1 &lt;- rnorm(50, 0.5, 1) # group 1\no2 &lt;- rnorm(50, 0, 1) # group 2\nod &lt;- mean(o1) - mean(o2) # effect size\nse_o &lt;- sqrt(var(o1)/50 + var(o2)/50) # standard error of the difference\n\nn_r &lt;- 100 # sample size replication\n\nse_o_r &lt;- sqrt(se_o^2 + (var(o1)/100 + var(o2)/100))\n\nod + qnorm(c(0.025, 0.975)) * se_o_r\n#&gt; [1] 0.325520 1.298378\n\n\n\n\n\nCodepar(mar = c(4, 4, 0.1, 0.1))  \ncurve(dnorm(x, od, se_o_r), od - se_o_r*4, od + se_o_r*4, lwd = 2, xlab = latex2exp::TeX(\"$\\\\theta$\"), ylab = \"Density\")\nabline(v = od + qnorm(c(0.025, 0.975)) * se_o_r, lty = \"dashed\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n  \n\n\n  \n  \n  \n  \n  \n  \n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTake into account uncertainty of both studies\nWe can plan a replication using the standard deviation of the original study and the expected sample size\n\n\n\n\nLow precise original studies lead to wide PI. For a replication study is difficult to fall outside the PI\nMainly for one-to-one replications design"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#mathur-vanderweele--mathur2020-nw-p_orig",
+    "href": "slides/02-replication-methods/02-replication-methods.html#mathur-vanderweele--mathur2020-nw-p_orig",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Mathur & VanderWeele (2020) \\(p_{orig}\\)\n",
+    "text": "Mathur & VanderWeele (2020) \\(p_{orig}\\)\n\n\n\nTheory\nPros-cons\nR Code\nSimulation\n\n\n\nMathur & VanderWeele (2020) proposed a new method based on the prediction interval to calculate a p value \\(p_{orig}\\) representing the probability that \\(\\theta_{orig}\\) is consistent with the replications. This method is suited for many-to-one replication designs. Formally:\n\\[\nP_{orig} = 2 \\left[ 1 - \\Phi \\left( \\frac{|\\hat \\theta_{orig} - \\hat \\mu_{\\theta_{rep}}|}{\\sqrt{\\hat \\tau^2 + \\sigma^2_{orig} + \\hat{SE}^2_{\\hat \\mu_{\\theta_{rep}}}}} \\right) \\right]\n\\]\n\n\n\\(\\mu_{\\theta_{rep}}\\) is the pooled (i.e., meta-analytic) estimation of the \\(k\\) replications\n\n\\(\\tau^2\\) is the variance among replications\n\n\n\nIt is interpreted as the probability that \\(\\theta_{orig}\\) is equal or more extreme that what observed. A very low \\(p_{orig}\\) suggest that the original study is inconsistent with replications.\n\n\nSuited for many-to-one designs\nWe take into account all sources of uncertainty\nWe have a p-value\n\n\n\n\nThe code is implemented in the Replicate and MetaUtility R packages:\n\nCodetau2 &lt;- 0.05\ntheta_rep &lt;- 0.2\ntheta_orig &lt;- 0.7\n\nn_orig &lt;- 30\nn_rep &lt;- 100\nk &lt;- 20\n\nreplications &lt;- sim_studies(k, theta_rep, tau2, n_rep, n_rep)\noriginal &lt;- sim_studies(1, theta_orig, 0, n_orig, n_orig)\n\nfit_rep &lt;- metafor::rma(yi, vi, data = replications) # random-effects meta-analysis\n\nReplicate::p_orig(original$yi, original$vi, fit_rep$b[[1]], fit_rep$tau2, fit_rep$se^2)\n#&gt; [1] 0.5563241\n\n\n\n\n\nCode# standard errors assuming same n and variance 1\nse_orig &lt;- sqrt(4/(n_orig * 2))\nse_rep &lt;- sqrt(4/(n_rep * 2))\nse_theta_rep &lt;- sqrt(1/((1/(se_rep^2 + tau2)) * k)) # standard error of the random-effects estimate\n\nsep &lt;- sqrt(tau2 + se_orig^2 + se_theta_rep^2) # z of p-orig denominator\n\ncurve(dnorm(x, theta_rep, sep), theta_rep - 4*sep, theta_rep + 4*sep, ylab = \"Density\", xlab = latex2exp::TeX(\"\\\\theta\"))\npoints(theta_orig, 0.02, pch = 19, cex = 2)\nabline(v = qnorm(c(0.025, 0.975), theta_rep, sep), lty = \"dashed\", col = \"firebrick\")"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#mathur-vanderweele--mathur2020-nw-hat-p_-0",
+    "href": "slides/02-replication-methods/02-replication-methods.html#mathur-vanderweele--mathur2020-nw-hat-p_-0",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Mathur & VanderWeele (2020) \\(\\hat P_{> 0}\\)\n",
+    "text": "Mathur & VanderWeele (2020) \\(\\hat P_{&gt; 0}\\)\n\n\n\nTheory\nR Code\nBootstrap Code\nBootstrap Results\n\n\n\nAnother related metric is the \\(\\hat P_{&gt; 0}\\), representing the proportion of replications following the same direction as the original effect. Before simply computing the proportions we need to adjust the estimated \\(\\theta_{rep_i}\\) with a shrinkage factor:\n\\[\n\\tilde{\\theta}_{rep_i} = (\\theta_{rep_i} - \\mu_{\\theta_{rep_i}}) \\sqrt{\\frac{\\hat \\tau^2}{\\hat \\tau^2 + v_{rep_i}}}\n\\]\nThis method is somehow similar to the vote counting but we are adjusting the effects taking into account \\(\\tau^2\\).\n\n\n\nCode# compute calibrated estimation for the replications\n# use restricted maximum likelihood to estimate tau2 under the hood\ntheta_sh &lt;- MetaUtility::calib_ests(replications$yi, replications$sei, method = \"REML\")\nmean(theta_sh &gt; 0)\n#&gt; [1] 0.75\n\n\n\n\nThe authors suggest a bootstrapping approach for making inference on \\(\\hat P_{&gt; 0}\\)\n\nCodenboot &lt;- 1e4\ntheta_boot &lt;- matrix(0, nrow = nboot, ncol = k)\n\nfor(i in 1:nboot){\n  idx &lt;- sample(1:nrow(replications), nrow(replications), replace = TRUE)\n  replications_boot &lt;- replications[idx, ]\n  theta_cal &lt;- MetaUtility::calib_ests(replications_boot$yi, \n                                       replications_boot$sei, \n                                       method = \"REML\")\n  theta_boot[i, ] &lt;- theta_cal\n}\n\n# calculate\np_greater_boot &lt;- apply(theta_boot, 1, function(x) mean(x &gt; 0))"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#mathur-vanderweele--mathur2020-nw-hat-p_gtrless-q",
+    "href": "slides/02-replication-methods/02-replication-methods.html#mathur-vanderweele--mathur2020-nw-hat-p_gtrless-q",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Mathur & VanderWeele (2020) \\(\\hat P_{\\gtrless q*}\\)\n",
+    "text": "Mathur & VanderWeele (2020) \\(\\hat P_{\\gtrless q*}\\)\n\nInstead of using 0 as threshold, we can use meaningful effect size to be considered as low but different from 0. \\(\\hat P_{\\gtrless q*}\\) is the proportion of (calibrated) replications greater or lower than the \\(q*\\) value. This framework is similar to equivalence and minimum effect size testing (Lakens, Scheel, and Isager 2018).\n\nCodeq &lt;- 0.2 # minimum non zero effect\n\nfit &lt;- metafor::rma(yi, vi, data = replications)\n\n# see ?MetaUtility::prop_stronger\nMetaUtility::prop_stronger(q = q,\n                           M = fit$b[[1]],\n                           t2 = fit$tau2,\n                           tail = \"above\",\n                           estimate.method = \"calibrated\",\n                           ci.method = \"calibrated\",\n                           dat = replications,\n                           yi.name = \"yi\",\n                           vi.name = \"vi\")\n#&gt;    est        se  lo   hi  bt.mn shapiro.pval\n#&gt; 1 0.35 0.1137901 0.1 0.55 0.3573    0.5224829"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#combining-original-and-replications",
+    "href": "slides/02-replication-methods/02-replication-methods.html#combining-original-and-replications",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Combining original and replications",
+    "text": "Combining original and replications\n\n\nTheory\nFixed-effects Model\nRandom-Effects model\nPooling replications\n\n\n\nAnother approach is to combine the original and replication results (both one-to-one and many-to-one) using a meta-analysis model. Then we can test if the pooled estimate is different from 0 or another meaningful value.\n\n\nUse all the available information, especially when fitting a random-effects model\nTake into account the precision by inverse-variance weighting\n\n\n\n\nDid not consider the publication bias\nFor one-to-one designs only a fixed-effects model can be used\n\n\n\n\n\nCode# fixed-effects\nfit_fixed &lt;- rma(yi, vi, method = \"FE\")\nsummary(fit_fixed)\n#&gt; \n#&gt; Fixed-Effects Model (k = 20)\n#&gt; \n#&gt;   logLik  deviance       AIC       BIC      AICc   \n#&gt;  20.7415   -0.0000  -39.4829  -38.4872  -39.2607   \n#&gt; \n#&gt; I^2 (total heterogeneity / total variability):   0.00%\n#&gt; H^2 (total variability / sampling variability):  0.00\n#&gt; \n#&gt; Test for Heterogeneity:\n#&gt; Q(df = 19) = 0.0000, p-val = 1.0000\n#&gt; \n#&gt; Model Results:\n#&gt; \n#&gt; estimate      se    zval    pval   ci.lb   ci.ub      \n#&gt;   0.2000  0.0316  6.3246  &lt;.0001&gt; \n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\n\nCode# fixed-effects\nfit_random &lt;- rma(yi, vi, method = \"REML\")\nsummary(fit_random)\n#&gt; \n#&gt; Random-Effects Model (k = 20; tau^2 estimator: REML)\n#&gt; \n#&gt;   logLik  deviance       AIC       BIC      AICc   \n#&gt;  19.7044  -39.4088  -35.4088  -33.5199  -34.6588   \n#&gt; \n#&gt; tau^2 (estimated amount of total heterogeneity): 0 (SE = 0.0065)\n#&gt; tau (square root of estimated tau^2 value):      0\n#&gt; I^2 (total heterogeneity / total variability):   0.00%\n#&gt; H^2 (total variability / sampling variability):  1.00\n#&gt; \n#&gt; Test for Heterogeneity:\n#&gt; Q(df = 19) = 0.0000, p-val = 1.0000\n#&gt; \n#&gt; Model Results:\n#&gt; \n#&gt; estimate      se    zval    pval   ci.lb   ci.ub      \n#&gt;   0.2000  0.0316  6.3246  &lt;.0001&gt; \n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\nThe previous approach can be also implemented combining replications into a single effect and then compare the original with the combined replication study.\nThis is similar to using the CI or PI approaches but the replication effect will probably by very precise due to pooling multiple studies."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#q-statistics",
+    "href": "slides/02-replication-methods/02-replication-methods.html#q-statistics",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Q Statistics",
+    "text": "Q Statistics\nAn interesting proposal is using the Q statistics (Hedges and Schauer 2019a, 2019c, 2021, 2019b; Jacob M. Schauer 2022; J. M. Schauer and Hedges 2021; Jacob M. Schauer and Hedges 2020), commonly used in meta-analysis to assess the presence of heterogeneity. Formally:\n\\[\nQ = \\sum_{i = 1}^{k} \\frac{(\\theta_i - \\bar \\theta_w)^2}{\\sigma^2_i}\n\\]\nWhere \\(\\bar \\theta_w\\) is the inverse-variance weighted average (i.g., fixed-effect model). The Q statistics is essentially a weighted sum of squares. Under the null hypothesis where all studies are equal \\(\\theta_1 = \\theta_2, ... = \\theta_i\\) the Q statistics has a \\(\\chi^2\\) distribution with \\(k - 1\\) degrees of freedom. Under the alternative hypothesis the distribution is a non-central \\(\\chi^2\\) with non centrality parameter \\(\\lambda\\). The expected value of the \\(Q\\) is \\(E(Q) = v + \\lambda\\), where \\(v\\) are the degrees of freedom."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#q-statistics-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#q-statistics-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Q Statistics",
+    "text": "Q Statistics\nHedges & Schauer proposed to use the Q statistics to evaluate the consistency of a series of replications:\n\nIn case of exact replication, \\(\\lambda = 0\\) because \\(\\theta_1 = \\theta_2, ... = \\theta_k\\).\nIn case of approximate replication, \\(\\lambda &lt; \\lambda_0\\) where \\(\\lambda_0\\) is the maximum value considered as equal to null (i.e., 0).\n\nThis approach is testing the consistency (i.e., homogeneity) of replications. A successful replication should minimize the heterogeneity and the presence of a significant Q statistics should bring evidence for not replicating the effect1.\nThe approach has been debated by a series of opinion papers (see Hedges and Schauer 2019a; Mathur and VanderWeele 2019)"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#q-statistics-2",
+    "href": "slides/02-replication-methods/02-replication-methods.html#q-statistics-2",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Q Statistics",
+    "text": "Q Statistics\nThe method has been expanded and formalized in several papers with different objectives:\n\n\nto cover different replications setup (burden of proof on replicating vs non-replicating, many-to-one and one-to-one, etc.)\n\n\n\n\ninterpret and choose the \\(\\lambda\\) parameter given that is the core of the approach\n\n\n\n\nevaluating the power and statistical properties under different replication scenarios\n\n\n\n\nthe standard implementation put the burden of proof on non-replication. Thus \\(H_0\\) is that studies replicates. They provided also a series of tests with the opposite formulation."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#q-statistics-3",
+    "href": "slides/02-replication-methods/02-replication-methods.html#q-statistics-3",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Q Statistics",
+    "text": "Q Statistics\nIn the case of evaluating an exact replication we can use the Qrep() function that simply calculate the p-value based on the Q sampling distribution.\n\n\nFunction\nCode\nPlot\n\n\n\n\nQrep &lt;- function(yi, vi, lambda0 = 0, alpha = 0.05){\n  fit &lt;- metafor::rma(yi, vi)\n  k &lt;- fit$k\n  Q &lt;- fit$QE\n  df &lt;- k - 1\n  Qp &lt;- pchisq(Q, df = df, ncp = lambda0, lower.tail = FALSE)\n  pval &lt;- ifelse(Qp &lt; 0.001, \"p &lt; 0.001\", sprintf(\"p = %.3f\", Qp))\n  lambda &lt;- ifelse((Q - df) &lt; 0, 0, (Q - df))\n  res &lt;- list(Q = Q, lambda = lambda, pval = Qp, df = df, k = k, alpha = alpha, lambda0 = lambda0)\n  H0 &lt;- ifelse(lambda0 != 0, paste(\"H0: lambda &lt;\", lambda0), \"H0: lambda = 0\")\n  title &lt;- ifelse(lambda0 != 0, \"Q test for Approximate Replication\", \"Q test for Exact Replication\")\n  cli::cli_rule()\n  cat(cli::col_blue(cli::style_bold(title)), \"\\n\\n\")\n  cat(sprintf(\"Q = %.3f (df = %s), lambda = %.3f, %s\", res$Q, res$df, lambda, pval), \"\\n\")\n  cat(H0, \"\\n\")\n  cli::cli_rule()\n  class(res) &lt;- \"Qrep\"\n  invisible(res)\n}\n\n\n\n\n#&gt; Q test for Exact Replication \n#&gt; \n#&gt; Q = 367.321 (df = 99), lambda = 268.321, p  H0: lambda = 0\n\n\n\nCodeQres &lt;- Qrep(dat$yi, dat$vi)\n#&gt; Q test for Exact Replication \n#&gt; \n#&gt; Q = 367.321 (df = 99), lambda = 268.321, p  H0: lambda = 0\n\n\n\n\n\nCodeplot.Qrep(Qres)"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#q-statistics-4",
+    "href": "slides/02-replication-methods/02-replication-methods.html#q-statistics-4",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Q Statistics",
+    "text": "Q Statistics\n\nIn case of approximate replication we need to set \\(\\lambda_0\\) to a meaningful value but the overall test is the same. The critical \\(Q\\) is no longer evaluated with a central \\(\\chi^2\\) but a non-central \\(\\chi^2\\) with \\(\\lambda_0\\) as non-centrality parameter.\nHedges and Schauer (2019b) provide different strategies to choose \\(\\lambda_0\\). They found that under some assumptions, \\(\\lambda = (k - 1) \\frac{\\tau^2}{\\tilde{v}}\\)\nGiven that we introduced the \\(I^2\\) statistics we can derive a \\(\\lambda_0\\) based in \\(I^2\\). F. L. Schmidt and Hunter (2014) proposed that when \\(\\tilde{v}\\) is at least 75% of total variance \\(\\tilde{v} + \\tau^2\\) thus \\(\\tau^2\\) could be considered neglegible. This corresponds to a \\(I^2 = 25%\\) and a ratio \\(\\frac{\\tau^2}{\\tilde{v}} = 1/3\\) thus \\(\\lambda_0 = \\frac{(k - 1)}{3}\\) can be considered a neglegible heterogeneity\n\n\nCodek &lt;- 100\ndat &lt;- sim_studies(k, 0.5, 0, 50, 50)\nQrep(dat$yi, dat$vi, lambda0 = (k - 1)/3)\n#&gt; Q test for Approximate Replication \n#&gt; \n#&gt; Q = 98.121 (df = 99), lambda = 0.000, p = 0.977 \n#&gt; H0: lambda"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg",
+    "href": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Small Telescopes (Simonsohn 2015)\n",
+    "text": "Small Telescopes (Simonsohn 2015)\n\nSimonsohn (2015) introduced 3 main questions when evaluating replicability:\n\n\nWhen we combine data from the original and replication study, what is our best guess of the overall effect?\n\n\n\nmeta-analysis\n\n\n\nIs the effect of the replication study different from the original study?\n\n\n\nmeta-analysis and standard tests, but problematic in terms of statistical power\n\n\n\nDoes the replication study suggest that the effect of interest is undetectable different from zero?\n\n\n\nsmall telescopes"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Small Telescopes (Simonsohn 2015)\n",
+    "text": "Small Telescopes (Simonsohn 2015)\n\nThe idea is simple but quite powerful and insightful. Let’s assume that an original study found an effect of \\(y_{orig} = 0.7\\) on a two-sample design with \\(n = 20\\) per group.\n\n\nwe define a threshold as the effect size that is associated with a certain low power level e.g., \\(33\\%\\) given the sample size i.e. \\(\\theta_{small} = 0.5\\)\n\nthe replication study found an effect of \\(y{rep} = 0.2\\) with \\(n = 100\\) subjects\n\n\n\nIf the \\(y_{rep}\\) is lower (i.e., the upper bound of the confidence interval) than the small effect (\\(\\theta_{small} = 0.5\\)) we conclude that the effect is probably so low that could not have been detected by the original study. Thus there is no evidence for a replication."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg-2",
+    "href": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg-2",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Small Telescopes (Simonsohn 2015)\n",
+    "text": "Small Telescopes (Simonsohn 2015)\n\nWe can use the custom small_telescope() function on simulated data:\n\nsmall_telescope &lt;- function(or_d,\n                            or_se,\n                            rep_d,\n                            rep_se,\n                            small,\n                            ci = 0.95){\n  # quantile for the ci\n  qs &lt;- c((1 - ci)/2, 1 - (1 - ci)/2)\n  \n  # original confidence interval\n  or_ci &lt;- or_d + qnorm(qs) * or_se\n  \n  # replication confidence interval\n  rep_ci &lt;- rep_d + qnorm(qs) * rep_se\n  \n  # small power\n  is_replicated &lt;- rep_ci[2] &gt; small\n  \n  msg_original &lt;- sprintf(\"Original Study: d = %.3f %s CI = [%.3f, %.3f]\",\n                          or_d, ci, or_ci[1], or_ci[2])\n  \n  msg_replicated &lt;- sprintf(\"Replication Study: d = %.3f %s CI = [%.3f, %.3f]\",\n                            rep_d, ci, rep_ci[1], rep_ci[2])\n  \n  \n  if(is_replicated){\n    msg_res &lt;- sprintf(\"The replicated effect is not smaller than the small effect (%.3f), (probably) replication!\", small)\n    msg_res &lt;- cli::col_green(msg_res)\n  }else{\n    msg_res &lt;- sprintf(\"The replicated effect is smaller than the small effect (%.3f), no replication!\", small)\n    msg_res &lt;- cli::col_red(msg_res)\n  }\n  \n  out &lt;- data.frame(id = c(\"original\", \"replication\"),\n                    d = c(or_d, rep_d),\n                    lower = c(or_ci[1], rep_ci[1]),\n                    upper = c(or_ci[2], rep_ci[2]),\n                    small = small\n  )\n  \n  # nice message\n  cat(\n    msg_original,\n    msg_replicated,\n    cli::rule(),\n    msg_res,\n    sep = \"\\n\"\n  )\n  \n  invisible(out)\n  \n}"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg-3",
+    "href": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg-3",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Small Telescopes (Simonsohn 2015)\n",
+    "text": "Small Telescopes (Simonsohn 2015)\n\n\nCodeset.seed(2025)\n\nd &lt;- 0.2 # real effect\n\n# original study\nor_n &lt;- 20\nor_d &lt;- 0.7\nor_se &lt;- sqrt(1/20 + 1/20)\nd_small &lt;- pwr::pwr.t.test(or_n, power = 0.33)$d\n\n# replication\nrep_n &lt;- 100 # sample size of replication study\ng0 &lt;- rnorm(rep_n, 0, 1)\ng1 &lt;- rnorm(rep_n, d, 1)\n\nrep_d &lt;- mean(g1) - mean(g0)\nrep_se &lt;- sqrt(var(g1)/rep_n + var(g0)/rep_n)\n\n\nHere we are using the pwr::pwr.t.test() to compute the effect size \\(\\theta_{small}\\) (in code d) associated with 33% power."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg-4",
+    "href": "slides/02-replication-methods/02-replication-methods.html#small-telescopes-simonsohn2015-kg-4",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Small Telescopes (Simonsohn 2015)\n",
+    "text": "Small Telescopes (Simonsohn 2015)\n\n\nCodesmall_telescope(or_d, or_se, rep_d, rep_se, d_small, ci = 0.95)\n#&gt; Original Study: d = 0.700 0.95 CI = [0.080, 1.320]\n#&gt; Replication Study: d = 0.214 0.95 CI = [-0.061, 0.490]\n#&gt; ────────────────────────────────────────────────────────────────────────────────\n#&gt; The replicated effect is smaller than the small effect (0.493), no replication!\n\n\nAnd a (quite over-killed) plot:"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayes-factor",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayes-factor",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayes Factor",
+    "text": "Bayes Factor\nVerhagen and Wagenmakers (2014) proposed a method to estimate the evidence of a replication study. The core topics to understand the method are:\n\nBayesian hypothesis testing using the Bayes Factor (see, Rouder et al. 2009)\n\nBayes Factor using the Savage-Dickey density ratio (SDR, Wagenmakers et al. 2010)"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayesian inference",
+    "text": "Bayesian inference\nBayesian inference is the statistical procedure where prior beliefs about a phenomenon are combined, using the Bayes theorem, with evidence from data to obtain the posterior beliefs.\n\nThe interesting part is that the researcher express the prior beliefs in probabilistic terms. Then after collecting data, evidence from the experiment is combined increasing or decreasing the plausibility of prior beliefs.\n\n\nLet’s make an (not a very innovative 😄) example. We need to evaluate the fairness of a coin. The crucial parameter is \\(\\theta\\) that is the probability of success (e.g., head). We have our prior belief about the coin (e.g., fair but with some uncertainty). We toss the coin \\(k\\) times and we observe \\(x\\) heads. What are my conclusions?"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayesian inference",
+    "text": "Bayesian inference\n\\[\np(\\theta|D) = \\frac{p(D|\\theta) \\; p(\\theta)}{p(D)}\n\\] Where \\(\\theta\\) is our parameter and \\(D\\) the data. \\(p(\\theta|D)\\) is the posterior distribution that is the product between the likelihood \\(p(D|\\theta)\\) and the prior \\(p(\\theta)\\). \\(p(D)\\) is the probability of the data (aka marginal likelihood) and is necessary only for the posterior to be a proper probability distribution.\nWe can “read” the formula as: The probability of the parameter given the data is the product between the likelihood of the data given the parameter and the prior probability of the parameter."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference-2",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference-2",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayesian inference",
+    "text": "Bayesian inference\nLet’s express our prior belief in probabilistic terms:"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference-3",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference-3",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayesian inference",
+    "text": "Bayesian inference\nNow we collect data and we observe \\(x = 40\\) tails out of \\(k = 50\\) trials thus \\(\\hat{\\theta} = 0.8\\) and compute the likelihood:"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference-4",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayesian-inference-4",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayesian inference",
+    "text": "Bayesian inference\nFinally we combine, using the Bayes rule, prior and likelihood to obtain the posterior distribution:"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayes-factor-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayes-factor-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayes Factor",
+    "text": "Bayes Factor\nThe idea of the Bayes Factor is computing the evidence of the data under two competing hypotheses, \\(H_0\\) and \\(H_1\\) (~ \\(\\theta\\) in our previous example):\n\\[\n\\frac{p(H_0|D)}{p(H_1|D)} = \\frac{f(D|H_0)}{f(D|H_1)} \\times \\frac{p(H_0)}{p(H_1)}\n\\]\nWhere \\(f\\) is the likelihood function, \\(y\\) are the data. The \\(\\frac{p(H_0)}{p(H_1)}\\) is the prior odds of the two hypothesis. The Bayes Factor is the ratio between the likelihood of the data under the two hypotheses."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayes-factor-using-the-sdr",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayes-factor-using-the-sdr",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayes Factor using the SDR",
+    "text": "Bayes Factor using the SDR\nCalculating the BF can be problematic in some condition. The SDR is a convenient shortcut to calculate the Bayes Factor (Wagenmakers et al. 2010). The idea is that the ratio between the prior and posterior density distribution for the \\(H_1\\) is an estimate of the Bayes factor calculated in the standard way.\n\\[\nBF_{01} = \\frac{p(D|H_0)}{p(D|H_1)} = \\frac{p(\\theta = x|D, H_1)}{p(\\theta = x, H_1)}\n\\]\nWhere \\(\\theta\\) is the parameter of interest and \\(x\\) is the null value under \\(H_0\\) e.g., 0. and \\(D\\) are the data."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayes-factor-using-the-sdr-example",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayes-factor-using-the-sdr-example",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayes Factor using the SDR, Example:",
+    "text": "Bayes Factor using the SDR, Example:\nFollowing the previous example \\(H_0: \\theta = 0.5\\). Under \\(H_1\\) we use a completely uninformative prior by setting \\(\\theta \\sim Beta(1, 1)\\).\nWe flip again the coin 20 times and we found that \\(\\hat \\theta = 0.75\\)."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#bayes-factor-using-the-sdr-example-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#bayes-factor-using-the-sdr-example-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Bayes Factor using the SDR, Example:",
+    "text": "Bayes Factor using the SDR, Example:\nThe ratio between the two black dots is the Bayes Factor.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n\n\n\n\n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n\n  \n\n\n  \n\n\n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n\n\n  \n\n\n  \n  \n  \n  \n  \n  \n  \n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n  \n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n\n\n\n\n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n  \n  \n  \n  \n\n\n\n  \n\n\n  \n\n\n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n\n\n  \n\n\n  \n  \n  \n  \n  \n  \n  \n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n  \n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n\n\n  \n\n\n\n\n\nIf the probability density of the null value decrease after seeing data (from prior to posterior) this means that the Bayes factor should favor the alternative hypothesis. On the left, the density of 0.5 is lower after seeing the data –&gt; evidence for H1 On the right the density of 0.5 is higher after seeing the data –&gt; evidence for H0"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#verhagen2014-tx-model",
+    "href": "slides/02-replication-methods/02-replication-methods.html#verhagen2014-tx-model",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "\nVerhagen and Wagenmakers (2014) model1\n",
+    "text": "Verhagen and Wagenmakers (2014) model1\n\nThe idea is using the posterior distribution of the original study as prior for a Bayesian hypothesis testing where:\n\n\n\\(H_0: \\theta_{rep} = 0\\) thus there is no effect in the replication study\n\n\\(H_1: \\theta_{rep} \\neq 0\\) and in particular is distributed as \\(\\delta \\sim \\mathcal{N}(\\theta_{orig}, \\sigma^2_{orig})\\) where \\(\\theta_{orig}\\) and \\(\\sigma^2_{orig}\\) are the mean and standard error of the original study\n\nIf \\(H_0\\) is more likely after seeing the data, there is evidence against the replication (i.e., \\(BF_{r0} &gt; 1\\)) otherwise there is evidence for a successful replication (\\(BF_{r1} &gt; 1\\)).\nsee also Ly et al. (2019) for an improvement"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#verhagen2014-tx-model-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#verhagen2014-tx-model-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "\nVerhagen and Wagenmakers (2014) model",
+    "text": "Verhagen and Wagenmakers (2014) model\n\n\n\n\n\n\nWarning\n\n\nDisclaimer: The actual implementation of Verhagen and Wagenmakers (2014) is different (they use the \\(t\\) statistics). The proposed implementation for the current workshop use a standard linear model."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example",
+    "text": "Example\nLet’s assume that the original study (\\(n = 30\\)) estimate a \\(y_{orig} = 0.4\\) and a standard error of \\(\\sigma^2/n\\).\n\nCode# original study\nn &lt;- 30\nyorig &lt;- 0.4\nse &lt;- sqrt(1/30)\n\n\n\n\n\n\n\n\nNote\n\n\nThe assumption of Verhagen & Wagenmakers (2014) is that the original study performed a Bayesian analysis with a completely flat prior. Thus the confidence interval is the same as the Bayesian credible interval."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example",
+    "text": "Example\nFor this reason, the posterior distribution of the original study can be approximated as:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n\n\n  \n  \n  \n  \n  \n  \n  \n\n\nWith an uninformative prior the credible interval is the same as the confidence interval"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-2",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-2",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example",
+    "text": "Example\nLet’s imagine that a new study tried to replicate the original one. They collected \\(n = 100\\) participants with the same protocol and found and effect of \\(y_{rep} = 0.1\\).\n\nCodenrep &lt;- 100\nyrep &lt;- MASS::mvrnorm(nrep, mu = 0.1, Sigma = 1, empirical = TRUE)[, 1]\ndat &lt;- data.frame(y = yrep)\nhist(yrep, main = \"Replication Study (n1 = 100)\", xlab = latex2exp::TeX(\"$y_{rep}$\"))\nabline(v = mean(yrep), lwd = 2, col = \"firebrick\")"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-3",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-3",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example",
+    "text": "Example\nWe can analyze these data with an intercept-only regression model setting as prior the posterior distribution of the original study:\n\nCode# setting the prior on the intercept parameter\nprior &lt;- rstanarm::normal(location = yorig,\n                          scale = se)\n\n# fitting the bayesian linear regression\nfit &lt;- stan_glm(y ~ 1, \n                data = dat, \n                prior_intercept = prior,\n                refresh = FALSE)\n\nsummary(fit)\n#&gt; \n#&gt; Model Info:\n#&gt;  function:     stan_glm\n#&gt;  family:       gaussian [identity]\n#&gt;  formula:      y ~ 1\n#&gt;  algorithm:    sampling\n#&gt;  sample:       4000 (posterior sample size)\n#&gt;  priors:       see help('prior_summary')\n#&gt;  observations: 100\n#&gt;  predictors:   1\n#&gt; \n#&gt; Estimates:\n#&gt;               mean   sd   10%   50%   90%\n#&gt; (Intercept) 0.2    0.1  0.1   0.2   0.3  \n#&gt; sigma       1.0    0.1  0.9   1.0   1.1  \n#&gt; \n#&gt; Fit Diagnostics:\n#&gt;            mean   sd   10%   50%   90%\n#&gt; mean_PPD 0.2    0.1  0.0   0.2   0.3  \n#&gt; \n#&gt; The mean_ppd is the sample average posterior predictive distribution of the outcome variable (for details see help('summary.stanreg')).\n#&gt; \n#&gt; MCMC diagnostics\n#&gt;               mcse Rhat n_eff\n#&gt; (Intercept)   0.0  1.0  2609 \n#&gt; sigma         0.0  1.0  2608 \n#&gt; mean_PPD      0.0  1.0  3185 \n#&gt; log-posterior 0.0  1.0  1693 \n#&gt; \n#&gt; For each parameter, mcse is Monte Carlo standard error, n_eff is a crude measure of effective sample size, and Rhat is the potential scale reduction factor on split chains (at convergence Rhat=1)."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-4",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-4",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example",
+    "text": "Example\n\n\nResults\nPlot\n\n\n\nWe can use the bayestestR::bayesfactor_pointnull() to calculate the BF using the Savage-Dickey density ratio.\n\nCodebf &lt;- bayestestR::bayesfactor_pointnull(fit, null = 0)\nprint(bf)\n#&gt; Bayes Factor (Savage-Dickey density ratio) \n#&gt; \n#&gt; Parameter   |    BF\n#&gt; -------------------\n#&gt; (Intercept) | 0.274\n#&gt; \n#&gt; * Evidence Against The Null: 0\n#&gt; \n\n\n\n\n\nCodeplot(bf)"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-5",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-5",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example",
+    "text": "Example\nYou can also use the bf_replication() function:\n\nbf_replication &lt;- function(mu_original,\n                           se_original,\n                           replication){\n  \n  # prior based on the original study\n  prior &lt;- rstanarm::normal(location = mu_original, scale = se_original)\n  \n  # to dataframe\n  replication &lt;- data.frame(y = replication)\n  \n  fit &lt;- rstanarm::stan_glm(y ~ 1,\n                            data = replication,\n                            prior_intercept = prior, \n                            refresh = 0) # avoid printing\n  \n  bf &lt;- bayestestR::bayesfactor_pointnull(fit, null = 0, verbose = FALSE)\n  \n  title &lt;- \"Bayes Factor Replication Rate\"\n  posterior &lt;- \"Posterior Distribution ~ Mean: %.3f, SE: %.3f\"\n  replication &lt;- \"Evidence for replication: %3f (log %.3f)\"\n  non_replication &lt;- \"Evidence for non replication: %3f (log %.3f)\"\n  \n  if(bf$log_BF &gt; 0){\n    replication &lt;- cli::col_green(sprintf(replication, exp(bf$log_BF), bf$log_BF))\n    non_replication &lt;- sprintf(non_replication, 1/exp(bf$log_BF), -bf$log_BF)\n  }else{\n    replication &lt;- sprintf(replication, exp(bf$log_BF), bf$log_BF)\n    non_replication &lt;- cli::col_red(sprintf(non_replication, 1/exp(bf$log_BF), -bf$log_BF))\n  }\n  \n  outlist &lt;- list(\n    fit = fit,\n    bf = bf\n  )\n  \n  cat(\n    cli::col_blue(title),\n    cli::rule(),\n    sprintf(posterior, fit$coefficients, fit$ses),\n    \"\\n\",\n    replication,\n    non_replication,\n    sep = \"\\n\"\n  )\n  \n  invisible(outlist)\n  \n}"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-6",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-6",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example",
+    "text": "Example\n\nCodebf_replication(mu_original = yorig, se_original = se, replication = yrep)\n#&gt; Bayes Factor Replication Rate\n#&gt; ────────────────────────────────────────────────────────────────────────────────\n#&gt; Posterior Distribution ~ Mean: 0.169, SE: 0.088\n#&gt; \n#&gt; \n#&gt; Evidence for replication: 0.278539 (log -1.278)\n#&gt; Evidence for non replication: 3.590164 (log 1.278)"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-7",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-7",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example",
+    "text": "Example\nA better custom plot:\n\nCodebfplot &lt;- data.frame(\n  prior = rnorm(1e5, yorig, se),\n  posterior = rnorm(1e5, fit$coefficients, fit$ses)\n)\n \nplt &lt;- ggplot() +\n  stat_function(geom = \"line\", \n                aes(color = \"Original Study (Prior)\"),\n                linewidth = 1,\n                alpha = 0.3,\n                fun = dnorm, args = list(mean = yorig, sd = se)) +\n  stat_function(geom = \"line\",\n                linewidth = 1,\n                aes(color = \"Replication Study (Posterior)\"),\n                fun = dnorm, args = list(mean = fit$coefficients, sd = fit$ses)) +\n  xlim(c(-0.5, 1.2)) +\n  geom_point(aes(x = c(0, 0), y = c(dnorm(0, yorig, sd = se),\n                                    dnorm(0, fit$coefficients, sd = fit$ses))),\n             size = 3) +\n  xlab(latex2exp::TeX(\"\\\\delta\")) +\n  ylab(\"Density\") +\n  theme(legend.position = \"bottom\",\n        legend.title = element_blank())"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#example-8",
+    "href": "slides/02-replication-methods/02-replication-methods.html#example-8",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Example",
+    "text": "Example\nA better custom plot:"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#references",
+    "href": "slides/02-replication-methods/02-replication-methods.html#references",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "References",
+    "text": "References\n\n\n\n\n\n\n\n\nBrandt, Mark J, Hans IJzerman, Ap Dijksterhuis, Frank J Farach, Jason Geller, Roger Giner-Sorolla, James A Grange, Marco Perugini, Jeffrey R Spies, and Anna van ’t Veer. 2014. “The Replication Recipe: What Makes for a Convincing Replication?” Journal of Experimental Social Psychology 50 (January): 217–24. https://doi.org/10.1016/j.jesp.2013.10.005.\n\n\nBushman, B J, and Morgan C Wang. 2009. “Vote-Counting Procedures in Meta-Analysis.” In The Handbook of Research Synthesis and Meta-Analysis, 207–20. New York, NY: Russell Sage Foundation.\n\n\nHedges, Larry V, and Ingram Olkin. 1980. “Vote-Counting Methods in Research Synthesis.” Psychological Bulletin 88 (September): 359–69. https://doi.org/10.1037/0033-2909.88.2.359.\n\n\nHedges, Larry V, and Jacob M Schauer. 2019a. “Consistency of Effects Is Important in Replication: Rejoinder to Mathur and VanderWeele (2019).” Psychological Methods 24 (October): 576–77. https://doi.org/10.1037/met0000237.\n\n\n———. 2019b. “Statistical Analyses for Studying Replication: Meta-Analytic Perspectives.” Psychological Methods 24 (October): 557–70. https://doi.org/10.1037/met0000189.\n\n\n———. 2019c. “More Than One Replication Study Is Needed for Unambiguous Tests of Replication.” Journal of Educational and Behavioral Statistics: A Quarterly Publication Sponsored by the American Educational Research Association and the American Statistical Association 44 (October): 543–70. https://doi.org/10.3102/1076998619852953.\n\n\n———. 2021. “The Design of Replication Studies.” Journal of the Royal Statistical Society. Series A, 184 (March): 868–86. https://doi.org/10.1111/rssa.12688.\n\n\nJeffreys, Harold. 1973. Scientific Inference. Cambridge, England: Cambridge University Press.\n\n\nLakens, Daniël, Anne M Scheel, and Peder M Isager. 2018. “Equivalence Testing for Psychological Research: A Tutorial.” Advances in Methods and Practices in Psychological Science 1 (June): 259–69. https://doi.org/10.1177/2515245918770963.\n\n\nLy, Alexander, Alexander Etz, Maarten Marsman, and Eric-Jan Wagenmakers. 2019. “Replication Bayes Factors from Evidence Updating.” Behavior Research Methods 51 (December): 2498–508. https://doi.org/10.3758/s13428-018-1092-x.\n\n\nMathur, Maya B, and Tyler J VanderWeele. 2019. “Challenges and Suggestions for Defining Replication \"Success\" When Effects May Be Heterogeneous: Comment on Hedges and Schauer (2019).” Psychological Methods 24 (October): 571–75. https://doi.org/10.1037/met0000223.\n\n\n———. 2020. “New Statistical Metrics for Multisite Replication Projects.” Journal of the Royal Statistical Society. Series A, (Statistics in Society) 183 (June): 1145–66. https://doi.org/10.1111/rssa.12572.\n\n\nNosek, Brian A, and Timothy M Errington. 2020. “What Is Replication?” PLoS Biology 18 (March): e3000691. https://doi.org/10.1371/journal.pbio.3000691.\n\n\nPatil, Prasad, Roger D Peng, and Jeffrey T Leek. 2016. “What Should Researchers Expect When They Replicate Studies? A Statistical View of Replicability in Psychological Science.” Perspectives on Psychological Science: A Journal of the Association for Psychological Science 11 (July): 539–44. https://doi.org/10.1177/1745691616646366.\n\n\nRouder, Jeffrey N, Paul L Speckman, Dongchu Sun, Richard D Morey, and Geoffrey Iverson. 2009. “Bayesian t Tests for Accepting and Rejecting the Null Hypothesis.” Psychonomic Bulletin & Review 16 (April): 225–37. https://doi.org/10.3758/PBR.16.2.225.\n\n\nSchauer, J M, and L V Hedges. 2021. “Reconsidering Statistical Methods for Assessing Replication.” Psychological Methods 26 (February): 127–39. https://doi.org/10.1037/met0000302.\n\n\nSchauer, Jacob M. 2022. “Replicability and Meta-Analysis.” In Avoiding Questionable Research Practices in Applied Psychology, edited by William O’Donohue, Akihiko Masuda, and Scott Lilienfeld, 301–42. Cham: Springer International Publishing. https://doi.org/10.1007/978-3-031-04968-2_14.\n\n\nSchauer, Jacob M, and Larry V Hedges. 2020. “Assessing Heterogeneity and Power in Replications of Psychological Experiments.” Psychological Bulletin 146 (August): 701–19. https://doi.org/10.1037/bul0000232.\n\n\nSchmidt, Frank L, and John E Hunter. 2014. Methods of Meta-Analysis: Correcting Error and Bias in Research Findings. 3rd ed. Thousand Oaks, CA: SAGE Publications. https://doi.org/10.4135/9781483398105.\n\n\nSchmidt, Stefan. 2009. “Shall We Really Do It Again? The Powerful Concept of Replication Is Neglected in the Social Sciences.” Review of General Psychology: Journal of Division 1, of the American Psychological Association 13 (June): 90–100. https://doi.org/10.1037/a0015108.\n\n\nSimonsohn, Uri. 2015. “Small Telescopes: Detectability and the Evaluation of Replication Results.” Psychological Science 26 (May): 559–69. https://doi.org/10.1177/0956797614567341.\n\n\nSpence, Jeffrey R, and David J Stanley. 2016. “Prediction Interval: What to Expect When You’re Expecting … a Replication.” PloS One 11 (September): e0162874. https://doi.org/10.1371/journal.pone.0162874.\n\n\nValentine, Jeffrey C, Anthony Biglan, Robert F Boruch, Felipe González Castro, Linda M Collins, Brian R Flay, Sheppard Kellam, Eve K Mościcki, and Steven P Schinke. 2011. “Replication in Prevention Science.” Prevention Science: The Official Journal of the Society for Prevention Research 12 (June): 103–17. https://doi.org/10.1007/s11121-011-0217-6.\n\n\nVerhagen, Josine, and Eric-Jan Wagenmakers. 2014. “Bayesian Tests to Quantify the Result of a Replication Attempt.” Journal of Experimental Psychology. General 143 (August): 1457–75. https://doi.org/10.1037/a0036731.\n\n\nWagenmakers, Eric-Jan, Tom Lodewyckx, Himanshu Kuriyal, and Raoul Grasman. 2010. “Bayesian Hypothesis Testing for Psychologists: A Tutorial on the Savage–Dickey Method.” Cognitive Psychology 60 (May): 158–89. https://doi.org/10.1016/j.cogpsych.2009.12.001."
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#simulating-for-learning",
+    "href": "slides/02-replication-methods/02-replication-methods.html#simulating-for-learning",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Simulating for learning",
+    "text": "Simulating for learning\nFor the examples we are going to simulate studies. Each study comes from a two-groups comparison on a continous outcome:\n\\[\n\\Delta = \\overline{X_1} - \\overline{X_2}\n\\]\n\\[\nSE_{\\Delta} = \\sqrt{\\frac{s^2_1}{n_1} + \\frac{s^2_2}{n_2}}\n\\]\nWith \\(X_{1_j} \\sim \\mathcal{N}(0, 1)\\) and \\(X_{2_j} \\sim \\mathcal{N}(\\Delta, 1)\\)\ncontinue…"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#simulating-for-learning-1",
+    "href": "slides/02-replication-methods/02-replication-methods.html#simulating-for-learning-1",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Simulating for learning",
+    "text": "Simulating for learning\nThus our observed effect sizes \\(y_i\\) is sampled from: \\[\ny_i \\sim \\mathcal{N}(\\mu_\\theta, \\tau^2 + \\frac{1}{n_1} + \\frac{1}{n_2})\n\\]\nWhere \\(\\frac{1}{n_1} + \\frac{1}{n_2}\\) is the sampling variability (\\(\\sigma^2_i\\)).\nThe sampling variances are sampled from:\n\\[\n\\sigma_i^2 \\sim \\frac{\\chi^2_{n_1 + n_2 - 2}}{n_1 + n_2 - 2} (\\frac{1}{n_1} + \\frac{1}{n_2})\n\\]"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#simulating-for-learning-2",
+    "href": "slides/02-replication-methods/02-replication-methods.html#simulating-for-learning-2",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Simulating for learning",
+    "text": "Simulating for learning\nEverything is implemented into the sim_studies() function:\n\nsim_studies &lt;- function(k, theta, tau2, n0, n1, summary = FALSE){\n  yi &lt;- rnorm(k, theta, sqrt(tau2 + 1/n0 + 1/n1))\n  vi &lt;- (rchisq(k, n0 + n1 - 2) / (n0 + n1 - 2)) * (1/n0 + 1/n1)\n  out &lt;- data.frame(yi, vi, sei = sqrt(vi))\n  if(summary){\n    out &lt;- summary_es(out)\n  }\n  return(out)\n}"
+  },
+  {
+    "objectID": "slides/02-replication-methods/02-replication-methods.html#simulating-for-learning-an-example",
+    "href": "slides/02-replication-methods/02-replication-methods.html#simulating-for-learning-an-example",
+    "title": "Statistical Methods for Replication Assessment",
+    "section": "Simulating for learning, an example",
+    "text": "Simulating for learning, an example\n\nsim_studies(k = 10, theta = 0.5, tau2 = 0.1, n0 = 30, n1 = 30)\n#&gt;             yi         vi       sei\n#&gt; 1   0.66504967 0.06037725 0.2457178\n#&gt; 2   0.29487518 0.06296358 0.2509254\n#&gt; 3   1.01478100 0.05277811 0.2297349\n#&gt; 4  -0.08361232 0.05247352 0.2290710\n#&gt; 5   0.53940395 0.06431728 0.2536085\n#&gt; 6   0.09283449 0.06303700 0.2510717\n#&gt; 7   0.24396035 0.07983971 0.2825592\n#&gt; 8   0.43284789 0.06815338 0.2610620\n#&gt; 9   0.51447571 0.04877761 0.2208565\n#&gt; 10  0.59251585 0.05032623 0.2243351"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#setup",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#setup",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Setup",
+    "text": "Setup\nPackages\n\nlibrary(tidyverse) # for data manipulation\nlibrary(metafor) # for meta-analysis\ndevtools::load_all() # load all utils functions"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Meta-analysis",
+    "text": "Meta-analysis\n\nThe meta-analysis is a statistical procedure to combine evidence from a group of studies.\nIt is usually combined with a systematic review of the literature\nIs somehow the gold-standard approach when we want to summarise and make inference on a specific research area"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#effect-size",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#effect-size",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Effect size",
+    "text": "Effect size\nTo compare results from different studies, we should use a common metrics. Frequently meta-analysts use standardized effect sizes. For example the Pearson correlation or the Cohen’s \\(d\\).\n\\[\nr = \\frac{\\sum{(x_i - \\bar{x})(y_i - \\bar{y})}}{\\sqrt{\\sum{(x_i - \\bar{x})^2}\\sum{(y_i - \\bar{y})^2}}}\n\\]\n\\[\nd = \\frac{\\bar{x_1} - \\bar{x_2}}{s_p}\n\\]\n\\[\ns_p = \\sqrt{\\frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{n_1 + n_2 - 2}}\n\\]"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#effect-size-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#effect-size-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Effect size",
+    "text": "Effect size\nThe advantage of standandardized effect size is that regardless the original variable, the intepretation and the scale is the same. For example the pearson correlation ranges between -1 and 1 and the Cohen’s \\(d\\) between \\(- \\infty\\) and \\(\\infty\\) and is intepreted as how many standard deviations the two groups differs.\n\nCodeS &lt;- matrix(c(1, 0.7, 0.7, 1), nrow = 2)\nX &lt;- MASS::mvrnorm(100, c(0, 2), S, empirical = TRUE)\n\npar(mfrow = c(1,2))\nplot(X, xlab = \"x\", ylab = \"y\", cex = 1.3, pch = 19,\n     cex.lab = 1.2, cex.axis = 1.2,\n     main = latex2exp::TeX(sprintf(\"$r = %.2f$\", cor(X[, 1], X[, 2]))))\nabline(lm(X[, 2] ~ X[, 1]), col = \"firebrick\", lwd = 2)\n\n\nplot(density(X[, 1]), xlim = c(-5, 7), ylim = c(0, 0.5), col = \"dodgerblue\", lwd = 2,\n     main = latex2exp::TeX(sprintf(\"$d = %.2f$\", lsr::cohensD(X[, 1], X[, 2]))),\n     xlab = \"\")\nlines(density(X[, 2]), col = \"firebrick\", lwd = 2)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#sec-effsize-se",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#sec-effsize-se",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Effect size sampling variability",
+    "text": "Effect size sampling variability\n\n\nFormula\nPlot\n\n\n\nFor example, there are multiple methods to estimate the Cohen’s \\(d\\) sampling variability. For example:\n\\[\nV_d = \\frac{n_1 + n_2}{n_1 n_2} + \\frac{d^2}{2(n_1 + n_2)}\n\\]\nEach effect size has a specific formula for the sampling variability. The sample size is usually the most important information. Studies with high sample size have low sampling variability.\n\n\nAs the sample size grows and tends to infinity, the sampling variability approach zero."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#notation",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#notation",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Notation",
+    "text": "Notation\nMeta-analysis notation is a little bit inconsistent in textbooks and papers. We define here some rules to simplify the work.\n\n\n\\(k\\) is the number of studies\n\n\\(n_j\\) is the sample size of the group \\(j\\) within a study\n\n\\(y_i\\) are the observed effect size included in the meta-analysis\n\n\\(\\sigma_i^2\\) are the observed sampling variance of studies and \\(\\epsilon_i\\) are the sampling errors\n\n\\(\\theta\\) is the equal-effects parameter (see Equation 3)\n\n\\(\\delta_i\\) is the random-effect (see Equation 5)\n\n\\(\\mu_\\theta\\) is the average effect of a random-effects model (see Equation 4)\n\n\\(w_i\\) are the meta-analysis weights (e.g., see Equation 1)\n\n\\(\\tau^2\\) is the heterogeneity (see Equation 5)\n\n\\(\\Delta\\) is the (generic) population effect size\n\n\\(s_j^2\\) is the variance of the group \\(j\\) within a study"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-meta-analysis",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-meta-analysis",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Simulating Meta-Analysis",
+    "text": "Extra - Simulating Meta-Analysis\nFor the examples and plots I’m going to use simulated data1. We simulate unstandardized effect sizes (UMD) because the computations are easier and the estimator is unbiased (e.g., Viechtbauer 2005)\nMore specifically we simulate hypothetical studies where two independent groups are compared:\n\\[\n\\Delta = \\overline{X_1} - \\overline{X_2}\n\\]\n\\[\nSE_{\\Delta} = \\sqrt{\\frac{s^2_1}{n_1} + \\frac{s^2_2}{n_2}}\n\\]\nWith \\(X_{1_i} \\sim \\mathcal{N}(0, 1)\\) and \\(X_{2_i} \\sim \\mathcal{N}(\\Delta, 1)\\)\nThe main advantage is that, compared to standardized effect size, the sampling variability do not depends on the effect size itself, simplifying the computations.\nIf you are interested in meta-analysis simulation we wrote a preprint https://psyarxiv.com/br6vy/"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-as-a-weighted-average",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-as-a-weighted-average",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Meta-analysis as a (weighted) average",
+    "text": "Meta-analysis as a (weighted) average\nLet’s imagine to have \\(k = 10\\) studies. The segments are the 95% confidence intervals.\n\nCodek &lt;- 10\nni &lt;- round(runif(k, 10, 100))\ndat &lt;- sim_studies(k, 0.5, 0, ni, ni)\nqf &lt;- quick_forest(dat)\nqf\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\nWhat could you say about the phenomenon?"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-as-a-weighted-average-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-as-a-weighted-average-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Meta-analysis as a (weighted) average",
+    "text": "Meta-analysis as a (weighted) average\n\n\nPlot\nFormula\n\n\n\nWe could say that the average effect is roughly ~0.5 and there is some variability around the average.\n\nCodeavg &lt;- mean(dat$yi)\nqf + geom_vline(xintercept = avg, color = \"firebrick\") +\ngeom_segment(aes(x = yi, y = id-0.3, xend = avg, yend = id-0.3),\ncolor = \"firebrick\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n\n\n\n\n\n\n\n\\[\n\\overline y = \\frac{\\sum_{i = 1}^k y_i}{k}\n\\]\n\nybar &lt;- mean(dat$yi)\nybar\n#&gt; [1] 0.4580776"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-as-a-weighted-average-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-as-a-weighted-average-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Meta-analysis as a (weighted) average",
+    "text": "Meta-analysis as a (weighted) average\n\n\nPlot\nEquation\nR Code\n\n\n\nThe simple average is a good statistics. But some studies are clearly more precise (narrower confidence intervals) than others i.e. the sampling variance is lower.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n\n\n\n\n\n\n\nWe can compute a weighted average where each study is weighted (\\(w_i\\)) by the inverse of the variance. This is called inverse-variance weighting. Clearly, a weighted average were all weights are the same reduced to a simple unweighted average.\n\\[\n\\overline y = \\frac{\\sum_{i = 1}^k y_iw_i}{\\sum_{i = 1}^k w_i}\n\\] \\[\nw_i = \\frac{1}{v_i}\n\\tag{1}\\]\n\n\n\nwi &lt;- 1/dat$vi\nywbar &lt;- weighted.mean(dat$yi, wi) \nywbar\n#&gt; [1] 0.4693022\n\nThe value is (not so) different compared to the unweighted version (0.4580776). They are not exactly the same but given that weights are pretty homogeneous the two estimate are similar."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-as-a-weighted-average-3",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-as-a-weighted-average-3",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Meta-analysis as a (weighted) average",
+    "text": "Meta-analysis as a (weighted) average\nWhat we did is a very simple model but actually is a meta-analysis model. This is commonly known as equal-effects model (or fixed-effect) model.\n\nCodequick_forest(dat, weigth = TRUE) +\n  geom_vline(xintercept = ywbar, color = \"firebrick\") +\n  ggtitle(\"Weighted Average\")"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#sec-ee",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#sec-ee",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Equal-effects model (EE)",
+    "text": "Equal-effects model (EE)\n\n\nAssumptions\nEquations\nPlots\n\n\n\nThe EE model is the simplest meta-analysis model. The assumptions are:\n\nthere is a unique, true effect size to estimate \\(\\theta\\)\n\neach study is a more or less precise estimate of \\(\\theta\\)\n\nthere is no TRUE variability among studies. The observed variability is due to studies that are imprecise (i.e., sampling error)\n\nassuming that each study has a very large sample size, the observed variability is close to zero.\n\n\n\n\n\nFormally, we can define the EE model as: \\[\ny_i = \\theta + \\epsilon_i\n\\tag{2}\\]\n\\[\n\\epsilon_i \\sim \\mathcal{N}(0, \\sigma^2_i)\n\\tag{3}\\]\nWhere \\(\\sigma^2_i\\) is the vector of sampling variabilities of \\(k\\) studies. This is a standard linear model but with heterogeneous sampling variances."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#sec-ee-high-low",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#sec-ee-high-low",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Equal-effects model (EE)",
+    "text": "Equal-effects model (EE)\nA crucial part of the EE model is that, assuming studies with very large sample sizes, \\(\\epsilon_i\\) will tend to 0 and each study is an almost perfect estimation of \\(\\theta\\). Let’s simulate two models, with \\(k = 10\\) studies and \\(n = 30\\) and \\(n = 500\\). The effect size is the same \\(0.5\\).\n\nCodedat_low  &lt;- sim_studies(10, 0.5, 0, 30, 30)\ndat_high &lt;- sim_studies(10, 0.5, 0, 500, 500)\n\nqf_low &lt;- quick_forest(dat_low) + \n  geom_vline(xintercept = 0.5, color = \"firebrick\") +\n  xlim(c(-2, 2)) +\n  ggtitle(latex2exp::TeX(\"$n_{1,2} = 30$\"))\n\nqf_high &lt;- quick_forest(dat_high) + \n  geom_vline(xintercept = 0.5, color = \"firebrick\") +\n  xlim(c(-2, 2)) +\n  ggtitle(latex2exp::TeX(\"$n_{1,2} = 500$\"))\n\nplt_high_low &lt;- cowplot::plot_grid(\n  qf_low,\n  qf_high\n)\n\nplt_high_low"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-ee",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-ee",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Equal-effects model (EE)",
+    "text": "Equal-effects model (EE)\nClearly, as \\(n\\) increase, each study is essentially a perfect estimation of \\(\\theta\\) as depicted in the theoretical figure (see slide 1.11)."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#are-the-ee-assumptions-realistic-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#are-the-ee-assumptions-realistic-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Are the EE assumptions realistic?",
+    "text": "Are the EE assumptions realistic?\nThe EE model is appropriate if our studies are somehow exact replications of the exact same effect. We are assuming that there is no real variability.\n\nHowever, meta-analysis rarely report the results of \\(k\\) exact replicates. It is more common to include studies with the same underlying objective but a roughly similar method.\n\npeople with different ages or other participant-level differences\ndifferent methodology\n…"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#are-the-ee-assumptions-realistic-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#are-the-ee-assumptions-realistic-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Are the EE assumptions realistic?",
+    "text": "Are the EE assumptions realistic?\nIn this case, even with extremely large studies, our effect could be larger in some conditions or smaller or absent in other conditions.\nIn other terms we are assuming that there could be some variability (i.e., heterogeneity) among studies that is independent from the sample size (or more generally the precision)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-re",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-re",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Random-effects model (RE)",
+    "text": "Random-effects model (RE)\n\n\nTheory\nEstimation\nPlots\n\n\n\nWe can extend the EE model including another source of variability, \\(\\tau^2\\). \\(\\tau^2\\) is the true heterogeneity among studies caused by methdological differences or intrisic variability in the phenomenon.\nFormally we can extend the equation 3 as: \\[\ny_i = \\mu_{\\theta} + \\delta_i + \\epsilon_i\n\\tag{4}\\]\n\\[\n\\delta_i \\sim \\mathcal{N}(0, \\tau^2)\n\\tag{5}\\]\n\\[\n\\epsilon_i \\sim \\mathcal{N}(0, \\sigma^2_i)\n\\]\nWhere \\(\\mu_{\\theta}\\) is the average effect size and \\(\\delta_i\\) is the study-specific deviation from the average effect (regulated by \\(\\tau^2\\)).\n\n\nGiven that we extended the EE model equation. Also the estimation of the average effect need to be extended. Basically the RE is still a weighted average but weights need to include also \\(\\tau^2\\).\n\\[\n\\overline y = \\frac{\\sum_{i = 1}^k y_iw^*_i}{\\sum_{i = 1}^k w^*_i}\n\\tag{6}\\]\n\\[\nw^*_i = \\frac{1}{v_i + \\tau^2}\n\\tag{7}\\]\nThe consequence is that weights are different where extremely precise/imprecise studies will impact less the estimation of the average effect under the RE model compared to EE."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Random-effects model",
+    "text": "Random-effects model\nThe crucial difference with the EE model is that even with large \\(n\\), only the \\(\\mu_{\\theta} + \\delta_i\\) are estimated (almost) without error. As long \\(\\tau^2 \\neq 0\\) there will be variability in the effect sizes."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Random-effects model",
+    "text": "Random-effects model\nAgain, we can easily demonstrate this with a simulation. We use the same simulation as slide 1.12 but including \\(\\tau^2 = 0.2\\).\n\nCodedat_low  &lt;- sim_studies(10, 0.5, 0.2, 30, 30)\ndat_high &lt;- sim_studies(10, 0.5, 0.2, 500, 500)\n\nqf_low &lt;- quick_forest(dat_low) + \n  geom_vline(xintercept = 0.5, color = \"firebrick\") +\n  xlim(c(-3, 3)) +\n  ggtitle(latex2exp::TeX(\"$n_{1,2} = 30$\"))\n\nqf_high &lt;- quick_forest(dat_high) + \n  geom_vline(xintercept = 0.5, color = \"firebrick\") +\n  xlim(c(-3, 3)) +\n  ggtitle(latex2exp::TeX(\"$n_{1,2} = 500$\"))\n\nqf_tau_high_low &lt;- cowplot::plot_grid(\n  qf_low,\n  qf_high\n)\nqf_tau_high_low\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n\n\n  \n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n  \n  \n  \n\n\nThe main point is that even with \\(n \\to \\infty\\) the observed variance is not reduced as long \\(\\tau^2 \\neq 0\\)."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-meta-analysis-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-meta-analysis-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Simulating Meta-Analysis",
+    "text": "Extra - Simulating Meta-Analysis\n\n\nEquations 1\nEquations 1\nCode\n\n\n\nFor the simulations, we can generate data from effect size and variance sampling distributions1. The unstandardized effect size is a mean difference between independent groups. The sampling distribution is:\n\\[\ny_i \\sim \\mathcal{N}(\\Delta, \\frac{1}{n_1} + \\frac{1}{n_2})\n\\]\nWhere \\(\\Delta\\) is the population level effect size and \\(n_{1,2}\\) are the sample sizes of the two studies. The sampling variances are generated from a \\(\\chi^2\\) distribution:\n\\[\n\\sigma_i^2 \\sim \\frac{\\chi^2_{n_1 + n_2 - 2}}{n_1 + n_2 - 2} (\\frac{1}{n_1} + \\frac{1}{n_2})\n\\]\n\n\nClearly we can include \\(\\tau^2\\) to include between-study variability. For an equal-effects model \\(\\Delta = \\theta\\) thus the equation is unchanged. For a random-effects model, \\(\\Delta = \\theta_i = \\mu_\\theta + \\delta_i\\)\n\\[\ny_i \\sim \\mathcal{N}(\\Delta, \\tau^2 + \\frac{1}{n_1} + \\frac{1}{n_2})\n\\]\n\n\nThe simulation is implemented in the sim_studies function:\n\nsim_studies &lt;- function(k, theta, tau2, n0, n1, summary = FALSE){\n  yi &lt;- rnorm(k, theta, sqrt(tau2 + 1/n0 + 1/n1))\n  vi &lt;- (rchisq(k, n0 + n1 - 2) / (n0 + n1 - 2)) * (1/n0 + 1/n1)\n  out &lt;- data.frame(yi, vi, sei = sqrt(vi))\n  if(summary){\n    out &lt;- summary_es(out)\n  }\n  return(out)\n}\n\n\ndat &lt;- sim_studies(k = 10, theta = 0.5, tau2 = 0.2, n0 = 30, n1 = 30)\ndat\n#&gt;             yi         vi       sei\n#&gt; 1   0.42941886 0.07100954 0.2664762\n#&gt; 2   0.18821429 0.07848938 0.2801596\n#&gt; 3   1.76659242 0.07541501 0.2746179\n#&gt; 4   0.86322268 0.07889104 0.2808755\n#&gt; 5   0.25711166 0.07885730 0.2808154\n#&gt; 6   0.35147383 0.06539647 0.2557273\n#&gt; 7  -1.12010105 0.08277837 0.2877123\n#&gt; 8   0.33662728 0.08491376 0.2913997\n#&gt; 9   0.03877311 0.05525454 0.2350628\n#&gt; 10 -0.01783659 0.06141055 0.2478115\n\n\n\n\nsee https://www.jepusto.com/simulating-correlated-smds/ for a nice blog post about simulations"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#heterogeneity",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#heterogeneity",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Heterogeneity",
+    "text": "Heterogeneity\nWe discussed so far about estimating the average effect (\\(\\theta\\) or \\(\\mu_\\theta\\)). But how to estimate the heterogeneity?\nThere are several estimators for \\(\\tau^2\\)\n\nHunter–Schmidt\nHedges\nDerSimonian–Laird\nMaximum-Likelihood\nRestricted Maximum-Likelihood (REML)\n\nWe will mainly use the REML estimator. See Viechtbauer (2005) and (Veroniki2016-zs?) for more details."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#the-q-statistics",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#the-q-statistics",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "The Q Statistics1\n",
+    "text": "The Q Statistics1\n\nThe Q statistics is used to make statistical inference on the heterogeneity. Can be considered as a weighted sum of squares:\n\\[\nQ = \\sum^k_{i = 1}w_i(y_i - \\hat \\mu)^2\n\\]\nWhere \\(\\hat \\mu\\) is EE estimation (regardless if \\(\\tau^2 \\neq 0\\)) and \\(w_i\\) are the inverse-variance weights. Note that in the case of \\(w_1 = w_2 ... = w_i\\), Q is just a standard sum of squares (or deviance).\nSee Harrer et al. (2021) (Chapter 5) and Hedges and Schauer (2019) for an overview about the Q statistics"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#the-q-statistics-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#the-q-statistics-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "The Q Statistics",
+    "text": "The Q Statistics\n\nGiven that we are summing up squared distances, they should be approximately \\(\\chi^2\\) with \\(df = k - 1\\). In case of no heterogeneity (\\(\\tau^2 = 0\\)) the observed variability is caused by sampling error only. The expectd value of the \\(\\chi^2\\) is just the degrees of freedom (\\(df = k - 1\\)).\nIn case of \\(\\tau^2 \\neq 0\\), the expected value is \\(k - 1 + \\lambda\\) where \\(\\lambda\\) is a non-centrality parameter.\nIn other terms, if the expected value of \\(Q\\) exceed the expected value assuming no heterogeneity, we have evidence that \\(\\tau^2 \\neq 0\\)."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#the-q-statistics-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#the-q-statistics-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "The Q Statistics",
+    "text": "The Q Statistics\nLet’s try a more practical approach. We simulate a lot of meta-analysis with and without heterogeneity and we check the Q statistics.\n\nCodeget_Q &lt;- function(yi, vi){\n  wi &lt;- 1/vi\n  theta_ee &lt;- weighted.mean(yi, wi)\n  sum(wi*(yi - theta_ee)^2)\n}\n\nk &lt;- 30\nn &lt;- 30\ntau2 &lt;- 0.1\nnsim &lt;- 1e4\n\nQs_tau2_0 &lt;- rep(0, nsim)\nQs_tau2 &lt;- rep(0, nsim)\nres2_tau2_0 &lt;- vector(\"list\", nsim)\nres2_tau2 &lt;- vector(\"list\", nsim)\n\nfor(i in 1:nsim){\n  dat_tau2_0 &lt;- sim_studies(k = 30, theta = 0.5, tau2 = 0, n0 = n, n1 = n)\n  dat_tau2 &lt;- sim_studies(k = 30, theta = 0.5, tau2 = tau2, n0 = n, n1 = n)\n  \n  theta_ee_tau2_0 &lt;- weighted.mean(dat_tau2_0$yi, 1/dat_tau2_0$vi)\n  theta_ee &lt;- weighted.mean(dat_tau2$yi, 1/dat_tau2$vi)\n  \n  res2_tau2_0[[i]] &lt;- dat_tau2_0$yi - theta_ee_tau2_0\n  res2_tau2[[i]] &lt;- dat_tau2$yi - theta_ee\n  \n  Qs_tau2_0[i] &lt;- get_Q(dat_tau2_0$yi, dat_tau2_0$vi)\n  Qs_tau2[i] &lt;- get_Q(dat_tau2$yi, dat_tau2$vi)\n}\n\ndf &lt;- k - 1\n\npar(mfrow = c(2,2))\nhist(Qs_tau2_0, probability = TRUE, ylim = c(0, 0.08), xlim = c(0, 150),\n     xlab = \"Q\",\n     main = latex2exp::TeX(\"$\\\\tau^2 = 0$\"))\ncurve(dchisq(x, df), 0, 100, add = TRUE, col = \"firebrick\", lwd = 2)\n\nhist(unlist(res2_tau2_0), probability = TRUE, main = latex2exp::TeX(\"$\\\\tau^2 = 0$\"), ylim = c(0, 2),\n     xlab = latex2exp::TeX(\"$y_i - \\\\hat{\\\\mu}$\"))\ncurve(dnorm(x, 0, sqrt(1/n + 1/n)), add = TRUE, col = \"dodgerblue\", lwd = 2)\n\nhist(Qs_tau2, probability = TRUE, ylim = c(0, 0.08), xlim = c(0, 150),\n     xlab = \"Q\",\n     main = latex2exp::TeX(\"$\\\\tau^2 = 0.1$\"))\ncurve(dchisq(x, df), 0, 100, add = TRUE, col = \"firebrick\", lwd = 2)\n\nhist(unlist(res2_tau2), probability = TRUE, main = latex2exp::TeX(\"$\\\\tau^2 = 0.1$\"), ylim = c(0, 2),\n     xlab = latex2exp::TeX(\"$y_i - \\\\hat{\\\\mu}$\"))\ncurve(dnorm(x, 0, sqrt(1/n + 1/n)), add = TRUE, col = \"dodgerblue\", lwd = 2)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#the-q-statistics-3",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#the-q-statistics-3",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "The Q Statistics",
+    "text": "The Q Statistics\nLet’s try a more practical approach. We simulate a lot of meta-analysis with and without heterogeneity and we check the Q statistics.\n\n\nclearly, in the presence of heterogeneity, the expected value of the Q statistics is higher (due to \\(\\lambda\\)) and also residuals are larger.\n\n\n\n\nwe can calculate a p-value for deviation from the \\(\\tau^2 = 0\\) case as evidence agaist the absence of heterogeneity"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#estimating-tau2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#estimating-tau2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Estimating \\(\\tau^2\\)\n",
+    "text": "Estimating \\(\\tau^2\\)\n\nThe Q statistics is rarely used to directly represent the heterogeneity. The raw measure of heterogeneity is \\(\\tau^2\\). The REML (restricted maximum likelihood) estimator is often used.\n\\[\n\\hat \\tau^2 = \\frac{\\sum_{i = 1}^k w_i^2[(y_i - \\hat \\mu)^2 - \\sigma^2_i]}{\\sum_{i = 1}^k w_i^2} + \\frac{1}{\\sum_{i = 1}^k w_i}\n\\]\nWhere \\(\\hat{\\mu}\\) is the weighted average (i.e., maximum likelihood estimation, see Equation 6 and Equation 7)."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#tau2-as-heterogeneity-measure",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#tau2-as-heterogeneity-measure",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "\n\\(\\tau^2\\) as heterogeneity measure",
+    "text": "\\(\\tau^2\\) as heterogeneity measure\n\n\n\\(\\tau^2\\) is the direct measure of heterogeneity in meta-analysis\nit is intepreted as a standard deviation (or variance) of the distribution of true effects\na phenomenon associated with an higher \\(\\tau^2\\) is interpred as more variable"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#tau2-as-heterogeneity-measure-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#tau2-as-heterogeneity-measure-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "\n\\(\\tau^2\\) as heterogeneity measure",
+    "text": "\\(\\tau^2\\) as heterogeneity measure\n\nCode# we generate 1e5 values from a random-effect model with certain parameters and different tau2 values\n# and check the expected distrubution of effect sizes\n\nn &lt;- 100\nk &lt;- 1e5\ntau2 &lt;- c(0, 0.1, 0.2, 0.5)\n\ndats &lt;- lapply(tau2, function(x) sim_studies(k, 0.5, x, n, n))\nnames(dats) &lt;- tau2\n\ndat &lt;- bind_rows(dats, .id = \"tau2\") \ndat$tau2 &lt;- factor(dat$tau2)\ndat$tau2 &lt;- factor(dat$tau2, labels = latex2exp::TeX(sprintf(\"$\\\\tau^2 = %s$\", levels(dat$tau2))))\n\ndat |&gt; \n  ggplot(aes(x = yi, y = after_stat(density))) +\n  geom_histogram(bins = 50) +\n  geom_vline(xintercept = 0.5, lwd = 0.5, color = \"firebrick\") +\n  facet_wrap(~tau2, labeller = label_parsed) +\n  ggtitle(latex2exp::TeX(\"Expected $y_i$ distribution, $d = 0.5$, $n_{1,2} = 100$\")) +\n  xlab(latex2exp::TeX(\"$y_i$\"))"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#i2-higgins2002-fh",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#i2-higgins2002-fh",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "\n\\(I^2\\) (Higgins and Thompson 2002)\n",
+    "text": "\\(I^2\\) (Higgins and Thompson 2002)\n\nWe have two sources of variability in a random-effects meta-analysis, the sampling variabilities \\(\\sigma_i^2\\) and \\(\\tau^2\\). We can use the \\(I^2\\) to express the interplay between the two. \\[\nI^2 = 100\\% \\times \\frac{\\hat{\\tau}^2}{\\hat{\\tau}^2 + \\tilde{v}}\n\\tag{8}\\]\n\\[\n\\tilde{v} = \\frac{(k-1) \\sum w_i}{(\\sum w_i)^2 - \\sum w_i^2},\n\\]\nWhere \\(\\tilde{v}\\) is the typical sampling variability. \\(I^2\\) is intepreted as the proportion of total variability due to real heterogeneity (i.e., \\(\\tau^2\\))"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#i2-higgins2002-fh-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#i2-higgins2002-fh-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "\n\\(I^2\\) (Higgins and Thompson 2002)1\n",
+    "text": "\\(I^2\\) (Higgins and Thompson 2002)1\n\nNote that we can have the same \\(I^2\\) in two completely different meta-analysis. An high \\(I^2\\) does not represent high heterogeneity. Let’s assume to have two meta-analysis with \\(k\\) studies and small (\\(n = 30\\)) vs large (\\(n = 500\\)) sample sizes.\nLet’s solve Equation 8 for \\(\\tau^2\\) (using filor::tau2_from_I2()) and we found that the same \\(I^2\\) can be obtained with two completely different \\(\\tau^2\\) values:\n\nn_1 &lt;- 30\nvi_1 &lt;- 1/n_1 + 1/n_1\ntau2_1 &lt;- filor::tau2_from_I2(0.8, vi_1)\ntau2_1\n#&gt; [1] 0.2666667\n\nn_2 &lt;- 500\nvi_2 &lt;- 1/n_2 + 1/n_2\ntau2_2 &lt;- filor::tau2_from_I2(0.8, vi_2)\ntau2_2\n#&gt; [1] 0.016\n\nsee https://www.meta-analysis-workshops.com/download/common-mistakes1.pdf"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#i2-higgins2002-fh-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#i2-higgins2002-fh-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "\n\\(I^2\\) (Higgins and Thompson 2002)\n",
+    "text": "\\(I^2\\) (Higgins and Thompson 2002)\n\n\nn_1 &lt;- 30\nvi_1 &lt;- 1/n_1 + 1/n_1\ntau2_1 &lt;- filor::tau2_from_I2(0.8, vi_1)\ntau2_1\n#&gt; [1] 0.2666667\n\nn_2 &lt;- 500\nvi_2 &lt;- 1/n_2 + 1/n_2\ntau2_2 &lt;- filor::tau2_from_I2(0.8, vi_2)\ntau2_2\n#&gt; [1] 0.016\n\n\nIn other terms, the \\(I^2\\) can be considered a good index of heterogeneity only when the total variance (\\(\\tilde{v} + \\tau^2\\)) is the same."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-in-r-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#meta-analysis-in-r-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Meta-analysis in R",
+    "text": "Meta-analysis in R\nIn R there are several packages to conduct a meta-analysis. For me, the best package is metafor (Viechtbauer 2010). The package support all steps in meta-analysis providing also an amazing documentation:"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Equal-effects model in R",
+    "text": "Equal-effects model in R\nDisclaimer: we are omitting the important part of collecting the information from published studies and calculating the (un)standardized effect sizes. Clerly this part is highly dependent on the actual dataset.\nThere are few useful resources:\n\nChapters 1-9 from Borestein et al. (2009)\n\nThe metafor::escalc() function that calculate all effects size and report an useful documentation"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Equal-effects model in R",
+    "text": "Equal-effects model in R\nWe can simulate an EE dataset (i.e., \\(\\tau^2 = 0\\)) and then fit the model with metafor:\n\ntheta &lt;- 0.3\nk &lt;- 30 # number of studies\nn &lt;- round(runif(k, 10, 60)) # random sample sizes with a plausible range\ndat &lt;- sim_studies(k = k, theta = theta, tau2 = 0, n0 = n, n1 = n)\ndat$n &lt;- n # n1 and n2 are the same, put only one\nhead(dat)\n#&gt;           yi         vi       sei  n\n#&gt; 1 -0.5774115 0.15008228 0.3874045 10\n#&gt; 2  0.3453475 0.04255176 0.2062808 46\n#&gt; 3  0.4126877 0.04788506 0.2188266 34\n#&gt; 4 -0.3028113 0.08649341 0.2940976 26\n#&gt; 5  0.2000260 0.05479083 0.2340744 55\n#&gt; 6  0.3873451 0.04458535 0.2111524 45"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Equal-effects model in R",
+    "text": "Equal-effects model in R\nWe can start by some summary statistics:\n\n# unweighted summary statistics for the effect\nsummary(dat$yi)\n#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n#&gt; -0.5774  0.1575  0.2350  0.2231  0.3661  0.5121\n\n# unweighted summary statistics for the variances\nsummary(dat$vi)\n#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n#&gt; 0.03055 0.03970 0.05136 0.06509 0.08463 0.15520\n\n# sample sizes\nsummary(dat$n) # n0 and n1 are the same\n#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n#&gt;   10.00   28.25   37.50   38.00   52.00   60.00"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r-3",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r-3",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Equal-effects model in R",
+    "text": "Equal-effects model in R\nThen we can use the metafor::rma.uni() function (or more simply metafor::rma()) providing the effect size, variances and method = \"EE\" to specify that we are fitting an equal-effects model.\n\nfit_ee &lt;- rma(yi, vi, method = \"EE\", data = dat)\nsummary(fit_ee)\n#&gt; \n#&gt; Equal-Effects Model (k = 30)\n#&gt; \n#&gt;   logLik  deviance       AIC       BIC      AICc   \n#&gt;   5.8152   18.7126   -9.6304   -8.2292   -9.4876   \n#&gt; \n#&gt; I^2 (total heterogeneity / total variability):   0.00%\n#&gt; H^2 (total variability / sampling variability):  0.65\n#&gt; \n#&gt; Test for Heterogeneity:\n#&gt; Q(df = 29) = 18.7126, p-val = 0.9284\n#&gt; \n#&gt; Model Results:\n#&gt; \n#&gt; estimate      se    zval    pval   ci.lb   ci.ub      \n#&gt;   0.2790  0.0418  6.6722  &lt;.0001  0.1970  0.3609  *** \n#&gt; \n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r-4",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#equal-effects-model-in-r-4",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Equal-effects model in R",
+    "text": "Equal-effects model in R\nWe can easily show that the results is the same as performing a simple weighted average using study-specific variances as weight:\n\nwi &lt;- 1/dat$vi\n\nweighted.mean(dat$yi, wi)\n#&gt; [1] 0.2789802\n\nsummary(fit_ee)\n#&gt; \n#&gt; Equal-Effects Model (k = 30)\n#&gt; \n#&gt;   logLik  deviance       AIC       BIC      AICc   \n#&gt;   5.8152   18.7126   -9.6304   -8.2292   -9.4876   \n#&gt; \n#&gt; I^2 (total heterogeneity / total variability):   0.00%\n#&gt; H^2 (total variability / sampling variability):  0.65\n#&gt; \n#&gt; Test for Heterogeneity:\n#&gt; Q(df = 29) = 18.7126, p-val = 0.9284\n#&gt; \n#&gt; Model Results:\n#&gt; \n#&gt; estimate      se    zval    pval   ci.lb   ci.ub      \n#&gt;   0.2790  0.0418  6.6722  &lt;.0001  0.1970  0.3609  *** \n#&gt; \n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-in-r",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-in-r",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Random-effects model in R",
+    "text": "Random-effects model in R\nThe syntax for a random-effects model is the same, we just need to use method = \"REML\" (or another \\(\\tau^2\\) estimation method)\n\nfit_re &lt;- rma(yi, vi, method = \"REML\", data = dat)\nsummary(fit_re)\n#&gt; \n#&gt; Random-Effects Model (k = 30; tau^2 estimator: REML)\n#&gt; \n#&gt;   logLik  deviance       AIC       BIC      AICc   \n#&gt;   5.2602  -10.5204   -6.5204   -3.7858   -6.0588   \n#&gt; \n#&gt; tau^2 (estimated amount of total heterogeneity): 0 (SE = 0.0128)\n#&gt; tau (square root of estimated tau^2 value):      0\n#&gt; I^2 (total heterogeneity / total variability):   0.00%\n#&gt; H^2 (total variability / sampling variability):  1.00\n#&gt; \n#&gt; Test for Heterogeneity:\n#&gt; Q(df = 29) = 18.7126, p-val = 0.9284\n#&gt; \n#&gt; Model Results:\n#&gt; \n#&gt; estimate      se    zval    pval   ci.lb   ci.ub      \n#&gt;   0.2790  0.0418  6.6722  &lt;.0001  0.1970  0.3609  *** \n#&gt; \n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-in-r-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-in-r-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Random-effects model in R",
+    "text": "Random-effects model in R\nWe can easily compare the models using the compare_rma() function:\n\nfilor::compare_rma(fit_ee, fit_re)  |&gt;\n  round(5)\n#&gt;        fit_ee  fit_re\n#&gt; b     0.27898 0.27898\n#&gt; se    0.04181 0.04181\n#&gt; zval  6.67219 6.67219\n#&gt; pval  0.00000 0.00000\n#&gt; ci.lb 0.19703 0.19703\n#&gt; ci.ub 0.36093 0.36093\n#&gt; I2    0.00000 0.00000\n#&gt; tau2  0.00000 0.00000\n\nWhat do you think? are there differences between the two models? What could be the reasons?"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-in-r-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#random-effects-model-in-r-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Random-effects model in R",
+    "text": "Random-effects model in R\nClearly, given that we simulated \\(\\tau^2 = 0\\) the RE model results is very close (if not equal) to the EE model. We can simulate a RE model:\n\ntau2 &lt;- 0.2\ndat &lt;- sim_studies(k = k, theta = theta, tau2 = tau2, n0 = n, n1 = n)\n\nfit_re &lt;- rma(yi, vi, method = \"REML\", data = dat)\nsummary(fit_re)\n#&gt; \n#&gt; Random-Effects Model (k = 30; tau^2 estimator: REML)\n#&gt; \n#&gt;   logLik  deviance       AIC       BIC      AICc   \n#&gt; -26.4883   52.9766   56.9766   59.7112   57.4382   \n#&gt; \n#&gt; tau^2 (estimated amount of total heterogeneity): 0.2944 (SE = 0.0937)\n#&gt; tau (square root of estimated tau^2 value):      0.5426\n#&gt; I^2 (total heterogeneity / total variability):   85.06%\n#&gt; H^2 (total variability / sampling variability):  6.70\n#&gt; \n#&gt; Test for Heterogeneity:\n#&gt; Q(df = 29) = 205.9017, p-val &lt; .0001\n#&gt; \n#&gt; Model Results:\n#&gt; \n#&gt; estimate      se    zval    pval   ci.lb   ci.ub      \n#&gt;   0.4907  0.1094  4.4839  &lt;.0001  0.2762  0.7052  *** \n#&gt; \n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#forest-plot",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#forest-plot",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Forest Plot",
+    "text": "Forest Plot\nThe most common plot to represent meta-analysis results is the forest plot:\n\nforest(fit_re)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#forest-plot-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#forest-plot-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Forest Plot",
+    "text": "Forest Plot\nThe most common plot to represent meta-analysis results is the forest plot:\n\nThe x axis represent the effect size\n\nThe y axis represent the studies\n\nThe size of the square is the weight of that study (\\(w_i = 1/\\sigma_i^2\\))\nThe interval is the 95% confidence interval\n\nThe diamond is the estimated effect and the 95% confidence interval"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#forest-plot-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#forest-plot-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Forest Plot",
+    "text": "Forest Plot\nIt is also common to plot studies ordering by the size of the effect, showing asymmetries or other patterns:\n\nforest(fit_re)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#multilab-studies-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#multilab-studies-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Multilab Studies",
+    "text": "Multilab Studies\nSo far we reasoned about collecting published studies and conducting a meta-analysis. Despite pooling evidence from multiple studies there are several limitations:\n\n\npublication bias\n\n\n\n\nsmall number of studies (\\(k\\)) thus low power and low estimation precision\n\n\n\n\nthe estimated \\(\\tau^2\\) could be high because the methdological heterogeneity is high –&gt; each research group use a different methodology"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#multilab-studies-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#multilab-studies-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Multilab Studies",
+    "text": "Multilab Studies\nWith multilab studies we define a new data collection where different research group conduct an experiment with a similar (or the exact same) methodology. In this way we can:\n\n\neliminate the publication bias\n\n\n\n\n\n\ncalibrate the number of studies (\\(k\\)) and observations (\\(n\\)) according to our criteria (power, precision, etc.)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#multilab-studies-and-meta-analysis",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#multilab-studies-and-meta-analysis",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Multilab Studies and meta-analysis",
+    "text": "Multilab Studies and meta-analysis\nFrom a statistical point of view, the only difference is the source of the data (planned and collected vs collected from the literature). In fact, a multilab study can be analyzed also using standard meta-analysis tools.\n\nWhen intepreting the results we could highlight some differences:\n\n\n\n\n\\(\\tau^2\\) in standard meta-analysis is considered the true variability of the phenomenon. In multilab studies (assuming an exact replication approach) should be low or close to zero.\n\n\n\n\nIn standard meta-analysis we could try to explain \\(\\tau^2\\) using meta-regression (e.g., putting the average participant age as predictor) while in multilab studies we could plan to use the same age thus removing the age effect."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Planning a Multilab Study",
+    "text": "Extra - Planning a Multilab Study\nLet’s imagine to plan a multilab study with the same setup as the previous meta-analysis. We are not collecting data from the literature but we want to know the number of studies \\(k\\) that we need to achieve e.g. a good statistical Power.\n\nWe define power as the probability of correctly rejecting the null hypothesis of no effect when the effect is actually present"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Planning a Multilab Study",
+    "text": "Extra - Planning a Multilab Study\nWe can do a Power analysis using Monte Carlo simulations:\n\nsimulate a meta-analysis given a set of parameters\nfit the meta-analysis model\nextract the p-value\nrepeat the steps 1-3 a lot of times e.g. 10000\ncount the number of significant (e.g., \\(\\leq \\alpha\\)) p-values"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Planning a Multilab Study",
+    "text": "Extra - Planning a Multilab Study\nWe can implement a simple simulation as:\n\nlibrary(metafor)\nlibrary(ggplot2)\n\n# set.seed(2023)\n\nk &lt;- seq(10, 100, 10)\nn &lt;- seq(10, 100, 20)\nes &lt;- 0.3\ntau2 &lt;- 0.1\nalpha &lt;- 0.05\nnsim &lt;- 1e3\n\nsim &lt;- tidyr::expand_grid(k, n, es, tau2)\nsim$power &lt;- 0\n\n# handle errors, return NA\nsrma &lt;- purrr::possibly(rma, otherwise = NA)\n\nfor(i in 1:nrow(sim)){ # iterate for each condition\n  pval &lt;- rep(0, nsim)\n  for(j in 1:nsim){ # iterate for each simulation\n    dat &lt;- sim_studies(k = sim$k[i], \n                       theta = sim$es[i], \n                       tau2 = sim$tau2[i],\n                       n0 = sim$n[i],\n                       n1 = sim$n[i])\n    fit &lt;- srma(yi, vi, data = dat, method = \"REML\")\n    pval[j] &lt;- fit$pval\n  }\n  sim$power[i] &lt;- mean(pval &lt;= alpha) # calculate power\n  filor::pb(nrow(sim), i)\n}\n\nsaveRDS(sim, here(\"04-meta-analysis/objects/power-example.rds\"))"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study-3",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study-3",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Planning a Multilab Study",
+    "text": "Extra - Planning a Multilab Study\nThen we can plot the results:\n\nCodesim &lt;- readRDS(here(\"slides/03-meta-analysis/objects/power-example.rds\"))\n\ntitle &lt;- \"$\\\\mu_\\\\theta = 0.3$, $\\\\tau^2 = 0.1$, $\\\\alpha = 0.05\"\n\nsim |&gt; \n  ggplot(aes(x = k, y = power, group = n, color = factor(n))) +\n  geom_line(lwd = 1) +\n  xlab(\"Number of Studies (k)\") +\n  ylab(\"Power\") +\n  labs(color = \"Sample Size\") +\n  theme(legend.position = \"bottom\") +\n  ggtitle(latex2exp::TeX(title))"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study-4",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---planning-a-multilab-study-4",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Planning a Multilab Study",
+    "text": "Extra - Planning a Multilab Study\nThis is a flexible way to simulate and plan a multilab study:\n\nWe could prefer increasing \\(k\\) (i.e., the research units) and limiting \\(n\\) thus reducing the effort for each lab. The downside are difficulties in managing multiple labs, increased dropout rate, difficulty in reaching the planned \\(k\\)\n\nWe could prefer increasing \\(n\\) and limiting \\(k\\). Each lab need to put more resources but the overall project could be easier.\nWe could try to estimate a cost function according to several parameters and find the best trade-off as implemented in Hedges and Schauer (2021)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Publication Bias (PB)",
+    "text": "Publication Bias (PB)\nThe PB is one of the most problematic aspects of meta-analysis. Essentially the probability of publishing a paper (~and thus including into the meta-analysis) is not the same regardless the result. Clearly we could include also the gray literature to mitigate the problem."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-disclaimer",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-disclaimer",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Publication Bias Disclaimer!",
+    "text": "Publication Bias Disclaimer!\nWe cannot (completely) solve the PB using statistical tools. The PB is a problem related to the publishing process and publishing incentives (significant results are more catchy and easy to explain).\n\n\n\npre-registrations, multi-lab studies, etc. can (almost) completely solve the problem filling the literature with unbiased studies (at least from the publishing point of view)\n\n\n\n\nthere are statistical tools to detect, estimate and correct for the publication bias. As every statistical method, they are influenced by statistical assumptions, number of studies and sample size, heterogeneity, etc."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---the-big-picture",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---the-big-picture",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Publication Bias (PB) - The Big Picture1\n",
+    "text": "Publication Bias (PB) - The Big Picture1\n\n\n\n\nPublication BiasVisual InspectionRobustnessDetectionCorrectionFail-safe NFunnel PlotRegression MethodsTrim and FillSelection Models\n\n\n\n\nThanks to the Wolfgang Viechtbauer’s course https://www.wvbauer.com/doku.php/course_ma"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Publication Bias (PB) - Funnel Plot",
+    "text": "Publication Bias (PB) - Funnel Plot\nThe first tool is called funnel plot. This is a visual tool to check the presence of asymmetry that could be caused by publication bias. If meta-analysis assumptions are respected, and there is no publication bias:\n\neffects should be normally distributed around the average effect\nmore precise studies should be closer to the average effect\nless precise studies could be equally distributed around the average effect\n\nLet’s simulate a lot of studies to show:\n\nset.seed(2023)\nk &lt;- 1e3\nn &lt;- round(runif(k, 10, 200))\ndat &lt;- sim_studies(k = k, theta = 0.5, tau2 = 0, n0 = n, n1 = n)\nfit &lt;- rma(yi, vi, method = \"EE\", data = dat)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Publication Bias (PB) - Funnel Plot",
+    "text": "Publication Bias (PB) - Funnel Plot\nLet’s plot the distribution of the data:\n\nhist(dat$yi)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n  \n  \n  \n  \n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n\n\n\n\n\n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n\n\n\n\n\n\n\n\nThe distribution is clearly normal and centered on the true simulated value. Now let’s add the precision (in this case standard error thus \\(\\sqrt{\\sigma_i^2}\\)) on the y-axis."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Publication Bias (PB) - Funnel Plot",
+    "text": "Publication Bias (PB) - Funnel Plot\nNote that the y axis is reversed so high-precise studies (\\(\\sqrt{\\sigma_i^2}\\) close to 0) are on top.\n\nCodeplot(dat$yi, dat$sei, ylim = rev(range(dat$sei)),\n     xlab = latex2exp::TeX(\"$y_i$\"),\n     ylab = latex2exp::TeX(\"$\\\\sqrt{\\\\sigma_i^2}$\"),\n     pch = 19,\n     col = scales::alpha(\"firebrick\", 0.5))\nabline(v = fit$b[[1]], col = \"black\", lwd = 1.2)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot-3",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot-3",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Publication Bias (PB) - Funnel Plot",
+    "text": "Publication Bias (PB) - Funnel Plot\nThe plot assume the typical funnel shape and there are not missing spots on the at the bottom. The presence of missing spots is a potential index of publication bias."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot-4",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---funnel-plot-4",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Publication Bias (PB) - Funnel Plot",
+    "text": "Publication Bias (PB) - Funnel Plot\nThe plot assume the typical funnel shape and there are not missing spots on the at the bottom. The presence of missing spots is a potential index of publication bias."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#robustness-to-pb---fail-safe-n",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#robustness-to-pb---fail-safe-n",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Robustness to PB - Fail-safe N",
+    "text": "Robustness to PB - Fail-safe N\nThe Fail-safe N (Rosenthal 1979) idea is very simple. Given a meta-analysis with a significant result (i.e., \\(p \\leq \\alpha\\)). How many null studies (i.e., \\(\\hat \\theta = 0\\)) do I need to obtain \\(p &gt; \\alpha\\)?\n\nmetafor::fsn(yi, vi, data = dat)\n#&gt; \n#&gt; Fail-safe N Calculation Using the Rosenthal Approach\n#&gt; \n#&gt; Observed Significance Level: &lt;.0001\n#&gt; Target Significance Level:   0.05\n#&gt; \n#&gt; Fail-safe N: 4396757"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#robustness-to-pb---fail-safe-n-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#robustness-to-pb---fail-safe-n-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Robustness to PB - Fail-safe N",
+    "text": "Robustness to PB - Fail-safe N\nThere are several criticism to the Fail-safe N procedure:\n\n\nis not actually detecting the PB but suggesting the required PB size to remove the effect. A very large N suggest that even with PB, it is unlikely that the results could be completely changed by actually reporting null studies\n\n\n\n\n\nOrwin (1983) proposed a new method calculating the number of studies required to reduce the effect size to a given target\n\n\n\n\n\nRosenberg (2005) proposed a method similar to Rosenthal (1979) but combining the (weighted) effect sizes and not the p-values."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#detecting-pb---egger-regression",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#detecting-pb---egger-regression",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Detecting PB - Egger Regression",
+    "text": "Detecting PB - Egger Regression\nA basic method to test the funnel plot asymmetry is using an the Egger regression test. Basically we calculate the relationship between \\(y_i\\) and \\(\\sqrt{\\sigma^2_i}\\). In the absence of asimmetry, the line slope should be not different from 0.\nWe can use the metafor::regtest() function:\n\negger &lt;- regtest(fit)\negger\n#&gt; \n#&gt; Regression Test for Funnel Plot Asymmetry\n#&gt; \n#&gt; Model:     fixed-effects meta-regression model\n#&gt; Predictor: standard error\n#&gt; \n#&gt; Test for Funnel Plot Asymmetry: z = 1.0847, p = 0.2781\n#&gt; Limit Estimate (as sei -&gt; 0):   b = 0.4821 (CI: 0.4521, 0.5122)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---egger-regression",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#publication-bias-pb---egger-regression",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Publication Bias (PB) - Egger Regression",
+    "text": "Publication Bias (PB) - Egger Regression\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n\n\n  \n\n\n\n  \n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n\n\n  \n\n\n\n\n\n  \n\n\n  \n\n\n\n  \n\n\n\n\n\n\nThis is a standard (meta) regression thus the number of studies, the precision of each study and heterogeneity influence the reliability (power, type-1 error rate, etc.) of the procedure."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#correcting-pb---trim-and-fill",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#correcting-pb---trim-and-fill",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Correcting PB - Trim and Fill",
+    "text": "Correcting PB - Trim and Fill\nThe Trim and Fill method (Duval and Tweedie 2000) is used to impute the hypothetical missing studies according to the funnel plot and recomputing the meta-analysis effect. Shi and Lin (Shi and Lin 2019) provide an updated overview of the method with some criticisms.\n\nLet’s simulate again a publication bias with \\(k = 100\\) studies:\n\nset.seed(2023)\nk &lt;- 100 # we increased k to better show the effect\ntheta &lt;- 0.5\ntau2 &lt;- 0.1\n\ndat &lt;- sim_pub_bias(selmodel = list(method = \"2step\", param = \"pval\", th = 0.05, side = \"&lt;=\"), k = k, theta = theta, tau2 = tau2, nmin = 10, nmax = 200)\nfit &lt;- rma(yi, vi, data = dat, method = \"REML\")"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#correcting-pb---trim-and-fill-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#correcting-pb---trim-and-fill-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Correcting PB - Trim and Fill",
+    "text": "Correcting PB - Trim and Fill\nNow we can use the metafor::trimfill() function:\n\ntaf &lt;- metafor::trimfill(fit)\ntaf\n#&gt; \n#&gt; Estimated number of missing studies on the left side: 29 (SE = 6.4513)\n#&gt; \n#&gt; Random-Effects Model (k = 129; tau^2 estimator: REML)\n#&gt; \n#&gt; tau^2 (estimated amount of total heterogeneity): 0.1382 (SE = 0.0203)\n#&gt; tau (square root of estimated tau^2 value):      0.3718\n#&gt; I^2 (total heterogeneity / total variability):   88.56%\n#&gt; H^2 (total variability / sampling variability):  8.74\n#&gt; \n#&gt; Test for Heterogeneity:\n#&gt; Q(df = 128) = 1073.8812, p-val &lt; .0001\n#&gt; \n#&gt; Model Results:\n#&gt; \n#&gt; estimate      se     zval    pval   ci.lb   ci.ub      \n#&gt;   0.4851  0.0357  13.5951  &lt;.0001  0.4152  0.5551  *** \n#&gt; \n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nThe trim-and-fill estimates that 29 are missing. The new effect size after including the studies is reduced and closer to the simulated value (but in this case still significant)."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#correcting-pb---trim-and-fill-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#correcting-pb---trim-and-fill-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Correcting PB - Trim and Fill",
+    "text": "Correcting PB - Trim and Fill\nWe can also visualize the funnel plot highligting the points that are included by the method.\n\nfunnel(taf)\n\n\nCodefunnel(taf)\negg &lt;- regtest(fit)\negg_npb &lt;- regtest(taf)\nse &lt;- seq(0,1.8,length=100)\nlines(coef(egg$fit)[1] + coef(egg$fit)[2]*se, se, lwd=3, col = \"black\")\nlines(coef(egg_npb$fit)[1] + coef(egg_npb$fit)[2]*se, se, lwd=3, col = \"firebrick\")\nlegend(\"topleft\", legend = c(\"Original\", \"Corrected\"), fill = c(\"black\", \"firebrick\"))"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#correcting-pb---selection-models-sm",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#correcting-pb---selection-models-sm",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Correcting PB - Selection Models (SM)",
+    "text": "Correcting PB - Selection Models (SM)\n\n\nSM assume a relationship between the p-value and the probability of publishing\n\n\n\n\n\nSM estimate this relationship from available studies and correct the average effect\n\n\n\n\n\n\nThe models are complicated (number of parameters) and need a large \\(k\\)\n\n\n\n\n\n\n\nThey provide a very elegant framework to formalize the publication bias supporting simulations and methods development"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#sm---publication-bias-function",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#sm---publication-bias-function",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "SM - Publication Bias Function",
+    "text": "SM - Publication Bias Function\n\nThe publication bias can be formalized using a weight function that assign a probability to a certain study properties (e.g., p-value, sample size, z-score, etc.) representing the likelihood of that study being published.\n\n\n\nThe general idea (e.g., Citkowicz and Vevea 2017) is to use a weighted probability density function (wPDF). In the presence of publication bias, the parameters of the wPDF will be different (i.e., adjusted) compared to unweighted PDF (i.e., assuming no publication bias)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#sm---publication-bias-function-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#sm---publication-bias-function-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "SM - Publication Bias Function",
+    "text": "SM - Publication Bias Function\nThe random-effect meta-analysis PDF can be written as (e.g., Citkowicz and Vevea 2017):\n\\[\nf\\left(y_i \\mid \\beta, \\tau^2 ; \\sigma_i^2\\right)=\\phi\\left(\\frac{y_i-\\Delta_i}{\\sqrt{\\sigma_i^2+\\tau^2}}\\right) / \\sqrt{\\sigma_i^2+\\tau^2},\n\\]\nAnd adding the weight function:\n\\[\nf\\left(Y_i \\mid \\beta, \\tau^2 ; \\sigma_i^2\\right)=\\frac{\\mathrm{w}\\left(p_i\\right) \\phi\\left(\\frac{y_i-\\Delta_i}{\\sqrt{\\sigma_i^2+\\tau^2}}\\right) / \\sqrt{\\sigma_i^2+\\tau^2}}{\\int_{-\\infty}^{\\infty} \\mathrm{w}\\left(p_i\\right) \\phi\\left(\\frac{Y_i-\\Delta_i}{\\sqrt{\\sigma_i^2+\\tau^2}}\\right) / \\sqrt{\\sigma_i^2+\\tau^2} d Y_i}\n\\]"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#sec-pub-bias-fun",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#sec-pub-bias-fun",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "SM - Publication Bias Function",
+    "text": "SM - Publication Bias Function\nFor example, Citkowicz and Vevea (2017) proposed a model using a weight function based on the Beta distribution with two parameters \\(a\\) and \\(b\\)1 \\(w(p_i) = p_i^{a - 1} \\times (1 - p_i)^{b - 1}\\):\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n\n\n\n\n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n  \n  \n  \n\n\n\n  \n  \n  \n  \n  \n  \n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n\n\n\n\n\n\n\nhttps://www.youtube.com/watch?v=ucmOCuyCk-c"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#selection-models",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#selection-models",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Selection Models",
+    "text": "Selection Models\nIn R we can use the metafor::selmodel() function to implement several type of models. For example we can apply the Citkowicz and Vevea (2017) model:\n\nsel_beta &lt;- selmodel(fit, type = \"beta\")\n\n\n\nResults\nPlot\n\n\n\n\n#&gt; \n#&gt; Random-Effects Model (k = 100; tau^2 estimator: ML)\n#&gt; \n#&gt; tau^2 (estimated amount of total heterogeneity): 0.0857 (SE = 0.0255)\n#&gt; tau (square root of estimated tau^2 value):      0.2928\n#&gt; \n#&gt; Test for Heterogeneity:\n#&gt; LRT(df = 1) = 293.8104, p-val &lt; .0001\n#&gt; \n#&gt; Model Results:\n#&gt; \n#&gt; estimate      se    zval    pval   ci.lb   ci.ub      \n#&gt;   0.4847  0.1020  4.7521  &lt;.0001  0.2848  0.6846  *** \n#&gt; \n#&gt; Test for Selection Model Parameters:\n#&gt; LRT(df = 2) = 14.3271, p-val = 0.0008\n#&gt; \n#&gt; Selection Model Results:\n#&gt; \n#&gt;          estimate      se     zval    pval   ci.lb   ci.ub     \n#&gt; delta.1    0.8174  0.0700  -2.6075  0.0091  0.6802  0.9547  ** \n#&gt; delta.2    0.7017  0.2009  -1.4846  0.1376  0.3080  1.0955     \n#&gt; \n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\nplot(sel_beta)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#selection-models-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#selection-models-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Selection Models",
+    "text": "Selection Models\nLet’s try the Beta selection model without publication bias:\n\nset.seed(2023)\ndat &lt;- sim_studies(30, 0.5, 0, 30, 30)\nfit &lt;- rma(yi, vi, data = dat, method = \"ML\")\nsel_beta &lt;- selmodel(fit, type = \"beta\")\nplot(sel_beta)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#more-on-sm-and-publication-bias",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#more-on-sm-and-publication-bias",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "More on SM and Publication Bias",
+    "text": "More on SM and Publication Bias\n\nThe SM documentation of metafor::selmodel() https://wviechtb.github.io/metafor/reference/selmodel.html\n\nWolfgang Viechtbauer overview of PB https://www.youtube.com/watch?v=ucmOCuyCk-c\n\n\nHarrer et al. (2021) - Doing Meta-analysis in R - Chapter 9\n\n\nMcShane, Böckenholt, and Hansen (2016) for a nice introduction about publication bias and SM\nAnother good overview by Jin, Zhou, and He (2015)\n\nSee also Guan and Vandekerckhove (2016), Maier, Bartoš, and Wagenmakers (2023) and Bartoš et al. (2022) for Bayesian approaches to PB"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#more-on-sm-and-publication-bias-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#more-on-sm-and-publication-bias-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "More on SM and Publication Bias",
+    "text": "More on SM and Publication Bias\nAssessing, testing and developing sofisticated models for publication bias is surely important and interesting. But as Wolfgang Viechtbauer (the author of metafor) said:\n\nhopefully there won’t be need for these models in the future (Viechtbauer 2021)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Simulating Publication Bias",
+    "text": "Extra - Simulating Publication Bias\nI wrote two custom functions to generate a biased dataset based on different criteria:\n\na simple step function with a threshold (e.g., \\(p \\leq 0.05\\) then 1 else 0)\nthe weight function from slide Slide 6.19\n\na custom criterion (e.g., select only \\(|y_i| &gt; 0.5\\))\n\n\nweigth_beta &lt;- function(x, a, b){\n  x^(a - 1) * (1 - x)^(b - 1)\n}\nweigth_2step &lt;- function(x, th, side = \"&lt;=\"){\n  ifelse(eval(call(side, x, th)), 1, 0)\n}\n\n…continue"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-1",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-1",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Simulating Publication Bias",
+    "text": "Extra - Simulating Publication Bias\n\nsim_pub_bias &lt;- function(selmodel,\n                         k, \n                         theta, \n                         tau2, \n                         nmin, \n                         nmax){\n  selmodel$method &lt;- match.arg(selmodel$method, choices = c(\"custom\", \"2step\", \"beta\"))\n  res &lt;- vector(mode = \"list\", length = k)\n  i &lt;- 1\n  while(i &lt;= k){\n    n &lt;- round(runif(1, nmin, nmax))\n    dat_i &lt;- sim_studies(k = 1, theta = theta, tau2 = tau2, n0 = n, n1 = n)\n    dat_i$n &lt;- n\n    dat_i &lt;- metafor::escalc(yi = yi, vi = vi, sei = sei, data = dat_i)\n    dat_i &lt;- data.frame(summary(dat_i))\n    \n    if(selmodel$method == \"2step\"){\n      ppub &lt;- weigth_2step(x = dat_i[[selmodel$param]], th = selmodel$th, side = selmodel$side)\n    }else if(selmodel$method == \"beta\"){\n      ppub &lt;- weigth_beta(x = dat_i$pval, a = selmodel$a, b = selmodel$b)\n    }else{\n      ppub &lt;- with(dat_i, eval(parse(text = selmodel$operation)))\n    }\n    \n    if(rbinom(1, 1, ppub) == 1){\n      res[[i]] &lt;- dat_i\n      i &lt;- i + 1\n    }\n  }\n  \n  dat &lt;- do.call(rbind, res)\n  return(dat)\n}"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-2",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-2",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Simulating Publication Bias",
+    "text": "Extra - Simulating Publication Bias\nFor example, let’s simulate a pretty simple publication bias model where we included \\(k = 40\\) studies. The biased criteria is that only \\(p \\leq 0.05\\) are included.\n\n\\(\\theta = 0.5\\)\n\n\\(\\tau^2 = 0\\) i.e. an EE model\n\\(n \\sim \\mathcal{U}(10, 200)\\)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-3",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-3",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Simulating Publication Bias",
+    "text": "Extra - Simulating Publication Bias\n\nset.seed(2023)\nk &lt;- 100\ntheta &lt;- 0.5\ntau2 &lt;- 0.1\n\ndat &lt;- sim_pub_bias(selmodel = list(method = \"2step\", param = \"pval\", th = 0.05, side = \"&lt;=\"), k = k, theta = theta, tau2 = tau2, nmin = 10, nmax = 200)\n\nfilor::trim_df(dat)\n#&gt;      yi    vi   sei   n    zi  pval ci.lb ci.ub\n#&gt; 1 0.352  0.02  0.14  99  2.52 0.012 0.078 0.627\n#&gt; 2 0.605 0.022 0.147  91 4.103     0 0.316 0.894\n#&gt; 3 1.714 0.038 0.195  44  8.81     0 1.333 2.096\n#&gt; 4 0.697 0.027 0.166  71 4.208     0 0.372 1.022\n#&gt; 5   ...   ...   ... ...   ...   ...   ...   ...\n#&gt; 6 0.682 0.026 0.161  70 4.239     0 0.367 0.997\n#&gt; 7 0.888 0.108 0.329  28 2.698 0.007 0.243 1.533\n#&gt; 8 1.033 0.089 0.298  21 3.464 0.001 0.449 1.618\n#&gt; 9 0.974  0.01   0.1 181 9.722     0 0.777  1.17"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-4",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-4",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Simulating Publication Bias",
+    "text": "Extra - Simulating Publication Bias\n\nfit &lt;- rma(yi, vi, data = dat)\nsummary(fit)\n#&gt; \n#&gt; Random-Effects Model (k = 100; tau^2 estimator: REML)\n#&gt; \n#&gt;   logLik  deviance       AIC       BIC      AICc   \n#&gt; -28.2354   56.4709   60.4709   65.6611   60.5959   \n#&gt; \n#&gt; tau^2 (estimated amount of total heterogeneity): 0.0811 (SE = 0.0145)\n#&gt; tau (square root of estimated tau^2 value):      0.2847\n#&gt; I^2 (total heterogeneity / total variability):   82.87%\n#&gt; H^2 (total variability / sampling variability):  5.84\n#&gt; \n#&gt; Test for Heterogeneity:\n#&gt; Q(df = 99) = 583.0508, p-val &lt; .0001\n#&gt; \n#&gt; Model Results:\n#&gt; \n#&gt; estimate      se     zval    pval   ci.lb   ci.ub      \n#&gt;   0.6232  0.0321  19.4055  &lt;.0001  0.5603  0.6862  *** \n#&gt; \n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nClearly, \\(\\theta\\) is overestimated because we are systematic omitting non-significant p-values. These studies are more likely to be imprecise studies thus we are probably creating a funnel plot asymmetry."
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-5",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#extra---simulating-publication-bias-5",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "Extra - Simulating Publication Bias",
+    "text": "Extra - Simulating Publication Bias\n\negger &lt;- regtest(fit)\nfunnel(fit, cex.lab = 1.2, cex = 1.2)\nse &lt;- seq(0,1.8,length=100)\nlines(coef(egger$fit)[1] + coef(egger$fit)[2]*se, se, lwd=3)"
+  },
+  {
+    "objectID": "slides/03-meta-analysis/03-meta-analysis.html#references",
+    "href": "slides/03-meta-analysis/03-meta-analysis.html#references",
+    "title": "Meta-Analysis and Multi-Lab Replication studies",
+    "section": "References",
+    "text": "References\n\n\n\n\n\n\n\n\nBartoš, František, Maximilian Maier, Daniel S Quintana, and Eric-Jan Wagenmakers. 2022. “Adjusting for Publication Bias in JASP and r: Selection Models, PET-PEESE, and Robust Bayesian Meta-Analysis.” Advances in Methods and Practices in Psychological Science 5 (July): 251524592211092. https://doi.org/10.1177/25152459221109259.\n\n\nBorenstein, Michael, Larry V Hedges, Julian P T Higgins, and Hannah R Rothstein. 2009. “Introduction to Meta-Analysis.” https://doi.org/10.1002/9780470743386.\n\n\nCitkowicz, Martyna, and Jack L Vevea. 2017. “A Parsimonious Weight Function for Modeling Publication Bias.” Psychological Methods 22 (March): 28–41. https://doi.org/10.1037/met0000119.\n\n\nDuval, S, and R Tweedie. 2000. “Trim and Fill: A Simple Funnel-Plot-Based Method of Testing and Adjusting for Publication Bias in Meta-Analysis.” Biometrics 56 (June): 455–63. https://doi.org/10.1111/j.0006-341x.2000.00455.x.\n\n\nGuan, Maime, and Joachim Vandekerckhove. 2016. “A Bayesian Approach to Mitigation of Publication Bias.” Psychonomic Bulletin & Review 23 (February): 74–86. https://doi.org/10.3758/s13423-015-0868-6.\n\n\nHarrer, Mathias, Pim Cuijpers, Toshi Furukawa, and David Ebert. 2021. Doing Meta-Analysis with r: A Hands-on Guide. 1st ed. London, England: CRC Press.\n\n\nHedges, Larry V, and Jacob M Schauer. 2019. “Statistical Analyses for Studying Replication: Meta-Analytic Perspectives.” Psychological Methods 24 (October): 557–70. https://doi.org/10.1037/met0000189.\n\n\n———. 2021. “The Design of Replication Studies.” Journal of the Royal Statistical Society. Series A, 184 (March): 868–86. https://doi.org/10.1111/rssa.12688.\n\n\nHiggins, Julian P T, and Simon G Thompson. 2002. “Quantifying Heterogeneity in a Meta-Analysis.” Statistics in Medicine 21 (June): 1539–58. https://doi.org/10.1002/sim.1186.\n\n\nJin, Zhi-Chao, Xiao-Hua Zhou, and Jia He. 2015. “Statistical Methods for Dealing with Publication Bias in Meta-Analysis.” Statistics in Medicine 34 (January): 343–60. https://doi.org/10.1002/sim.6342.\n\n\nMaier, Maximilian, František Bartoš, and Eric-Jan Wagenmakers. 2023. “Robust Bayesian Meta-Analysis: Addressing Publication Bias with Model-Averaging.” Psychological Methods 28 (February): 107–22. https://doi.org/10.1037/met0000405.\n\n\nMcShane, Blakeley B, Ulf Böckenholt, and Karsten T Hansen. 2016. “Adjusting for Publication Bias in Meta-Analysis: An Evaluation of Selection Methods and Some Cautionary Notes: An Evaluation of Selection Methods and Some Cautionary Notes.” Perspectives on Psychological Science: A Journal of the Association for Psychological Science 11 (September): 730–49. https://doi.org/10.1177/1745691616662243.\n\n\nOrwin, Robert G. 1983. “A Fail-SafeN for Effect Size in Meta-Analysis.” Journal of Educational Statistics 8 (June): 157–59. https://doi.org/10.3102/10769986008002157.\n\n\nRosenberg, Michael S. 2005. “The File-Drawer Problem Revisited: A General Weighted Method for Calculating Fail-Safe Numbers in Meta-Analysis.” Evolution; International Journal of Organic Evolution 59 (February): 464–68. https://doi.org/10.1111/j.0014-3820.2005.tb01004.x.\n\n\nRosenthal, Robert. 1979. “The File Drawer Problem and Tolerance for Null Results.” Psychological Bulletin 86 (May): 638–41. https://doi.org/10.1037/0033-2909.86.3.638.\n\n\nShi, Linyu, and Lifeng Lin. 2019. “The Trim-and-Fill Method for Publication Bias: Practical Guidelines and Recommendations Based on a Large Database of Meta-Analyses: Practical Guidelines and Recommendations Based on a Large Database of Meta-Analyses.” Medicine 98 (June): e15987. https://doi.org/10.1097/MD.0000000000015987.\n\n\nViechtbauer, Wolfgang. 2005. “Bias and Efficiency of Meta-Analytic Variance Estimators in the Random-Effects Model.” Journal of Educational and Behavioral Statistics: A Quarterly Publication Sponsored by the American Educational Research Association and the American Statistical Association 30 (September): 261–93. https://doi.org/10.3102/10769986030003261.\n\n\n———. 2010. “Conducting Meta-Analyses in R with the metafor Package.” Journal of Statistical Software. https://doi.org/10.18637/jss.v036.i03.\n\n\n———. 2021. “Selection Models for Publication Bias in Meta-Analysis. Presentation at ESMARConf2021.” figshare. https://doi.org/10.6084/M9.FIGSHARE.13637900.V1."
   }
 ]

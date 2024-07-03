@@ -1,0 +1,395 @@
+---
+title: Multiverse
+subtitle: Replicability Crisis in Science?
+code-fold: true
+---
+
+```{r}
+#| label: setup
+knitr::opts_chunk$set(echo = TRUE,
+                      dev = "svg",
+                      fig.align = "center")
+
+library(kableExtra)
+library(tidyverse)
+library(cowplot)
+library(latex2exp)
+
+specif <- readRDS("objects/plessen2023-specification-data.rds")
+pimaex <- readRDS("objects/pima-example.rds")
+specif_res <- specif$specif |> 
+  mutate(res = map(fit, filor::summary_rma)) |> 
+  unnest(res)
+
+mtheme <- function(){
+  theme_minimal(15)
+}
+
+theme_set(mtheme())
+```
+
+# Multiverse analysis {.section}
+
+## Multiverse analysis @Steegen2016-lz
+
+- Even a simple data analysis is characterized by several (often arbitrary) choices
+- The impact of these choices is not always clear, known or easy to predict
+- Researchers (with or without awareness) usually report a single set of choices 
+
+## Some examples
+
+- using a predictor as continous or choosing some thresholds and transforming to categorical
+- including or excluding an observation (e.g., outlier)
+- including or excluding a covariate (e.g., controlling for age or not)
+- using a linear model or an ordinal regression for discrete ordered data
+- ...
+
+## The garden of forking paths
+
+A tree of possibilities...
+
+![](img/forking-paths.svg)
+
+## The garden of forking paths
+
+... Where only some of them produce a certain result.
+
+![](img/forking-paths-color.svg)
+
+
+## Only plausible vs all scenarios
+
+Not all scenarios are equally plausible or reasonable. Thus the multiverse is not the entire set but a non-random sample of plausibile choices.
+
+```{r}
+x <- seq(0, 1, 0.0001)
+y <- dexp(x, 2)
+y <- (y-min(y))/(max(y)-min(y))
+
+plot(x*100, y, type = "l",
+     xlab = "All possible scenarios",
+     ylab = "Plausibility",
+     lwd = 2)
+```
+
+# Multiverse meta-analysis {.section}
+
+## Meta-analysis many choices
+
+Despite useful and very powerful, meta-analysis is characterized by several (arbitrary) choices. For example:
+
+- Should the study $x$ be excluded for theoretical or statistical (e.g., outliers) reasons?
+- Should we use an equal or random-effects model?
+- Which value should take the pre-post missing correlation?
+- ...
+
+## An example: Pre-post Cohen's $d$
+
+With a pre-post Cohen's $d$ we need the pre-post correlation $\rho$ to calculate the sampling variance:
+
+$$
+\sigma^2_{\epsilon_{pp}} = \frac{2(1 - \rho)}{n} + \frac{d^2}{2n}
+$$
+
+$\rho$ is usually non reported and need to be chosen from previous literature or a plausible guess.
+
+## Pre-post Cohen's $d$
+
+```{r}
+#| out-width: 100%
+#| fig-width: 10
+v_dm <- function(r, d, n){
+    2*(1-r)/n + d^2/(2*n)
+}
+
+vdd <- data.frame(x = seq(-1, 1, 0.001))
+vdd$y <- v_dm(vdd$x, 0, 40)
+
+ggplot(vdd, aes(x = x, y = y)) +
+    geom_line() +
+    xlab(expression(rho)) +
+    ylab(expression(sigma^2)) +
+    theme_minimal(25)
+```
+
+## A simulated example
+
+```{r}
+p_beta <- ggplot(pimaex, aes(y = b)) +
+    xlim(c(-0.5,0.5)) +
+    geom_boxplot(width = 0.5,
+                 fill = "dodgerblue",
+                 alpha = 0.6) + 
+    ylab(latex2exp::TeX("$\\mu_{\\,\\, \\theta}$")) +
+    theme_minimal(30) +
+    theme(axis.text.x = element_blank())
+
+p_pval <- ggplot(pimaex, aes(y = -log10(p.value))) +
+    xlim(c(-0.5,0.5)) +
+    geom_hline(yintercept = -log10(0.05)) +
+    geom_boxplot(width = 0.5,
+                 fill = "dodgerblue",
+                 alpha = 0.6) + 
+    ylab(latex2exp::TeX("Raw $-log_{10}(p)$")) +
+    theme_minimal(30) +
+    theme(axis.text.x = element_blank())
+
+cowplot::plot_grid(p_beta, p_pval, nrow = 1)
+```
+
+## An example from @Plessen2023-ex
+
+![](img/plessen2023.png)
+
+## An example from @Plessen2023-ex
+
+- Over the last four decades, more than 80 meta-analyses have examined the efficacy of psychotherapies for depression
+- More than 700 randomised controlled trials (RCTs)
+- Not all these studies goes in the same direction
+
+## An example from @Plessen2023-ex
+
+Discrepancies in results could be due to:
+
+### Which factors (which data to meta-analyze)
+
+- inclusion/esclusion of a subset of studies (e.g., low quality studies)
+- type of control group or control therapy
+- ...
+
+### How factors (how to meta-analyze)
+
+- type of model (e.g., equal vs random)
+- model complexity (two-level, three level, robust, etc.)
+- correcting for publication bias
+
+# Descriptive tools {.section}
+
+## Describing the multiverse
+
+@Hall2022-mp and @Liu2021-xv proposed several tools to describe the results of a multiverse analysis.
+
+The increase in complexity NEED to be managed using appropriate tools to summarise and visualize the results.
+
+## Estimated effect of interest
+
+```{r}
+specif_res |> 
+  ggplot(aes(x = b)) +
+  geom_histogram(bins = 50,
+                 fill = "dodgerblue",
+                 col = "black") +
+  ylab("Frequency") +
+  xlab("Estimated Effect") +
+  geom_vline(xintercept = 0, col = "red") +
+  geom_vline(xintercept = 0.25, col = "green")
+```
+
+## Estimated effect as a function of scenarios
+
+```{r}
+above <- specif_res |> 
+  arrange(b) |> 
+  mutate(id = 1:n()) |> 
+  ggplot(aes(x = id, y = b)) +
+  geom_segment(aes(xend = id, y = ci.lb, yend = ci.ub)) +
+  geom_hline(yintercept = 0, col = "red") +
+  geom_hline(yintercept = 0.25, col = "green") +
+  theme(axis.title.y = element_blank(),
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank())
+  
+below <- specif_res |> 
+  arrange(b) |> 
+  mutate(id = 1:n()) |> 
+  pivot_longer(c(
+    target_group,
+    format,
+    diagnosis,
+    risk_of_bias,
+    type,
+    method
+  )) |> 
+  ggplot(aes(x = id, y = value)) +
+  geom_raster() +
+  theme(axis.title.y = element_blank(),
+        axis.text.x = element_blank()) +
+  xlab("Specification")
+
+plot_grid(above, below, nrow = 2, align = "hv")
+```
+
+## Fixing a specific parameter
+
+We can the effect of a set of scenarios having a certain parameter:
+
+```{r}
+specif_res |> 
+  arrange(b) |> 
+  mutate(id = 1:n()) |> 
+  ggplot(aes(x = b, fill = diagnosis)) +
+  geom_density(alpha = 0.5)
+```
+
+# Inferential tools {.section}
+
+## Specification Curve @Simonsohn2020-sr
+
+The idea of the specification curve is both descriptive (see previous plots) and inferential.
+
+Inferentially, the approach requires to generate a new dataset under the null hypothesis and compare with the observed value.
+
+## Specification Curve in meta-analysis @Plessen2023-ex
+
+@Plessen2023-ex describe how to implement the method for meta-analysis.
+
+1. For each dataset/model generate $k_s$ data (where $k$ is the number of effect in the specification $s$) sampling from $\mathcal{N}(0,\sigma^2_{\epsilon_i} + \tau^2)$.
+2. Fit the model (FE or RE)
+3. Get the specification curve
+4. Repeat 1-3 for a large number of times (e.g., 1000)
+5. Compute the 2.5% and 95.75% quantiles
+6. Check if the observed specification is outside the 95% CI
+
+## Specification Curve in meta-analysis @Plessen2023-ex
+
+```{r}
+#| code-fold: true
+specif$SD |> 
+  filter(spec %in% sample(1:1000, 1)) |> 
+  ggplot(aes(x = id, y = b)) +
+  geom_line(aes(group = spec))
+```
+
+## Specification Curve in meta-analysis @Plessen2023-ex
+
+```{r}
+#| code-fold: true
+specif$SD |> 
+  filter(spec %in% sample(1:1000, 1)) |> 
+  ggplot(aes(x = id, y = b)) +
+  geom_line(aes(group = spec))
+```
+
+## Specification Curve in meta-analysis @Plessen2023-ex
+
+```{r}
+#| code-fold: true
+specif$SD |> 
+  filter(spec %in% sample(1:1000, 1)) |> 
+  ggplot(aes(x = id, y = b)) +
+  geom_line(aes(group = spec))
+```
+
+## Specification Curve in meta-analysis @Plessen2023-ex
+
+```{r}
+#| code-fold: true
+specif_res <- specif_res |> 
+  arrange(b) |> 
+  mutate(id = 1:n())
+
+ggplot(data = specif$SD,
+       aes(x = id, y = b)) +
+  geom_line(aes(group = spec)) +
+  geom_line(data = specif_res,
+            aes(x = id, y = b),
+            col = "firebrick",
+            lwd = 2)
+```
+
+## PIMA
+
+**P**-selection **I**nference in **M**ultiverse **M**eta-analysis (PIMA) is an inferential approach to multiverse analysis is an inferential framework for:
+
+- obtaining an overall p-value across the multiverse
+- obtaining corrected p-values based on resampling methods
+
+## PIMA [@Girardi2024-ip]
+
+![](img/girardi2024.pdf){width=80% fig-align="center"}
+
+## PIMA on meta-analysis
+
+We implemented PIMA also on meta-analysis but (for the moment) limited to two-level models without moderators.
+
+![](img/wip.jpg)
+
+## The main advantage of PIMA
+
+```{r}
+tp <- function(p){
+    -log10(p)
+}
+
+lbl <- c("Never $p \\leq 0.05$", 
+         "Before correction $p \\leq 0.05$", 
+         "After correction $p \\leq 0.05$")
+
+
+pimaex$sign <- factor(pimaex$sign, 
+                     labels = latex2exp::TeX(lbl))
+
+ggplot(pimaex, aes(x = tp(p.value), tp(adjust.maxt), color = sign)) +
+    geom_hline(yintercept = tp(0.05), alpha = 0.4) +
+    geom_vline(xintercept = tp(0.05), alpha = 0.4) +
+    geom_abline(linetype = "dashed", lwd = 0.5) +
+    geom_point(size = 5,
+               position = position_jitter(width = 0.1),
+               alpha = 0.5) +
+    xlim(c(0, 3)) +
+    ylim(c(0, 3)) +
+    xlab(TeX("Raw p value ($-log_{10}$)")) +
+    ylab(TeX("Corrected p value")) +
+    theme_minimal(base_size = 20) +
+    theme(legend.title = element_blank(),
+          legend.position = "bottom") +
+    scale_color_manual(labels = scales::parse_format(), values = c("#F8766D", "#7CAE00", "#00BFC4"))
+```
+
+# Important aspects of multiverse analysis {.section}
+
+## Important aspects of multiverse analysis
+
+- Include only plausible scenarios. Regardless the aim (description or inference) of the multiverse, the results are meaningful if and only if scenarios are plausible.
+- Scenarios are assumed to be equally plausible but we could imagine a plausibility weight (future direction)
+- Multiverse analysis is also useful to estimate the degree of variability according to plausible choices
+
+# Some other multiverse examples and resources {.section}
+
+## R Packages
+
+- https://mucollective.github.io/multiverse/
+- https://mverseanalysis.github.io/mverse/
+- https://github.com/uwdata/boba
+
+## Multiverse projects
+
+- @Dafflon2022-zl implemented a multiverse analysis for neuroimaging data
+- @Hoogeveen2023-dw implemented a Bayesian multiverse analysis within the Many Labs 4 project (a large scale replication project in Psychology)
+- @Olsson-Collentine2023-sj re-analyzed some replication projects using a multiverse approach
+
+## Multiverse is catchy!
+
+```{r}
+multi_cit <- data.frame(
+        year = c(2024L,2023L,2022L,2021L,2020L,2019L,
+                 2018L,2017L,2016L,2015L,2014L,2013L),
+      papers = c(30L, 46L, 33L, 19L, 10L, 11L, 4L, 2L, 3L, 0L, 1L, 1L),
+       total = c(652674L,1295092L,1317981L,1299609L,
+                 1161910L,1044346L,955091L,907118L,874112L,840256L,804004L,
+                 777242L)
+)
+
+multi_cit |> 
+    mutate(year = as.integer(year)) |> 
+    ggplot(aes(x = year, y = papers/total)) +
+    geom_line() +
+    geom_label(aes(label = papers)) +
+    scale_x_continuous(breaks = seq(2012, 2024, 1)) +
+    theme(axis.title.x = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank()) +
+    ylab("# papers on Multiverse")
+```
+
+## References

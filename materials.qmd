@@ -2,7 +2,10 @@
 title: "Replicability Crisis in Science?"
 ---
 
+# Filippo Gambarota
+
 - [Introduction to the workshop](slides/00-intro/00-intro.qmd)
 - [Replication starter pack](slides/01-replication-tools/01-replication-tools.qmd)
-- [Introduction to meta-analysis](slides/02-meta-analysis/02-meta-analysis.qmd)
-- [Statistical methods for replication assessment](slides/03-replication-methods/03-replication-methods.qmd)
+- [Statistical methods for assessing replication](slides/02-replication-methods/02-replication-methods.qmd)
+- [Introduction to meta-analysis](slides/03-meta-analysis/03-meta-analysis.qmd)
+- [Statistical methods for replication assessment](slides/04-multiverse-meta-analysis/04-multiverse-meta-analysis.qmd)

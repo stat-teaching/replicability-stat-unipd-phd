@@ -5,7 +5,7 @@ $emp-color: #FA3F9F;
 $p-font-size: 0.75em !default;
 $h1-font-size: 1.3em !default;
 $h2-font-size: 1.2em !default;
-$h3-font-size: 1em !default;
+$h3-font-size: 0.9em !default;
 $h4-font-size: 1em !default;
 $refs-font-size: 0.5em!default;
 $toc-font-size: 0.7em!default;
@@ -15,6 +15,10 @@ $quest-font-size: 1.2em !default;
 /*-- scss:rules --*/
 
 /* GENERAL */
+
+.references {
+  font-size: 70%;
+}
 
 /* captions */
 
@@ -35,6 +39,10 @@ ul {
   font-size: $p-font-size;
 }
 
+ol {
+  font-size: $p-font-size;
+}
+
 .citation .refbook {
   color: blue!important;
 }
@@ -49,6 +57,10 @@ aside {
 
 .reveal h2 {
   font-size: $h2-font-size;
+}
+
+.reveal h3 {
+  font-size: $h3-font-size;
 }
 
 .reveal p {
@@ -139,20 +151,6 @@ code {
 
 .section h1 {
   font-size: $h1-font-size!important;
-}
-
-/* REFERENCES */
-
-.refs h2 {
-  font-size: $h2-font-size!important;
-}
-
-.refs {
-  font-size: 100%!important;
-}
-
-.csl-entry {
-  font-size: $refs-font-size;
 }
 
 /* FINAL SLIDE */

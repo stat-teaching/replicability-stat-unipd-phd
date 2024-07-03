@@ -24,13 +24,18 @@ website:
         aria-label: GitHub
         
 author: 
-  - name: "Filippo Gambarota"
+  - name: "Branden Fitelson"
+    email: branden@fitelson.org
+    orcid: "0000-0002-8847-220X"
+  - name: Filippo Gambarota
     email: filippo.gambarota@unipd.it
     twitter: fgambarota
     github: filippogambarota
     orcid: "0000-0002-6666-1747"
-institute: "University of Padova"
-
+    institute: "University of Padova"
+  - name: Giovanni Parmigiani
+    email: gp@jimmy.harvard.edu
+    orcid: "0000-0002-8783-5961"
 format:
   html:
     theme: cosmo
