@@ -9,14 +9,13 @@ subtitle: Replicability Crisis in Science?
 knitr::opts_chunk$set(echo = TRUE,
                       dev = "svg",
                       fig.align = "center")
+
+library(kableExtra)
 ```
 
-# About us {.section}
+# About me {.section}
 
-## About us {.about}
-
-:::: {.columns}
-::: {.column width='40%'}
+## About me {.about}
 
 ### Filippo Gambarota 
 
@@ -24,22 +23,7 @@ knitr::opts_chunk$set(echo = TRUE,
 ](img/fg.jpg){width=200 fig-align="center"}
 
 - [**Postdoctoral Researcher**]{.imp}: Department of Developmental and Social Psychology
-- **Research interests**: meta-analysis, psychometrics, data simulation, programming
-
-:::
-::: {.column width='20%'}
-:::
-::: {.column width='40%'}
-
-### Gianmarco Altoè
-
-![[`r icons::fontawesome("envelope")`](mailto:gianmarco.altoe@unipd.it) [`r icons::fontawesome("globe")`](https://www.didattica.unipd.it/off/docente/6A8AF57C3282433554D456917489A756) ](img/ga.png){width=200 fig-align="center"}
-
-- [**Associate Professor**]{.imp}: Department of Developmental and Social Psychology
-- **Research interests**: psychological testing, Bayesian statistics, Power and design analysis
-
-:::
-::::
+- **Research interests**: meta-analysis, psychometrics, data simulation, R programming and multiverse analysis.
 
 ## About us {.about}
 
@@ -53,18 +37,27 @@ We are part of the **Psicostat** research group. A interdisciplinary research gr
 
 ## Program
 
-| Day | Title | Topics |
-|:---:|:---:|:---:|
-| 18/09/2023 | **Tools for reproducible research** | R, Quarto, Git/Github, Open Science Framework |
-| 18/09/2023 | **Meta-Analysis and Multi-Lab Replication studies** | Equal and random-effects model, heterogeneity, power-analysis, simulating data |
-| 18/09/2023 | **Exploring Replicability in Biostatistics** | Binary classifiers, ROC and AUC, meta-analysis with gene expression data |
-| 18/09/2023 | **Statistical Methods for Replicability Assessment** | Frequentist and Bayesian statistical methods for replicability assessment |
+```{r}
+#| echo: false
+data.frame(
+  stringsAsFactors = FALSE,
+               Day = c("08/07/24", "09/07/24", "10/07/24"),
+             Title = c("Tools for reproducible research",
+                       "Statistical methods for replication assessment","Meta-analyis and multiverse analysis"),
+            Topics = c("R, Quarto, Git/Github, Open Science Framework",
+                       "Frequentist and Bayesian statistical methods for replicability assessment",
+                       "Equal and random-effects model, heterogeneity, power-analysis, simulating data")
+) |> 
+kable()  |> 
+kable_styling(full_width = FALSE, font_size = 25) |> 
+column_spec(2, bold = TRUE)
+```
 
 ## Materials 📘
 
 . . .
 
-- 🌐 All the **material** (code, slides, extra) are available on the **Github** of the Summer School [https://github.com/replicability-stat-unipd/replicability-summer-school-2023](https://github.com/replicability-stat-unipd/replicability-summer-school-2023). The same material can be accessed using this link [https://replicability-stat-unipd.github.io/replicability-summer-school-2023/](https://replicability-stat-unipd.github.io/replicability-summer-school-2023/)
+- 🌐 All the **material** (code, slides, extra) are available on **Github** [github.com/stat-teaching/replicability-stat-unipd-phd](https://github.com/stat-teaching/replicability-stat-unipd-phd). The same material can be accessed using this link [stat-teaching.github.io/replicability-stat-unipd-phd](https://stat-teaching.github.io/replicability-stat-unipd-phd/)
 
 . . .
 
@@ -72,31 +65,13 @@ We are part of the **Psicostat** research group. A interdisciplinary research gr
 
 . . .
 
-- 💻 For code debugging, exercises or general questions we can use this shared online code editor [etherpad.wikimedia.org/p/replicability-summer-school-2023](https://etherpad.wikimedia.org/p/replicability-summer-school-2023). Basically we can write code together `r emo::ji("smile")`
+- 💻 For code debugging, exercises or general questions we can use this shared online code editor [etherpad.wikimedia.org/p/replicability-stat-unipd-phd](https://etherpad.wikimedia.org/p/replicability-stat-unipd-phd). Basically we can write code together `r emo::ji("smile")`
 
 . . .
 
 - ⚙️ We are going to use mainly the slides, R Studio, the Github website and the shared editor. **I suggest you to bookmark the Github website and the editor**
 
 # The website {.section}
-
-::: {.notes}
-Show the website here
-:::
-
-## Other info
-
-### References
-
-There will be references at the end of each slide deck. You will se a button where you can download the `.bib` file to import into your reference manager.
-
-</br>
-
-<center>
-<button class="button">
-<p> Download References </p>
-</button>
-</center>
 
 ## Disclaimer
 

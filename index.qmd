@@ -4,6 +4,12 @@ bibliography: "https://raw.githubusercontent.com/filippogambarota/bib-database/m
 csl: "https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl"
 ---
 
+```{r}
+#| include: false
+library(tidyverse)
+```
+
+
 [**Replicability Crisis in Science?**](https://www.stat.unipd.it/sites/stat.unipd.it/files/Parmigiani-Fitelson-Gambarota%20July2024.pdf) is one of the [Specialist Courses](https://www.stat.unipd.it/ricerca/courses-202324-xxxix-cycle) organized from the [Department of Statistical Sciences](https://www.stat.unipd.it/en/) (University of Padova). The course has been proposed for the AY 2023/24 to the PhD students of the XXXIX cycle.
 
 # Overview
@@ -65,6 +71,33 @@ When evaluating the reliability of scientific findings and predictions, a major 
 ### 14:30 - 16:30
 
 #### Filippo Gambarota - Meta-analysis and multiverse analysis
+
+# Groups
+
+During each day there will be some group activites. We created some balanced groups according to the background.
+
+```{r}
+#| output: asis
+#| echo: false
+#| message: false
+#| warning: false
+students <- readxl::read_xlsx("files/students.xlsx")
+
+group_name <- c("Bayes" = 1, "Pearson" = 2, "Gosset" = 3, "Tukey" = 4, "Bonferroni" = 5)
+
+students$group <- names(group_name[students$group])
+
+S <- students |> 
+  select(student, phd_program, group) |> 
+  arrange(group, student)
+
+Sl <- split(S, S$group)
+
+for(i in 1:length(Sl)){
+  pander::pandoc.header(paste("Group", names(Sl)[i]), 2)
+  cat(sprintf("- %s [*%s*]", Sl[[i]]$student, Sl[[i]]$phd_program), sep = "\n")
+}
+```
 
 :::{.refs}
 :::

@@ -27,3 +27,10 @@ knitr:
     dev: svg
     warning: false
     message: false
+author: 
+  - name: Filippo Gambarota
+    email: filippo.gambarota@unipd.it
+    twitter: fgambarota
+    github: filippogambarota
+    orcid: "0000-0002-6666-1747"
+    institute: "University of Padova"

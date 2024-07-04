@@ -365,7 +365,7 @@ x <- abs(x)
 x <- as.character(x)
 ```
 
-. . .
+## The Tidy approach - Pipes
 
 When using the pipe, we remove the redundand assignment `<-` pattern:
 
@@ -483,9 +483,9 @@ Beyond the coding part, the markup language is the core element of a literate pr
 - XML
 - ...
 
-## LaTeX ^[[https://latexbase.com/](https://latexbase.com/d/47cd5b2a-3a74-47cc-ac13-042c9760e192)]
+## LaTeX ^[[https://latexbase.com/](https://www.overleaf.com/project/6658541939d95ad2ae3d8c99)]
 
-<iframe src="https://latexbase.com/d/47cd5b2a-3a74-47cc-ac13-042c9760e192" height="500" width="1000" style="border: 1px solid #464646;display:block;" allowfullscreen="" allow="autoplay"></iframe>
+![](img/latex-example.png)
 
 ## HTML
 

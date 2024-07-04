@@ -299,7 +299,7 @@ A crucial part of the EE model is that, assuming studies with very large sample 
 
 ```{r}
 #| code-fold: true
-#| fig-height: 7
+#| fig-height: 5
 dat_low  <- sim_studies(10, 0.5, 0, 30, 30)
 dat_high <- sim_studies(10, 0.5, 0, 500, 500)
 
@@ -393,7 +393,7 @@ The consequence is that weights are different where extremely precise/imprecise 
 #| echo: false
 #| fig-height: 8
 #| out-width: 60%
-#| eval: false
+#| eval: true
 imgs$random
 ```
 
@@ -405,8 +405,8 @@ The crucial difference with the EE model is that even with large $n$, only the $
 
 ```{r}
 #| echo: false
-#| fig-height: 8
-#| eval: false
+#| fig-height: 5
+#| eval: true
 imgs$equal_vs_random
 ```
 
@@ -416,6 +416,7 @@ Again, we can easily demonstrate this with a simulation. We use the same simulat
 
 ```{r}
 #| code-fold: true
+#| out-width: 70%
 dat_low  <- sim_studies(10, 0.5, 0.2, 30, 30)
 dat_high <- sim_studies(10, 0.5, 0.2, 500, 500)
 
@@ -436,7 +437,7 @@ qf_tau_high_low <- cowplot::plot_grid(
 qf_tau_high_low
 ```
 
-The main point is that even with $n \to \infty$ the observed variance is not reduced as long $\tau^2 \neq 0$.
+Even with $n \to \infty$ the observed variance is not reduced as long $\tau^2 \neq 0$.
 
 ## Extra - Simulating Meta-Analysis {.extra}
 
@@ -493,7 +494,7 @@ There are several estimators for $\tau^2$
 - Maximum-Likelihood
 - Restricted Maximum-Likelihood (REML)
 
-We will mainly use the REML estimator. See @Viechtbauer2005-zt and @Veroniki2016-zs for more details.
+We will mainly use the REML estimator. See @Viechtbauer2005-zt and @Veroniki2016-nw for more details.
 
 ## The Q Statistics^[See @Harrer2021-go (Chapter 5) and @Hedges2019-ry for an overview about the Q statistics]
 
@@ -783,8 +784,8 @@ summary(fit_re)
 
 The most common plot to represent meta-analysis results is the forest plot:
 ```{r}
-#| fig-width: 10
-#| fig-height: 7
+#| fig-width: 8
+#| fig-height: 5
 forest(fit_re)
 ```
 
@@ -803,9 +804,9 @@ The most common plot to represent meta-analysis results is the forest plot:
 It is also common to plot studies ordering by the size of the effect, showing asymmetries or other patterns:
 
 ```{r}
-#| fig-width: 10
-#| fig-height: 7
-forest(fit_re)
+#| fig-width: 8
+#| fig-height: 5
+forest(fit_re, order = "yi")
 ```
 
 # Multilab Studies  {.section}
@@ -982,6 +983,7 @@ fit <- rma(yi, vi, method = "EE", data = dat)
 Let's plot the distribution of the data:
 
 ```{r}
+#| out-width: 70%
 hist(dat$yi)
 ```
 
@@ -1148,6 +1150,8 @@ taf <- metafor::trimfill(fit)
 taf
 ```
 
+## Correcting PB - Trim and Fill
+
 The trim-and-fill estimates that `r taf$k0` are missing. The new effect size after including the studies is reduced and closer to the simulated value (but in this case still significant).
 
 ## Correcting PB - Trim and Fill
@@ -1285,74 +1289,10 @@ Assessing, testing and developing sofisticated models for publication bias is su
 
 > hopefully there won't be need for these models in the future [@Viechtbauer2021-od]
 
-## Extra - Simulating Publication Bias {.extra}
+## More on meta-analysis
 
-I wrote two custom functions to generate a biased dataset based on different criteria:
-
-- a simple step function with a threshold (e.g., $p \leq 0.05$ then 1 else 0)
-- the weight function from slide [@sec-pub-bias-fun]
-- a custom criterion (e.g., select only $|y_i| > 0.5$)
-
-```{r}
-#| echo: false
-#| output: asis
-filor::print_fun(c(funs$weigth_beta, funs$weigth_2step))
-```
-
-...continue
-
-## Extra - Simulating Publication Bias {.extra}
-
-```{r}
-#| echo: false
-#| output: asis
-filor::print_fun(c(funs$sim_pub_bias))
-```
-
-## Extra - Simulating Publication Bias {.extra}
-
-For example, let's simulate a pretty simple publication bias model where we included $k = 40$ studies. The biased criteria is that only $p \leq 0.05$ are included.
-
-- $\theta = 0.5$
-- $\tau^2 = 0$ i.e. an EE model
-- $n \sim \mathcal{U}(10, 200)$
-
-```{r}
-#| echo: false
-
-pval <- seq(0, 1, 0.01)
-plot(pval, ifelse(pval <= 0.05, 1, 0), type = "l", xlab = "P Value", ylab = "Probability of Publishing", lwd = 2, col = "firebrick")
-```
-
-## Extra - Simulating Publication Bias {.extra}
-
-```{r}
-set.seed(2023)
-k <- 100
-theta <- 0.5
-tau2 <- 0.1
-
-dat <- sim_pub_bias(selmodel = list(method = "2step", param = "pval", th = 0.05, side = "<="), k = k, theta = theta, tau2 = tau2, nmin = 10, nmax = 200)
-
-filor::trim_df(dat)
-```
-
-## Extra - Simulating Publication Bias {.extra}
-
-```{r}
-fit <- rma(yi, vi, data = dat)
-summary(fit)
-```
-
-Clearly, $\theta$ is overestimated because we are systematic omitting non-significant p-values. These studies are more likely to be imprecise studies thus we are probably creating a funnel plot asymmetry.
-
-## Extra - Simulating Publication Bias {.extra}
-
-```{r}
-egger <- regtest(fit)
-funnel(fit, cex.lab = 1.2, cex = 1.2)
-se <- seq(0,1.8,length=100)
-lines(coef(egger$fit)[1] + coef(egger$fit)[2]*se, se, lwd=3)
-```
+- the `metafor` website contains a lot of materials, examples, tutorials about meta-analysis models
+- I have an entire workshop on meta-analysis using data simulation [https://stat-teaching.github.io/metasimulation/](https://stat-teaching.github.io/metasimulation/)
+- The book [Doing meta-analysis in R](https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/) is an amazing resource
 
 ## References
