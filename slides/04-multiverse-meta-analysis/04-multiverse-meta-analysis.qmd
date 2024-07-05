@@ -6,6 +6,7 @@ code-fold: true
 
 ```{r}
 #| label: setup
+#| include: false
 knitr::opts_chunk$set(echo = TRUE,
                       dev = "svg",
                       fig.align = "center")
@@ -14,6 +15,7 @@ library(kableExtra)
 library(tidyverse)
 library(cowplot)
 library(latex2exp)
+library(metafor)
 
 specif <- readRDS("objects/plessen2023-specification-data.rds")
 pimaex <- readRDS("objects/pima-example.rds")
@@ -83,6 +85,20 @@ Despite useful and very powerful, meta-analysis is characterized by several (arb
 - Which value should take the pre-post missing correlation?
 - ...
 
+## An example: Pre-post designs
+
+Let's imagine that we have $k$ studies about the efficacy of a certain treatment. They collected a sample of participants measuring a certain variable $y$ before and after the treatment.
+
+With this design we can summarise the effect computing the difference between the average of the two time points.
+
+An effect size (e.g., Cohen's $d$) can be calculated as:
+
+$$
+d = \frac{\overline y_{post} - \overline y_{pre}}{\sigma_p}
+$$
+
+And $\sigma_p$ is the pooled pre-post standard deviation.
+
 ## An example: Pre-post Cohen's $d$
 
 With a pre-post Cohen's $d$ we need the pre-post correlation $\rho$ to calculate the sampling variance:
@@ -115,7 +131,216 @@ ggplot(vdd, aes(x = x, y = y)) +
 ## A simulated example
 
 ```{r}
-p_beta <- ggplot(pimaex, aes(y = b)) +
+#| include: false
+
+tidy.flip <- function(x){
+    res <- data.frame(x@res)
+    names(res) <- tolower(names(res))
+    return(res)
+}
+
+set.seed(6264)
+k <- 10 # number of studies
+p <- 5 # number of measures
+n <- round(runif(k, 10, 200)) # number of subjects
+mu <- round(runif(p, -0.5, 1), 1)
+tau2 <- round(runif(p, 0.01, 0.2), 2)
+rho_pp <- 0.6 # pre-post correlation
+rho_out <- round(runif(filor::ncor(p), 0, 0.7), 2) # correlation between outcomes
+Rpp <- rho_pp + diag(1 - rho_pp, 2)
+R <- filor::rmat(rho_out) # correlation matrix between outcomes
+TM <- diag(sqrt(tau2)) %*% R %*% diag(sqrt(tau2)) # var-cov matrix of random effects
+TM <- Matrix::nearPD(TM)$mat
+
+j <- sample(1:p, k, replace = TRUE) # number of outcomes per study
+mui <- MASS::mvrnorm(k, mu, TM)
+
+dat <- data.frame(
+    study = rep(1:k, j),
+    outcome = filor::mseq(1, j)
+)
+
+dat$n <- rep(n, j)
+dat$m_pre <- dat$m_post <- dat$sd_pre <- dat$sd_post <- dat$rpp <- NA
+
+for(i in 1:k){ # each study
+    m_pre <- m_post <- sd_pre <- sd_post <- rpp <- rep(NA, j[i])
+    for(o in 1:j[i]){
+        pre_post <- MASS::mvrnorm(n[i], c(0, mui[i, o]), Rpp)
+        m_pre_post <- colMeans(pre_post)
+        sd_pre_post <- apply(pre_post, 2, sd)
+        m_pre[o] <- m_pre_post[1]
+        m_post[o] <- m_pre_post[2]
+        sd_pre[o] <- sd_pre_post[1]
+        sd_post[o] <- sd_pre_post[2]
+        rpp[o] <- cor(pre_post)[1, 2]
+    }
+    dat[dat$study == i, "m_pre"] <- m_pre
+    dat[dat$study == i, "m_post"] <- m_post
+    dat[dat$study == i, "sd_pre"] <- sd_pre
+    dat[dat$study == i, "sd_post"] <- sd_post
+    dat[dat$study == i, "rpp"] <- rpp
+}
+
+dat$sp <- sqrt((dat$sd_post^2 + dat$sd_pre^2)/2)
+
+# multiverse
+
+multi <- tidyr::expand_grid(rpp = c(0, 0.3, 0.5, 0.8),
+                            rout = c(0, 0.3, 0.5, 0.8),
+                            method = c("EE", "REML"))
+
+
+multi_res <- vector(mode = "list", length = nrow(multi))
+
+for(i in 1:length(multi_res)){
+    dati <- dat
+    dati$grpp <- multi$rpp[i]
+    dati <- escalc("SMCR", m1i = m_pre, m2i = m_post, sd1i = sp, ri = grpp, ni = n, data = dati)
+    dati <- aggregate(dati, cluster = study, rho = multi$rout[i])
+    multi_res[[i]] <- rma(yi, vi, data = dati, method = multi$method[i])
+}
+
+B <- 1000
+M <- nrow(multi)
+S <- flip::make.signSpace(k, B)
+
+zi <- matrix(NA, k, M)
+
+for(i in 1:M){
+    # estimating tau2 under the null hypothesis
+    dati <- multi_res[[i]]$data
+    fit0 <- rma.mv(yi, vi, random = ~1|study, data = dati, beta = 0)
+    tau20 <- fit0$sigma2
+    zi[, i] <- as.numeric(dati$yi) / sqrt(dati$vi + tau20)
+}
+
+multi_flip <- flip::flip(zi, perms = S)
+multi_flip <- flip::flip.adjust(multi_flip)
+multi_res_d <- bind_rows(map(multi_res, filor::summary_rma)) 
+multi_flip_d <- bind_rows(map(multi_flip, tidy.flip))
+multi <- cbind(multi, multi_flip_d, multi_res_d)
+rownames(multi) <- NULL
+multi <- multi |> 
+    mutate(id = 1:n(),
+           sign_before = p.value <= 0.05,
+           sign_after = adjust.maxt <= 0.05,
+           sign = case_when(
+               !sign_before & !sign_after ~ "never",
+               sign_before & !sign_after ~ "before",
+               sign_before & sign_after ~ "always"
+           ),
+           sign = factor(sign, levels = c("never", "before", "always"))
+    )
+```
+
+The data structure: multiple measures of the same outcome within each paper
+
+```{r}
+#| echo: false
+dat_example <- escalc("SMCR", m1i = m_pre, m2i = m_post, sd1i = sp, ri = rep(0, nrow(dat)), ni = n, data = dat)
+
+dat_example |>
+  select(study, outcome, n, yi, vi) |> 
+  data.frame() |> 
+  mutate(across(where(is.numeric), \(x) round(x, 2))) |> 
+  rename("ni" = n) |> 
+  filor::trim_df(5) |> 
+  kable() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("condensed"), font_size = 25)
+```
+
+## Simulation approach
+
+Let's make an example for a paper with $j = 3$ measures of the outcome:
+
+$$
+\begin{bmatrix}
+        y_{11} \\
+        y_{12} \\
+        y_{13}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \mu_{\theta_1} \\
+        \mu_{\theta_2} \\
+        \mu_{\theta_3}
+    \end{bmatrix}
+    +
+    \begin{bmatrix}
+        \delta_{\theta_1} \\
+        \delta_{\theta_2} \\
+        \delta_{\theta_3}
+    \end{bmatrix}
+    +
+    \begin{bmatrix}
+        \epsilon_{\theta_{11}} \\
+        \epsilon_{\theta_{12}} \\
+        \epsilon_{\theta_{13}}
+\end{bmatrix}
+$$
+
+$$
+\boldsymbol{\delta} \sim \text{MVN}\left(
+    \begin{matrix}
+    0 \\
+    0 \\
+    0
+    \end{matrix}
+    \
+    \begin{matrix}
+        \tau^2_1 &        & \\
+        \rho_{21}\tau_2\tau_1        & \tau^2_1 & \\
+         \rho_{31}\tau_2\tau_1        &  \rho_{32}\tau_2\tau_1        & \tau^2_1 \\
+    \end{matrix}
+    \right)
+$$
+
+$$
+\boldsymbol{\epsilon} \sim \text{MVN}\left(
+    \begin{matrix}
+    0 \\
+    0 \\
+    0
+    \end{matrix}
+    \
+    \begin{matrix}
+        \sigma^2_{\epsilon_1} &        & \\
+        \rho_{21}\sigma^2_{\epsilon_2}\sigma^2_{\epsilon_1}        & \sigma^2_{\epsilon_2} & \\
+        \rho_{31}\sigma^2_{\epsilon_3}\sigma^2_{\epsilon_1}         &  \rho_{32}\sigma^2_{\epsilon_3}\sigma^2_{\epsilon_2}        & \sigma^2_{\epsilon_3} \\
+    \end{matrix}
+    \right)
+$$
+
+## Simulation approach
+
+We simulated individual participant data, thus:
+
+1. Sampling the true values $\theta_{ij}$ for each study $i$ and outcome $j$ from the multivariate distribution
+2. Generating $n_i$ pre and post data with correlation $\rho$
+3. Calculating the effect size (imputing the pre-post correlation)
+5. Aggregating multiple outcomes within the same paper (imputing the correlation)
+4. Fitting the meta-analyis model
+5. Calculating the scores
+7. Repeating 3-4 for each scenario
+6. Using PIMA
+
+## Simulation approach
+
+We simulated a relatively simple but plausible multiverse with:
+
+- `r length(unique(multi$rpp))` pre-post correlations
+- `r length(unique(multi$rout))` correlations between multiple measures of the same outcome
+- `r length(unique(multi$method))` meta-analysis models (fixed and random-effects)
+
+For a total of `r nrow(multi)` multiverse scenarios.
+
+## Results
+
+```{r}
+#| out-width: 80%
+#| fig-align: center
+p_beta <- ggplot(multi, aes(y = b)) +
     xlim(c(-0.5,0.5)) +
     geom_boxplot(width = 0.5,
                  fill = "dodgerblue",
@@ -124,7 +349,7 @@ p_beta <- ggplot(pimaex, aes(y = b)) +
     theme_minimal(30) +
     theme(axis.text.x = element_blank())
 
-p_pval <- ggplot(pimaex, aes(y = -log10(p.value))) +
+p_pval <- ggplot(multi, aes(y = -log10(p.value))) +
     xlim(c(-0.5,0.5)) +
     geom_hline(yintercept = -log10(0.05)) +
     geom_boxplot(width = 0.5,
@@ -134,7 +359,20 @@ p_pval <- ggplot(pimaex, aes(y = -log10(p.value))) +
     theme_minimal(30) +
     theme(axis.text.x = element_blank())
 
-cowplot::plot_grid(p_beta, p_pval, nrow = 1)
+rdata <- cor(zi)
+rdata <- data.frame(r = rdata[upper.tri(rdata, diag = FALSE)])
+
+p_cor <- ggplot(rdata, aes(y = r)) +
+    xlim(c(-0.5,0.5)) +
+    geom_boxplot(width = 0.5,
+                 fill = "dodgerblue",
+                 alpha = 0.6) + 
+    ylab(latex2exp::TeX("$\\rho$")) +
+    theme_minimal(30) +
+    theme(axis.text.x = element_blank()) +
+    ylim(c(-1,1))
+
+cowplot::plot_grid(p_beta, p_cor, p_pval, nrow = 1)
 ```
 
 ## An example from @Plessen2023-ex
@@ -185,9 +423,10 @@ specif_res |>
   geom_vline(xintercept = 0.25, col = "green")
 ```
 
-## Estimated effect as a function of scenarios
+## Estimated effect as a function of scenarios^[The red line is the 0 effect and the green line is a minimum effect of interest in the research field]
 
 ```{r}
+#| fig-height: 6
 above <- specif_res |> 
   arrange(b) |> 
   mutate(id = 1:n()) |> 
@@ -211,7 +450,7 @@ below <- specif_res |>
     method
   )) |> 
   ggplot(aes(x = id, y = value)) +
-  geom_raster() +
+  geom_tile() +
   theme(axis.title.y = element_blank(),
         axis.text.x = element_blank()) +
   xlab("Specification")
@@ -314,9 +553,63 @@ We implemented PIMA also on meta-analysis but (for the moment) limited to two-le
 
 ![](img/wip.jpg)
 
-## The main advantage of PIMA
+## PIMA Results
 
 ```{r}
+multi_flip_overall <- flip::npc(multi_flip, comb.funct = "maxT")
+multi_p <- multi_flip_overall@res$`p-value`
+fp <- function(p){
+    ifelse(p <= 0.001, "p < 0.001", as.character(round(p, 3)))
+}
+```
+
+The multiverse is associated with an overall p value of `r fp(multi_p)` ^[combined using the maxT method by @Westfall1993-ek]. Then we can describe the overall results:
+
+```{r}
+#| fig-out: 80%
+#| fig-align: center
+p_beta <- ggplot(multi, aes(y = b)) +
+    xlim(c(-0.5,0.5)) +
+    geom_boxplot(width = 0.5,
+                 fill = "dodgerblue",
+                 alpha = 0.6) + 
+    ylab(latex2exp::TeX("$\\mu_{\\,\\, \\theta}$")) +
+    theme_minimal(30) +
+    theme(axis.text.x = element_blank())
+
+p_pval <- ggplot(multi, aes(y = -log10(p.value))) +
+    xlim(c(-0.5,0.5)) +
+    geom_hline(yintercept = -log10(0.05)) +
+    geom_boxplot(width = 0.5,
+                 fill = "dodgerblue",
+                 alpha = 0.6) + 
+    ylab(latex2exp::TeX("Raw $-log_{10}(p)$")) +
+    theme_minimal(30) +
+    theme(axis.text.x = element_blank())
+
+rdata <- cor(zi)
+rdata <- data.frame(r = rdata[upper.tri(rdata, diag = FALSE)])
+
+p_cor <- ggplot(rdata, aes(y = r)) +
+    xlim(c(-0.5,0.5)) +
+    geom_boxplot(width = 0.5,
+                 fill = "dodgerblue",
+                 alpha = 0.6) + 
+    ylab(latex2exp::TeX("$\\rho$")) +
+    theme_minimal(30) +
+    theme(axis.text.x = element_blank()) +
+    ylim(c(-1,1))
+
+cowplot::plot_grid(p_beta, p_cor, p_pval, nrow = 1)
+```
+
+## Impact of multiplicity correction
+
+```{r}
+#| fig-out: 100%
+#| fig-height: 5
+#| fig-width: 8
+#| fig-align: center
 tp <- function(p){
     -log10(p)
 }
@@ -326,10 +619,10 @@ lbl <- c("Never $p \\leq 0.05$",
          "After correction $p \\leq 0.05$")
 
 
-pimaex$sign <- factor(pimaex$sign, 
+multi$sign <- factor(multi$sign, 
                      labels = latex2exp::TeX(lbl))
 
-ggplot(pimaex, aes(x = tp(p.value), tp(adjust.maxt), color = sign)) +
+ggplot(multi, aes(x = tp(p.value), tp(adjust.maxt), color = sign)) +
     geom_hline(yintercept = tp(0.05), alpha = 0.4) +
     geom_vline(xintercept = tp(0.05), alpha = 0.4) +
     geom_abline(linetype = "dashed", lwd = 0.5) +
@@ -339,7 +632,7 @@ ggplot(pimaex, aes(x = tp(p.value), tp(adjust.maxt), color = sign)) +
     xlim(c(0, 3)) +
     ylim(c(0, 3)) +
     xlab(TeX("Raw p value ($-log_{10}$)")) +
-    ylab(TeX("Corrected p value")) +
+    ylab(TeX("maxT p value ($-log_{10}$)")) +
     theme_minimal(base_size = 20) +
     theme(legend.title = element_blank(),
           legend.position = "bottom") +
@@ -393,3 +686,45 @@ multi_cit |>
 ```
 
 ## References
+
+::: {#refs}
+:::
+
+# Extra - PIMA implementation for meta-analysis {.section}
+
+## General Workflow
+ 
+![](img/workflow.png){fig-align="center"}
+
+## Meta-analysis with permutations [@Follmann1999-ha]
+
+With $k$ observed studies where $y_i$ and $\sigma^2_{\epsilon_i}$ being the observed effect sizes and sampling variances:
+
+1. Generate a random vector $\mathbf{s}$ of $\pm 1$ of length $k$
+2. Multiply the $\mathbf{y}$ vector with the $s$ vector
+3. Fit the meta-analysis model and calculate $z^{*}_j$ ($j$ for permuted)
+4. Repeat 1-3 for a large number of times $B$. With small $k$ we can do all the permutations $B = 2^k \times k$
+
+The first permutation ($j = 1$) is the observed data. The p value can be computed as:
+
+$$
+p = \frac{\text{\#}(|z^{*}_j| > |z^{*}_1|)}{B}
+$$
+
+## Fast meta-analysis using permutations
+
+- Meta-analysis using permutations requires recomputing $\tau^2$ and $\mu_\theta$ after each permutation.
+
+- We proposed to estimate $\tau^2$ under $H_0$ and use the value for the permutations (without re-estimating it)
+
+- This is extremely fast especially for large datasets and several multiverse scenarios
+
+## Estimating $\tau^2$ under $H_0$
+
+The crucial step is the point (1). This requires maximizing the log-likelihood fixing $\mu_\theta = 0$:
+
+$$
+L(\mu_{\theta}, \tau^2|\mathbf{y}) = -\frac{1}{2}\sum_{i = 1}^k \ln(\tau^2 + \sigma_{\epsilon_i}^2) - \frac{1}{2} \sum_{i = 1}^k \frac{(y_i - \mu_{\theta})^2}{\tau^2 +  \sigma_{\epsilon_i}^2}
+$$
+
+This can be done in R using some optimizer function (e.g., `optim`) or using directly the `metafor` package that allows fixing some parameters that are usually estimated.

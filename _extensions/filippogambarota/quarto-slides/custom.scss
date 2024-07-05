@@ -16,6 +16,10 @@ $quest-font-size: 1.2em !default;
 
 /* GENERAL */
 
+p {
+  font-size: $p-font-size;
+}
+
 .references {
   font-size: 70%;
 }

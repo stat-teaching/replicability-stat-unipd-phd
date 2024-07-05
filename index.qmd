@@ -81,21 +81,36 @@ During each day there will be some group activites. We created some balanced gro
 #| echo: false
 #| message: false
 #| warning: false
+
+set.seed(2024)
+
 students <- readxl::read_xlsx("files/students.xlsx")
 
-group_name <- c("Bayes" = 1, "Pearson" = 2, "Gosset" = 3, "Tukey" = 4, "Bonferroni" = 5)
+shuffle <- function(data){
+  data[sample(1:nrow(data)), ]
+}
+
+idg <- students$group
+
+studentsl <- split(students, students$phd_group)
+studentsl <- lapply(studentsl, shuffle)
+students <- bind_rows(studentsl)
+students$group <- idg
+
+group_name <- c("Bayes" = 1, "Pearson" = 2, "Gosset" = 3, 
+                "Tukey" = 4, "Bonferroni" = 5, "Neyman" = 6)
 
 students$group <- names(group_name[students$group])
 
 S <- students |> 
-  select(student, phd_program, group) |> 
+  select(student, phd_group, group) |> 
   arrange(group, student)
 
 Sl <- split(S, S$group)
 
 for(i in 1:length(Sl)){
   pander::pandoc.header(paste("Group", names(Sl)[i]), 2)
-  cat(sprintf("- %s [*%s*]", Sl[[i]]$student, Sl[[i]]$phd_program), sep = "\n")
+  cat(sprintf("- %s", Sl[[i]]$student), sep = "\n")
 }
 ```
 
