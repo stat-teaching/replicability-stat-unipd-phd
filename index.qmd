@@ -24,7 +24,7 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 # Schedule
 
-## Monday 8<sup>th</sup> June 2024
+## Monday 8<sup>th</sup> July 2024
 
 ### 9:00 - 12:00
 
@@ -40,7 +40,7 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 #### Filippo Gambarota - Tools for Open Science
 
-## Tuesday 9<sup>th</sup> June 2024
+## Tuesday 9<sup>th</sup> July 2024
 
 ### 9:00 - 12:00
 
@@ -56,7 +56,7 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 #### Filippo Gambarota - R tools and examples for Measures of Replication
 
-## Wednesday 10<sup>th</sup> June 2024
+## Wednesday 10<sup>th</sup> July 2024
 
 ### 9:00 - 12:00
 
