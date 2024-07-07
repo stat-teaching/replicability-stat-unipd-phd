@@ -66,7 +66,7 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 #### Giovanni Parmigiani - Replicability in Cancer Science
 
-- Paper: @Errington2021-fb [[pdf]](papers/Errington et al. 2021 - Investigating the replicability of preclinical cancer biology.pdf)
+- Paper: @Errington2021-fb [[pdf]](papers/Errington et al. 2021 - Investigating the replicability of preclinical cancer biology.pdf) Errington's [presentation](https://youtu.be/5xRjwGE0WdY) 
 
 ### 14:30 - 16:30
 
