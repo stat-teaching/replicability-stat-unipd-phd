@@ -14,10 +14,6 @@ format:
     embed-resources: true
   # beamer:
   #   output-file: example-beamer.pdf
-  revealjs:
-     output-file: example-revealjs.html
-     embed-resources: true
-  pdf: default
   docx: default
 bibliography: "ref.bib"
 number-sections: true
