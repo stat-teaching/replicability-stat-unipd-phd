@@ -52,6 +52,7 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 - Paper: @Mathur2020-nw [[pdf]](papers/Mathur and VanderWeele 2020 - New statistical metrics for multisite replication projects.pdf)
 and [statistical supplement](https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/jrsssa/183/3/10.1111_rssa.12572/1/rssa12572-sup-0001-supinfo.pdf?Expires=1723372390&Signature=SIZzyxdtOtsxjRfZ-aTc2DCEwAbUadE1flJxDOBeattxWpGgZ3FFpc2K3oVKoOrNhMaub8uVKHfOZvm6porMlyPVKPya5~QshIT7NGPiaJRWpCRA4F8FW4soQxPwGGj1eRQgFOSTw4NCsNIwFScTv0edUWQXR0zJrtFIf-xa~OcLuLIwnegujv6wdeQXAkaGx0PoYPMaeJll-EKyYte9xEkwpmvEdlZsp7-wBBsq~0YkabpCuA5ruVGvB22yybzYDcIk4BqJaTSuOWR-f0OzPbu5ucJVzPiLUMmeWvHpOj4AisycOzAOHFUSzDOpvVv9u~p7mMpp8HetNj-iWF5jWg__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA)
+
 ### 14:30 - 16:30
 
 #### Filippo Gambarota - R tools and examples for Measures of Replication
