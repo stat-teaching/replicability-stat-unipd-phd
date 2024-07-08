@@ -34,7 +34,7 @@ When evaluating the reliability of scientific findings and predictions, a major 
 
 #### Giovanni Parmigiani - Probability of Replication
 
-- Paper: @Miller2009-hp [[pdf]](papers/Miller 2009 - What is the probability of replicating a statistically significant effect.pdf)
+- Paper: @Miller2009-hp [[pdf]](papers/Miller 2009 - What is the probability of replicating a statistically significant effect.pdf) [[slides]](files/JC1-Miller.pdf)
  
 ### 14:30 - 16:30
 
