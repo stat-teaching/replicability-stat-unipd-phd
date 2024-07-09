@@ -83,7 +83,7 @@ During each day there will be some group activites. We created some balanced gro
 #| message: false
 #| warning: false
 
-set.seed(2024)
+#set.seed(2024)
 
 students <- readxl::read_xlsx("files/students.xlsx")
 
