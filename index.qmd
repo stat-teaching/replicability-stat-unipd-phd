@@ -47,11 +47,12 @@ When evaluating the reliability of scientific findings and predictions, a major 
 #### Branden Fitelson - How not to measure replication
 
 - Paper: @Fletcher2021-hv [[pdf]](papers/Fletcher 2021 - How (not) to measure replication.pdf)
+- Mathematica notebook for @Miller2009-hp paper [[pdf](files/miller.nb.pdf)] - [[nb](files/miller.nb)]
 
 #### Giovanni Parmigiani - How to measure replication
 
 - Paper: @Mathur2020-nw [[pdf]](papers/Mathur and VanderWeele 2020 - New statistical metrics for multisite replication projects.pdf)
-and [statistical supplement](https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/jrsssa/183/3/10.1111_rssa.12572/1/rssa12572-sup-0001-supinfo.pdf?Expires=1723372390&Signature=SIZzyxdtOtsxjRfZ-aTc2DCEwAbUadE1flJxDOBeattxWpGgZ3FFpc2K3oVKoOrNhMaub8uVKHfOZvm6porMlyPVKPya5~QshIT7NGPiaJRWpCRA4F8FW4soQxPwGGj1eRQgFOSTw4NCsNIwFScTv0edUWQXR0zJrtFIf-xa~OcLuLIwnegujv6wdeQXAkaGx0PoYPMaeJll-EKyYte9xEkwpmvEdlZsp7-wBBsq~0YkabpCuA5ruVGvB22yybzYDcIk4BqJaTSuOWR-f0OzPbu5ucJVzPiLUMmeWvHpOj4AisycOzAOHFUSzDOpvVv9u~p7mMpp8HetNj-iWF5jWg__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA) [[slides]](files/JC2-Mathur.pdf)
+and [statistical supplement](https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/jrsssa/183/3/10.1111_rssa.12572/1/rssa12572-sup-0001-supinfo.pdf?Expires=1723372390&Signature=SIZzyxdtOtsxjRfZ-aTc2DCEwAbUadE1flJxDOBeattxWpGgZ3FFpc2K3oVKoOrNhMaub8uVKHfOZvm6porMlyPVKPya5~QshIT7NGPiaJRWpCRA4F8FW4soQxPwGGj1eRQgFOSTw4NCsNIwFScTv0edUWQXR0zJrtFIf-xa~OcLuLIwnegujv6wdeQXAkaGx0PoYPMaeJll-EKyYte9xEkwpmvEdlZsp7-wBBsq~0YkabpCuA5ruVGvB22yybzYDcIk4BqJaTSuOWR-f0OzPbu5ucJVzPiLUMmeWvHpOj4AisycOzAOHFUSzDOpvVv9u~p7mMpp8HetNj-iWF5jWg__&Key-Pair-Id=APKAIE5G5CRDK6RD3PGA) - [[slides](files/JC2-Mathur.pdf)]
 
 ### 14:30 - 16:30
 
@@ -82,8 +83,9 @@ During each day there will be some group activites. We created some balanced gro
 #| echo: false
 #| message: false
 #| warning: false
+#| include: false
 
-#set.seed(2024)
+set.seed(111)
 
 students <- readxl::read_xlsx("files/students.xlsx")
 
@@ -114,6 +116,13 @@ for(i in 1:length(Sl)){
   cat(sprintf("- %s", Sl[[i]]$student), sep = "\n")
 }
 ```
+
+::: {layout-ncol=2}
+
+![](files/temp-group1.png)
+
+![](files/temp-group2.png)
+:::
 
 :::{.refs}
 :::
