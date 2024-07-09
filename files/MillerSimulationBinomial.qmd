@@ -4,7 +4,21 @@ format: html
 editor: visual
 ---
 
-Probability of replication of a Binomial test for simple versus simple hypothesis.
+Probability of replication of a Binomial test for simple versus simple hypothesis. Inspired by Miller's paper.
+
+Model: $x$ is Binomial $\theta$. There are two possible values of $\theta$ the null value $\theta_0$ and the alternative $\theta_1$. Both the original and replicated experiment have size $n$. We know $\gamma$.
+
+The logic is this:
+
+\-- compute the power $(1-\beta$) of the studies (it is the same for both) by simulation
+
+\-- for ever possible $x$ in $0, \ldots, n$ compute the p-value and the posterior probability of the null $\theta=\theta_0$
+
+\-- if the $x$ leads to a rejection compute the probability of replication as $\alpha/2 * p(\theta_0|x) + (1-\beta) (1-p(\theta_0|x))$
+
+\-- if the $x$ does not lead to a rejection compute the probability of replication as $(1-\alpha) * p(\theta_0|x) + \beta (1-p(\theta_0|x))$
+
+Function to compute the probability of replication.
 
 ```{r}
 probrep = function(
@@ -14,16 +28,18 @@ probrep = function(
   theta1, # success probability under the null hypothesis
   alpha # significance cutoff
 ){
-x1range = seq(0,nn)
-pvalue1 = pH0 = rep(NA,nn+1)
-# type two error
-MM = 10000
-xx.under.alt = rbinom(MM,nn,theta1)
-pvalue.alt = NA
-for (mm in 1:MM){
-pvalue.alt[mm] = binom.test(xx.under.alt[mm],nn,theta0,alternative="two.sided")$p.value
+  x1range = seq(0,nn) # possible values of original experiment
+  pvalue1 = pH0 = rep(NA,nn+1) # initialization
+# type two error estimation via quick simulation
+  MM = 10000
+  xx.under.alt = rbinom(MM,nn,theta1)
+  pvalue.alt = NA
+  for (mm in 1:MM){
+  pvalue.alt[mm] = binom.test(xx.under.alt[mm],nn,theta0,alternative="two.sided")$p.value
 }
-beta = mean( pvalue.alt > .05)
+  beta = mean( pvalue.alt > .05) # type one error in both studies
+#
+
 for (xx in x1range){
 # mapping between number of successes and pvalue in original ezxperiment
   pvalue1[xx] = 
@@ -60,18 +76,18 @@ probrep.out = probrep(nn=20,gamma=.5,theta0=.1,theta1=.2,alpha=0.05)
 plot(probrep.out$reject$pvalue.reject,
      probrep.out$reject$prep.reject,
      ylab="probability of replication",
-     xlab="p-value")
+     xlab="p-value of original study")
 plot(probrep.out$reject$pvalue.reject,
      probrep.out$reject$pH0.reject,
      ylab="probability of null hypothesis",
-     xlab="p-value")
+     xlab="p-value of original study")
 plot(probrep.out$retain$pvalue.retain,
      probrep.out$retain$prep.retain,
      ylab="probability of replication",
-     xlab="p-value")
+     xlab="p-value of original study")
 plot(probrep.out$retain$pvalue.retain,
      probrep.out$retain$pH0.retain,
      ylab="probability of null hypothesis",
-     xlab="p-value")
+     xlab="p-value of original study")
 
 ```
