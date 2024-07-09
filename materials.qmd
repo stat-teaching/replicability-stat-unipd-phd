@@ -1,5 +1,6 @@
 ---
 title: "Replicability Crisis in Science?"
+bibliography: "https://raw.githubusercontent.com/filippogambarota/bib-database/main/references.bib"
 ---
 
 # Filippo Gambarota
@@ -9,3 +10,9 @@ title: "Replicability Crisis in Science?"
 - [Statistical methods for assessing replication](slides/02-replication-methods/02-replication-methods.qmd)
 - [Introduction to meta-analysis](slides/03-meta-analysis/03-meta-analysis.qmd)
 - [Multiverse analysis](slides/04-multiverse-meta-analysis/04-multiverse-meta-analysis.qmd)
+
+# Giovanni Parmigiani
+
+- Simulation on @Miller2009-hp paper - [[qmd](files/MillerSimulationBinomial.qmd)]
+
+# References
