@@ -68,7 +68,7 @@ and [statistical supplement](https://oup.silverchair-cdn.com/oup/backfile/Conten
 
 #### Giovanni Parmigiani - Replicability in Cancer Science
 
-- Paper: @Errington2021-fb [[pdf]](papers/Errington et al. 2021 - Investigating the replicability of preclinical cancer biology.pdf) Errington's [presentation](https://youtu.be/5xRjwGE0WdY) 
+- Paper: @Errington2021-fb [[pdf]](papers/Errington et al. 2021 - Investigating the replicability of preclinical cancer biology.pdf) Errington's [presentation](https://youtu.be/5xRjwGE0WdY) - [[slides](slides/JC3-Errington.pdf)]
 
 ### 14:30 - 16:30
 
@@ -83,7 +83,6 @@ During each day there will be some group activites. We created some balanced gro
 #| echo: false
 #| message: false
 #| warning: false
-#| include: false
 
 set.seed(111)
 
@@ -116,13 +115,6 @@ for(i in 1:length(Sl)){
   cat(sprintf("- %s", Sl[[i]]$student), sep = "\n")
 }
 ```
-
-::: {layout-ncol=2}
-
-![](files/temp-group1.png)
-
-![](files/temp-group2.png)
-:::
 
 :::{.refs}
 :::
